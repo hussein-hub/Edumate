@@ -1,0 +1,22 @@
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <h1>Access register Page</h1>
+            <input class="border-radius" name="email" type="email" placeholder="Email" style="margin-bottom: 7px" required />
+            <input class="border-radius" name="password" type="password" placeholder="Password" style="margin-bottom: 7px" required />
+            <button class="border-radius" type="submit">Authenticate</button>
+        </form>
+    </div>
+</body>
+
+</html>

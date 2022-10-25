@@ -1,0 +1,27 @@
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <h1>Registration Page</h1>
+            <input class="border-radius" name="name" type="text" placeholder="Name" style="margin:15px 7px 7px 7px" required />
+            <input class="border-radius" name="email" type="email" placeholder="Email" style="margin-bottom: 7px" required />
+            <select class="border-radius" name="type">
+                <option class="border-radius" value="student">Student</option>
+                <option class="border-radius" value="teacher">Teacher</option>
+            </select>
+            <button class="border-radius" type="submit">Add</button>
+        </form>
+        <a href={% url 'home' %}>Back to home page</a>
+    </div>
+</body>
+
+</html>

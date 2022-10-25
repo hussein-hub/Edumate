@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'Edumate_app.apps.EdumateAppConfig',
+    'Student.apps.StudentConfig',
+    'Teacher.apps.TeacherConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'edumate_db',
         'USER': 'root',
-        'PASSWORD': 'hussein',
+        'PASSWORD': 'Nayan@123',
         'HOST':'localhost',
         'PORT':'3306',
     }
