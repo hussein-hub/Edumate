@@ -39,7 +39,11 @@
             </form>
         </div>
         <div>
-            <h5>Teacher Name: {{ teacher_c.name }}</h5>
-        </div>
+          {% for i in class_data %}
+              <div>Class Code : {{ i.class_code }}</div>
+              <div>Class Name : {{ i.class_name }}</div>
+              <br>
+          {% endfor %}
+      </div>
     </div>
 {% endblock content %}
