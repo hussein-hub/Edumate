@@ -43,6 +43,7 @@
                 <div>Class Code : {{ i.0 }}</div>
                 <div>Class Name : {{ i.1 }}</div>
                 <div>Teacher Name : {{ i.2 }}</div>
+                <a href="{% url 'classroom1' pk=pk pk2=i.0 %}">Goto classroom</a>
                 <br>
             {% endfor %}
         </div>

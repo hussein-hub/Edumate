@@ -1,5 +1,6 @@
-{% extends './base_teacher.html' %}
+{% extends './base_student.html' %}
 {% load static %}
+
 
 {% block navbar %}
 <header id="header" class="header d-flex align-items-center">
@@ -32,20 +33,17 @@
 
 {% block content %}
     <div>
-        <div>
-            <form method="post">
-                {% csrf_token %}
-                <input type="text" placeholder="Enter class Name" name="name">
-                <button type="submit">create</button>
-            </form>
-        </div>
-        <div>
-          {% for i in class_data %}
-              <div>Class Code : {{ i.class_code }}</div>
-              <div>Class Name : {{ i.class_name }}</div>
-              <a href="{% url 'classroom' pk=teacher.teach_id pk2=i.class_code %}">Goto classroom</a>
-              <br>
-          {% endfor %}
-      </div>
+      <p>Assignment name: {{ assign.0.assignment_name }}</p> 
+      <p>Assignment description : {{ assign.0.assignment_description }}</p>
+      <p>Marks : {{ assign.0.max_marks }}</p>
     </div>
+    <div>
+        <form method="post" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <input type="text" placeholder="Enter assignment description" name="description">
+            <input type="file" placeholder="Upload pdf file" name="submission">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <a href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a>
 {% endblock content %}

@@ -1,6 +1,7 @@
 {% extends './base_teacher.html' %}
 {% load static %}
 
+
 {% block navbar %}
 <header id="header" class="header d-flex align-items-center">
 
@@ -32,20 +33,20 @@
 
 {% block content %}
     <div>
-        <div>
-            <form method="post">
-                {% csrf_token %}
-                <input type="text" placeholder="Enter class Name" name="name">
-                <button type="submit">create</button>
-            </form>
-        </div>
-        <div>
-          {% for i in class_data %}
-              <div>Class Code : {{ i.class_code }}</div>
-              <div>Class Name : {{ i.class_name }}</div>
-              <a href="{% url 'classroom' pk=teacher.teach_id pk2=i.class_code %}">Goto classroom</a>
-              <br>
-          {% endfor %}
-      </div>
+      <form method="post">
+        {% csrf_token %}
+        <input type="text" placeholder="Enter assignment name" name="name">
+        <input type="text" placeholder="Enter assignment description" name="description">
+        <input type="text" placeholder="Enter maximum marks" name="marks">
+        <button type="submit">create</button>
+    </form>
+    {% for i in assign %}
+      <div>Assignment name : {{ i.assignment_name }}</div>
+      <div>Assignment description : {{ i.assignment_description }}</div>
+      <div>Maximum marks : {{ i.max_marks }}</div>
+      <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}">Go to submitted assignments page</a>
+      <br>
+    {% endfor %}
+    <a href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
     </div>
 {% endblock content %}
