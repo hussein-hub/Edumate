@@ -32,13 +32,29 @@
 {% endblock navbar %}
 
 {% block content %}
-    <div>
+    {% comment %} <div>
         {% for i in submit %}
         <p>Student ID: {{ i.stud_id }}</p>
         <p>Description: {{ i.assign_desc }}</p> 
         <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
-        <p>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" >{{ i.stud_id }}</a></p> 
         {% endfor %}
       <a href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to classroom</a>
+    </div> {% endcomment %}
+     
+    <div class="container-fluid">
+        <div class="row row-content">
+            <div class="col-6">
+                <p>Student Name: {{ student_name }}</p>
+                <p>Description: {{ submit.assign_desc }}</p> 
+                <br>
+                <iframe src={{ submit.assign_file.url }} style="width:718px; height:700px;"frameborder="0"></iframe>
+            </div>
+            <div class="col-6">
+                <p>Enter Marks</p>
+                <input type="number" name="marks" placeholder="Enter Marks">
+                <button class="btn btn-outline-success">Submit</button>
+            </div>
+        </div>
+        
     </div>
 {% endblock content %}

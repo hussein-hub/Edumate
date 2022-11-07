@@ -2,7 +2,7 @@ from django.shortcuts import render
 import string, random
 from django.http import FileResponse, Http404
 
-from Edumate_app.models import Teachers
+from Edumate_app.models import Students, Teachers
 from Student.models import ClassStudents, SubmittedAssignments
 from .models import ClassTeachers, Assignments
 
@@ -36,4 +36,12 @@ def assignmentsub(request, pk, pk2, pk3):
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
     for i in submitted:
         print(i.assign_file.url.split('/'))
-    return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2})
+    return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2 ,'pk3': pk3})
+
+def assignmentgrade(request, pk, pk2, pk3,pk4):
+    submitted=SubmittedAssignments.objects.get(assignment_id=pk3,stud_id = pk4)
+    stud = Students.objects.get(stud_id = pk4)
+    print(submitted.assign_file.url)
+    file_url = "http://127.0.0.1:8000"+submitted.assign_file.url
+    
+    return render(request, 'Teacher/grade_assignments.html', {'student_name':stud.name,'file':file_url,'submit': submitted, 'pk': pk, 'pk2': pk2})
