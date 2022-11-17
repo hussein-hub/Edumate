@@ -2,8 +2,8 @@ from django.http import QueryDict
 from django.shortcuts import render
 from Edumate_app.models import Teachers
 
-from Student.models import ClassStudents, SubmittedAssignments
-from Teacher.models import ClassTeachers, Assignments
+from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
+from Teacher.models import ClassTeachers, Assignments, PeerGrade
 
 # Create your views here.
 
@@ -38,7 +38,19 @@ def classroom(request, pk, pk2):
 
 def assignmentsub(request, pk, pk2, pk3):
     assign=Assignments.objects.filter(assignment_id=pk3)
-    if(request.method=="POST"):
+    assigned=PeerGrade.objects.filter(stud_id=pk, assign_id=pk3)
+    peer_1=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_1)
+    peer_2=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_2)
+    if(request.method=="POST" and request.POST.get('caller')=="call"):
+        peer_marks=PeerStudents()
+        peer_marks.stud_id=pk
+        peer_marks.assign_id=pk3
+        peer_marks.as_peer_1=peer_1[0].stud_id
+        peer_marks.as_1_marks=request.POST.get('peer1')
+        peer_marks.as_peer_2=peer_2[0].stud_id
+        peer_marks.as_2_marks=request.POST.get('peer2')
+        peer_marks.save()
+    elif(request.method=="POST"):
         assignment=SubmittedAssignments()
         assignment.assign_desc=request.POST.get('description')
         assignment.assignment_id=pk3
@@ -48,4 +60,4 @@ def assignmentsub(request, pk, pk2, pk3):
         assignment.assign_file = file
         assignment.stud_id=pk
         assignment.save()
-    return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2})
+    return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0].assign_desc, 'desc2': peer_2[0].assign_desc})

@@ -17,3 +17,14 @@ class SubmittedAssignments(models.Model):
     stud_id = models.IntegerField(default=0)
     class Meta:
         db_table = "SubAssigns"
+
+class PeerStudents(models.Model):
+    peerstud_id = models.AutoField(primary_key=True)
+    stud_id = models.IntegerField()
+    assign_id = models.IntegerField()
+    as_peer_1 = models.IntegerField()
+    as_1_marks = models.FloatField()
+    as_peer_2 = models.IntegerField()
+    as_2_marks = models.FloatField()
+    class Meta:
+        db_table = "PeerStudents"

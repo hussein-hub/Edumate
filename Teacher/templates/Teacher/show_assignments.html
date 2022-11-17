@@ -39,6 +39,47 @@
         <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
         <p>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" >{{ i.stud_id }}</a></p> 
         {% endfor %}
-      <a href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to classroom</a>
+        <form method="post">
+          {% csrf_token %}
+          <input name="peer" value="peer" style="display: none">
+          <button type="submit">Start the peergrading</button>
+        </form>
+        <table>
+          <tr>
+            <th>Student ID</th>
+            <th>Assigned peer 1</th>
+            <th>Marks given</th>
+            <th>Assigned peer 2</th>
+            <th>Marks given</th>
+          </tr>
+          {% for i in peer %}
+          <tr>
+            <td>{{ i.stud_id }}</td>
+            <td>{{ i.as_peer_1 }}</td>
+            <td>{{ i.as_1_marks }}</td>
+            <td>{{ i.as_peer_2 }}</td>
+            <td>{{ i.as_2_marks }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+        <table>
+          <tr>
+            <th>Student ID</th>
+            <th>Peer 1 who has given marks</th>
+            <th>Marks given</th>
+            <th>Peer 2 who has given marks</th>
+            <th>Marks given</th>
+          </tr>
+          {% for i in shr %}
+          <tr>
+            <td>{{ i.0 }}</td>
+            <td>{{ i.1 }}</td>
+            <td>{{ i.2 }}</td>
+            <td>{{ i.3 }}</td>
+            <td>{{ i.4 }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+        <a href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to classroom</a>
     </div>
 {% endblock content %}

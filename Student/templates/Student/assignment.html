@@ -45,5 +45,16 @@
             <button type="submit">Submit</button>
         </form>
     </div>
+    <div>
+      <form method="post">
+          {% csrf_token %}
+          <p>Description: {{ desc1 }}</p>
+          <input type="number" placeholder="Enter marks" name="peer1">
+          <p>Description: {{ desc2 }}</p>
+          <input type="number" placeholder="Enter marks" name="peer2">
+          <input type="text" name="caller" value="call" style="display: none">
+          <button type="submit">Submit</button>
+      </form>
+  </div>
     <a href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a>
 {% endblock content %}

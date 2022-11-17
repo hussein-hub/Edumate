@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'edumate_db',
         'USER': 'root',
-        'PASSWORD': 'hussein',
+        'PASSWORD': 'Nayan@123',
         'HOST':'localhost',
         'PORT':'3306',
     }

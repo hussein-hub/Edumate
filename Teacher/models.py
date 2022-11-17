@@ -18,3 +18,12 @@ class Assignments(models.Model):
     max_marks = models.FloatField(default=25)
     class Meta:
         db_table = "Assignments"
+
+class PeerGrade(models.Model):
+    peergrade_id = models.AutoField(primary_key=True)
+    stud_id = models.IntegerField()
+    assign_id = models.IntegerField()
+    peer_1 = models.IntegerField()
+    peer_2 = models.IntegerField()
+    class Meta:
+        db_table = "PeerGrade"

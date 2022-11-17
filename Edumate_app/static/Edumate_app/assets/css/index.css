@@ -47,6 +47,10 @@ a:hover {
   text-decoration: none;
 }
 
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 h1,
 h2,
 h3,
