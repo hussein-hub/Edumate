@@ -1,0 +1,77 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block styles %}
+<link href="{% static 'Teacher/assets/css/announcement_teach.css' %}" rel="stylesheet">
+{% endblock styles %}
+
+
+{% block navbar %}
+<header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="{% url 'login_student' %}">Student Login</a></li>
+          <li><a href="{% url 'login_teacher' %}">Teacher Login</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav><!-- .navbar -->
+  
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+  
+    </div>
+  </header>
+{% endblock navbar %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="centerHeader">Announcement</h1>
+        <form class="alignment" method="post">
+            {% csrf_token %}
+            <input style="width: 40vw; margin-right: 20px" class="form-control" type="text" placeholder="Announce" name="announce_data">
+            <button class="btn btn-primary" type="submit">create</button>
+        </form>
+        <br><br><hr><br>
+
+        <div class="row row-content">
+            {% for i in announcement_data %}
+            <div style="margin-top: 1%" class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                          {{ i.date }}
+                        </div>
+                        <div>
+                          <a href="announcement/{{i.id}}">
+                            <i class="fa fa-trash"></i>
+                          </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                        <p>{{ i.announce_data }}</p>
+                        {% comment %} <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer> {% endcomment %}
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <br>
+        <a class="btn btn-primary" href="{% url 'classroom' pk=pk pk2=pk2%}">Back</a>
+
+        <br><br><br>
+    </div>
+{% endblock content %}

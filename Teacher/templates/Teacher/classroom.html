@@ -44,8 +44,9 @@
         <div>Assignment name : {{ i.assignment_name }}</div>
         <div>Assignment description : {{ i.assignment_description }}</div>
         <div>Maximum marks : {{ i.max_marks }}</div>
-        <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}">Go to submitted assignments page</a>
-        <br>
+        <a class="btn btn-primary" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}">Go to submitted assignments page</a>
+        <a class="btn btn-primary" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Announcement</a>
+        <br>  
       {% endfor %}
       <a href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
     </div>

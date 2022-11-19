@@ -4,9 +4,10 @@ from django.http import FileResponse, Http404
 
 from Edumate_app.models import Students, Teachers
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
-from .models import ClassTeachers, Assignments, PeerGrade
+from .models import ClassTeachers, Assignments, PeerGrade, Announcements
 import random
 import copy
+from django.shortcuts import redirect, render
 
 # Create your views here.
 
@@ -89,3 +90,20 @@ def assignmentgrade(request, pk, pk2, pk3,pk4):
     print(submitted.assign_file.url)
     file_url = "http://127.0.0.1:8000"+submitted.assign_file.url
     return render(request, 'Teacher/grade_assignments.html', {'student_name':stud.name,'file':file_url,'submit': submitted, 'pk': pk, 'pk2': pk2})
+
+def announcement(request, pk, pk2):
+    if (request.method == 'POST'):
+        announcement = Announcements()
+        announcement.announce_data = request.POST.get('announce_data')
+        announcement.teach_id = pk
+        announcement.class_code = pk2
+        print(announcement.announce_data, announcement.teach_id, announcement.class_code)
+        announcement.save()
+    announcement_data = Announcements.objects.filter(class_code = pk2).order_by('-date')
+    return render(request, 'Teacher/announcement_teach.html', {'pk': pk, 'pk2': pk2, 'announcement_data': announcement_data})
+
+
+def delete(request, pk, pk2, id):
+    delAnnouncement = Announcements.objects.get(id=id)
+    delAnnouncement.delete()
+    return redirect('announcementteach', pk, pk2)

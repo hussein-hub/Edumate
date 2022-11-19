@@ -21,7 +21,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,400;1,500&display=swap" rel="stylesheet">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
   <!-- Vendor CSS Files -->
   <link href="{% static 'Edumate_app/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -32,6 +32,10 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static 'Edumate_app/assets/css/index.css' %}" rel="stylesheet">
+  <link href="{% static 'Teacher/assets/css/announcement_teach.css' %}" rel="stylesheet">
+
+  {% block styles %}
+  {% endblock styles %}
 
   <!-- =======================================================
   * Template Name: Impact - v1.1.1

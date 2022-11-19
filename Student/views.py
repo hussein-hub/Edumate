@@ -3,7 +3,7 @@ from django.shortcuts import render
 from Edumate_app.models import Teachers
 
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
-from Teacher.models import ClassTeachers, Assignments, PeerGrade
+from Teacher.models import ClassTeachers, Assignments, PeerGrade, Announcements
 
 # Create your views here.
 
@@ -61,3 +61,8 @@ def assignmentsub(request, pk, pk2, pk3):
         assignment.stud_id=pk
         assignment.save()
     return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0].assign_desc, 'desc2': peer_2[0].assign_desc})
+
+def announcement_stud(request, pk, pk2):
+    announcements = Announcements.objects.filter(class_code = pk2)
+    # print(pk, pk2)
+    return render(request, 'Student/announcement_student.html', {'pk': pk, 'pk2': pk2, 'announcements': announcements})
