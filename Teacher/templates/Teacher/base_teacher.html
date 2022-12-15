@@ -77,7 +77,7 @@
       </a>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="#hero">Home</a></li>
+          <li><a href="{% url 'home'%}">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#services">Services</a></li>
           <li><a href="#portfolio">Portfolio</a></li>
@@ -100,7 +100,7 @@
   {% endblock herosection %}
   <!-- End Hero Section -->
 
-
+<br><br><br>
   {% block content %}
   {% endblock content %}
 
@@ -143,6 +143,7 @@
 
   </main><!-- End #main --> {% endcomment %}
 
+  <br><br><br>
   <!-- ======= Footer ======= -->
   {% comment %}  fixed-bottom {% endcomment %}
   <footer id="footer" class="footer">

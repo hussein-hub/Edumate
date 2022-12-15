@@ -2,52 +2,48 @@
 {% load static %}
 
 
-{% block navbar %}
-<header id="header" class="header d-flex align-items-center">
 
-    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-      <a href="#" class="logo d-flex align-items-center">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
-        <h1>EDUMATE<span>.</span></h1>
-      </a>
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="{% url 'login_student' %}">Student Login</a></li>
-          <li><a href="{% url 'login_teacher' %}">Teacher Login</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav><!-- .navbar -->
-  
-      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-  
-    </div>
-  </header>
-{% endblock navbar %}
 
 {% block content %}
-    <div>
-      <form method="post">
+<br><br>
+<div class="container ">
+  <div class="container" >
+      <form method="post"class="form-group row">
         {% csrf_token %}
-        <input type="text" placeholder="Enter assignment name" name="name">
-        <input type="text" placeholder="Enter assignment description" name="description">
-        <input type="text" placeholder="Enter maximum marks" name="marks">
-        <button type="submit">create</button>
+        <div class="col-sm-3">
+        <input class="form-control" type="text" placeholder="Enter assignment name" name="name">
+      </div>
+        <div class="col-sm-5">
+        <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+      </div>
+        <div class="col-sm-2">
+        <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks">
+      </div>
+        <div class="col-sm-2">
+        <button class="btn btn-outline-success" type="submit">create</button>
+      </div>
       </form>
+
+      <br>
+
+      <div class="row">
       {% for i in assign %}
-        <div>Assignment name : {{ i.assignment_name }}</div>
-        <div>Assignment description : {{ i.assignment_description }}</div>
-        <div>Maximum marks : {{ i.max_marks }}</div>
-        <a class="btn btn-primary" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}">Go to submitted assignments page</a>
-        <br>  
+          
+
+        <div class="card mr-2 mb-2" style="width: 23%;">
+          <div class="card-body">
+            <h5 class="card-title">Name:  {{ i.assignment_name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted"> Max marks: {{ i.max_marks }} </h6>
+            <p class="card-text">Description : {{ i.assignment_description }}</p>
+            <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link">Go to submitted assignments</a>
+            
+          </div>
+        </div>
       {% endfor %}
-      <a class="btn btn-primary" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Announcement</a>
-      <a href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
+    </div>
+    <br>
+      <a class="btn btn-success" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
+      <a class="btn btn-outline-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
+    </div>
     </div>
 {% endblock content %}
