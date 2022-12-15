@@ -10,6 +10,8 @@ class ClassTeachers(models.Model):
     class_name = models.CharField(max_length=40)
     class Meta:
         db_table = "ClassTeachers"
+    def __str__(self):
+         return self.class_name + " - "+self.class_code
 
 class Assignments(models.Model):
     assignment_id = models.AutoField(primary_key=True)
@@ -19,7 +21,8 @@ class Assignments(models.Model):
     max_marks = models.FloatField(default=25)
     class Meta:
         db_table = "Assignments"
-
+    def __str__(self):
+         return self.assignment_name +" - "+ self.class_code
 class PeerGrade(models.Model):
     peergrade_id = models.AutoField(primary_key=True)
     stud_id = models.IntegerField()
@@ -36,3 +39,5 @@ class Announcements(models.Model):
     date = models.DateTimeField(default=datetime.now)
     class Meta:
         db_table = "Announcements"
+    def __str__(self):
+         return self.announce_data +" - "+ self.class_code
