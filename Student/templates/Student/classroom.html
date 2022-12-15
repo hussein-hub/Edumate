@@ -32,14 +32,32 @@
 {% endblock navbar %}
 
 {% block content %}
-    <div>
+<br><br><br><br>
+<div class="container">
+  <h1>Assignments</h1>
+<div class="row">
         {% for i in assign %}
-        <div>Assignment name : {{ i.assignment_name }}</div>
+        {% comment %} <div>Assignment name : {{ i.assignment_name }}</div>
         <div>Assignment description : {{ i.assignment_description }}</div>
         <div>Maximum marks : {{ i.max_marks }}</div>
         <a href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.assignment_id %}">Goto assignment</a>
-        <br>
+        <br> {% endcomment %}
+
+        <div class="card mr-2 mb-2" style="width: 23%;">
+          <div class="card-body">
+            <h5 class="card-title">Name:  {{ i.assignment_name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Description: {{ i.assignment_description }} </h6>
+            <p class="card-text">Max marks: {{ i.max_marks }}</p>
+            <a href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link">Go to Assignment</a>
+            
+          </div>
+        </div>
       {% endfor %}
-      <a href="{% url 'student_home' pk=pk %}">Back to home page</a>
-    </div>
+
+
+</div>
+<br>
+<a href="{% url 'student_home' pk=pk %}" class="btn btn-outline-success">Back to home page</a>
+
+</div>
 {% endblock content %}
