@@ -3,6 +3,34 @@
 
 
 {% block navbar %}
+
+<style>
+
+  #customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #customers tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #customers tr:hover {background-color: #ddd;}
+  
+  #customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA6D;
+    color: white;
+  }
+
+</style>
+
 <header id="header" class="header d-flex align-items-center">
 
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
@@ -32,19 +60,32 @@
 {% endblock navbar %}
 
 {% block content %}
+<div class="row">
+  {% for i in submit %}
+
+  <div class="card mr-2 mb-2" style="width: 23%;">
+    <div class="card-body">
+      <h5 class="card-title">id:  {{ i.stud_id }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">Description: {{ i.assign_desc }} </h6>
+      <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
+      <p>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" >{{ i.stud_id }}</a></p> 
+      <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" class="card-link btn btn-outline-success">Go to Assignment</a>
+    </div>
+  </div>
+{% endfor %}
+
+
+</div>
     <div>
-        {% for i in submit %}
-        <p>Student ID: {{ i.stud_id }}</p>
-        <p>Description: {{ i.assign_desc }}</p> 
-        <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
-        <p>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" >{{ i.stud_id }}</a></p> 
-        {% endfor %}
-        <form method="post">
-          {% csrf_token %}
-          <input name="peer" value="peer" style="display: none">
-          <button type="submit">Start the peergrading</button>
-        </form>
-        <table>
+        {% if peerf %}
+          <form method="post">
+            {% csrf_token %}
+            <input name="peer" value="peer" style="display: none">
+            <button type="submit" class="btn btn-outline-success">Start the peergrading</button>
+          </form>
+        {% endif %}
+        {% if peerf %}
+        <table id="customers">
           <tr>
             <th>Student ID</th>
             <th>Assigned peer 1</th>
@@ -62,12 +103,12 @@
           </tr>
           {% endfor %}
         </table>
-        <table>
+        <table id="customers">
           <tr>
             <th>Student ID</th>
-            <th>Peer 1 who has given marks</th>
+            <th>Marks given by peer1</th>
             <th>Marks given</th>
-            <th>Peer 2 who has given marks</th>
+            <th>Marks given by peer2</th>
             <th>Marks given</th>
           </tr>
           {% for i in shr %}
@@ -80,6 +121,7 @@
           </tr>
           {% endfor %}
         </table>
-        <a href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to classroom</a>
+        {% endif %}
+        <a href="{% url 'classroom' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to classroom</a>
     </div>
 {% endblock content %}

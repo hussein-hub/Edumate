@@ -31,6 +31,11 @@ def classroom(request, pk, pk2):
         assignment.assignment_description=request.POST.get('description')
         assignment.class_code=pk2
         assignment.max_marks=request.POST.get('marks')
+        if request.POST.get('peer')=="on":
+            assignment.peer_grade=True
+        else:
+            assignment.peer_grade=False
+        print(request.POST.get('peer'))
         assignment.save()
     assign=Assignments.objects.filter(class_code=pk2)
     return render(request, 'Teacher/classroom.html', {'assign': assign, 'pk': pk, 'pk2': pk2})
@@ -38,6 +43,8 @@ def classroom(request, pk, pk2):
 def assignmentsub(request, pk, pk2, pk3):
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
     peerassign=PeerStudents.objects.filter(assign_id=pk3)
+    assign_grade=Assignments.objects.filter(assignment_id =pk3)
+    assign_flag=assign_grade[0].peer_grade
     sorterval=[]
     for i in submitted:
         received1=PeerStudents.objects.filter(assign_id=pk3, as_peer_1=i.stud_id)
@@ -82,7 +89,7 @@ def assignmentsub(request, pk, pk2, pk3):
                 peer.peer_1=ans[i][0]
                 peer.peer_2=ans[i][1]
                 peer.save()
-    return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval})
+    return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval, 'peerf': assign_flag})
 
 def assignmentgrade(request, pk, pk2, pk3,pk4):
     submitted=SubmittedAssignments.objects.get(assignment_id=pk3,stud_id = pk4)

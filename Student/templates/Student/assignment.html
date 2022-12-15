@@ -33,7 +33,7 @@
 
 {% block content %}
     <div>
-      <p>Assignment name: {{ assign.0.assignment_name }}</p> 
+      <p style="padding-top: 30px">Assignment name: {{ assign.0.assignment_name }}</p> 
       <p>Assignment description : {{ assign.0.assignment_description }}</p>
       <p>Marks : {{ assign.0.max_marks }}</p>
     </div>
@@ -42,10 +42,12 @@
             {% csrf_token %}
             <input type="text" placeholder="Enter assignment description" name="description">
             <input type="file" placeholder="Upload pdf file" name="submission">
-            <button type="submit">Submit</button>
+            <a class="btn btn-outline-success">Submit</a>
         </form>
     </div>
     <div>
+      {% if pflag %}
+      {% if desc1 != "X" and desc2 != "X" %}
       <form method="post">
           {% csrf_token %}
           <p>Description: {{ desc1 }}</p>
@@ -53,8 +55,10 @@
           <p>Description: {{ desc2 }}</p>
           <input type="number" placeholder="Enter marks" name="peer2">
           <input type="text" name="caller" value="call" style="display: none">
-          <button type="submit">Submit</button>
+          <a class="btn btn-outline-success">Submit</a>
       </form>
+      {% endif %}
+    {% endif %}
   </div>
-    <a href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a>
+  <a class="btn btn-outline-success" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a>
 {% endblock content %}

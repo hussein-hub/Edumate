@@ -19,10 +19,12 @@ class Assignments(models.Model):
     assignment_description = models.CharField(max_length=100)
     class_code = models.CharField(max_length=10)
     max_marks = models.FloatField(default=25)
+    peer_grade = models.BooleanField(default=False)
     class Meta:
         db_table = "Assignments"
     def __str__(self):
          return self.assignment_name +" - "+ self.class_code
+
 class PeerGrade(models.Model):
     peergrade_id = models.AutoField(primary_key=True)
     stud_id = models.IntegerField()

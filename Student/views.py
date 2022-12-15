@@ -37,20 +37,27 @@ def classroom(request, pk, pk2):
     return render(request, 'Student/classroom.html', {'assign': assign, 'pk': pk, 'pk2': pk2})
 
 def assignmentsub(request, pk, pk2, pk3):
-    # assign=Assignments.objects.filter(assignment_id=pk3)
-    # assigned=PeerGrade.objects.filter(stud_id=pk, assign_id=pk3)
-    # peer_1=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_1)
-    # peer_2=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_2)
-    # if(request.method=="POST" and request.POST.get('caller')=="call"):
-    #     peer_marks=PeerStudents()
-    #     peer_marks.stud_id=pk
-    #     peer_marks.assign_id=pk3
-    #     peer_marks.as_peer_1=peer_1[0].stud_id
-    #     peer_marks.as_1_marks=request.POST.get('peer1')
-    #     peer_marks.as_peer_2=peer_2[0].stud_id
-    #     peer_marks.as_2_marks=request.POST.get('peer2')
-    #     peer_marks.save()
-    if(request.method=="POST"):
+    assign=Assignments.objects.filter(assignment_id=pk3)
+    pflag=assign[0].peer_grade
+    peer_1=[]
+    peer_2=[]
+    temp=False
+    if assign[0].peer_grade:
+        assigned=PeerGrade.objects.filter(stud_id=pk, assign_id=pk3)
+        if(assigned):
+            peer_1=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_1)
+            peer_2=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_2)
+    if(request.method=="POST" and request.POST.get('caller')=="call"):
+        peer_marks=PeerStudents()
+        peer_marks.stud_id=pk
+        peer_marks.assign_id=pk3
+        peer_marks.as_peer_1=peer_1[0].stud_id
+        peer_marks.as_1_marks=request.POST.get('peer1')
+        peer_marks.as_peer_2=peer_2[0].stud_id
+        peer_marks.as_2_marks=request.POST.get('peer2')
+        peer_marks.save()
+        temp=True
+    if(request.method=="POST" and temp==False):
         assignment=SubmittedAssignments()
         assignment.assign_desc=request.POST.get('description')
         assignment.assignment_id=pk3
@@ -60,6 +67,10 @@ def assignmentsub(request, pk, pk2, pk3):
         assignment.assign_file = file
         assignment.stud_id=pk
         assignment.save()
+    if(len(peer_1) and len(peer_2)):
+        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0].assign_desc, 'desc2': peer_2[0].assign_desc, 'pflag': pflag})
+    else:
+        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': "X", 'desc2': "X", 'pflag': pflag})
     # return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0].assign_desc, 'desc2': peer_2[0].assign_desc})
     return render(request, 'Student/assignment.html', {'pk': pk, 'pk2': pk2, })
 
