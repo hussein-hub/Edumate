@@ -17,6 +17,7 @@ class SubmittedAssignments(models.Model):
     stud_id = models.IntegerField(default=0)
     class Meta:
         db_table = "SubAssigns"
+    
 
 class PeerStudents(models.Model):
     peerstud_id = models.AutoField(primary_key=True)

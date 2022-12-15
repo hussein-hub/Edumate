@@ -8,6 +8,8 @@ class Students(models.Model):
     password = models.CharField(max_length=50)
     class Meta:
         db_table = "Students"
+    def __str__(self):
+         return self.name
 
 class Teachers(models.Model):   
     teach_id = models.AutoField(primary_key=True)
@@ -16,3 +18,5 @@ class Teachers(models.Model):
     password = models.CharField(max_length=50)
     class Meta:
         db_table = "Teachers"
+    def __str__(self):
+         return self.name
