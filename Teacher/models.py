@@ -1,3 +1,4 @@
+from datetime import datetime
 from unittest.util import _MAX_LENGTH
 from django.db import models
 
@@ -27,3 +28,11 @@ class PeerGrade(models.Model):
     peer_2 = models.IntegerField()
     class Meta:
         db_table = "PeerGrade"
+
+class Announcements(models.Model):
+    teach_id = models.IntegerField()
+    class_code = models.CharField(max_length=10)
+    announce_data = models.CharField(max_length=1000)
+    date = models.DateTimeField(default=datetime.now)
+    class Meta:
+        db_table = "Announcements"

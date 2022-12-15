@@ -4,3 +4,7 @@ from .models import *
 admin.site.register(ClassTeachers)
 admin.site.register(Assignments)
 admin.site.register(PeerGrade)
+
+@admin.register(Announcements)
+class AnnouncementsAdmin(admin.ModelAdmin):
+    list_display = ("class_code", "announce_data", "date")

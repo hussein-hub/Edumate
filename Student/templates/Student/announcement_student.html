@@ -1,6 +1,9 @@
 {% extends './base_student.html' %}
 {% load static %}
 
+{% block styles %}
+<link href="{% static 'Student/assets/css/announcement_student.css' %}" rel="stylesheet">
+{% endblock styles %}
 
 {% block navbar %}
 <header id="header" class="header d-flex align-items-center">
@@ -32,14 +35,36 @@
 {% endblock navbar %}
 
 {% block content %}
-    <div>
-        {% for i in assign %}
-        {% comment %} <div>Assignment name : {{ i.assignment_name }}</div>
+    <div class="container">
+        <h1 class="centerHeader">Announcements</h1>
+        <br><br><hr><br>
+        {% comment %} {% for i in assign %}
+        <div>Assignment name : {{ i.assignment_name }}</div>
         <div>Assignment description : {{ i.assignment_description }}</div>
         <div>Maximum marks : {{ i.max_marks }}</div>
         <a href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.assignment_id %}">Goto assignment</a>
         <br>
-      {% endfor %}
-      <a href="{% url 'student_home' pk=pk %}">Back to home page</a>
+      {% endfor %} {% endcomment %}
+      <div class="row row-content">
+        {% for i in announcements %}
+        <div style="margin-top: 1%" class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    {{ i.date }}
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                    <p>{{ i.announce_data }}</p>
+                    {% comment %} <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer> {% endcomment %}
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+      <br>
+      <a class="btn btn-primary" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back</a>
+
+      <br><br><br>
     </div>
 {% endblock content %}
