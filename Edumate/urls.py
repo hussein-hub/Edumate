@@ -4,6 +4,10 @@ from django.conf import settings
 from django.urls import path
 from django.conf.urls.static import static
 
+admin.site.site_header = 'Edumate'                    # default: "Django Administration"
+admin.site.index_title = 'Edumate Admin'                 # default: "Site administration"
+admin.site.site_title = 'Edumate Admin'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Edumate_app.urls')),
