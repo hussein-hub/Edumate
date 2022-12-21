@@ -42,7 +42,7 @@
             {% csrf_token %}
             <input type="text" placeholder="Enter assignment description" name="description">
             <input type="file" placeholder="Upload pdf file" name="submission">
-            <a class="btn btn-outline-success">Submit</a>
+            <button type="submit" class="btn btn-outline-success">Submit</button>
         </form>
     </div>
     <div>
@@ -50,12 +50,12 @@
       {% if desc1 != "X" and desc2 != "X" %}
       <form method="post">
           {% csrf_token %}
-          <p>Description: {{ desc1 }}</p>
+          <p>File: <a target="_blank" href="{{ desc1.assign_file.url }}">View Doc</a></p>
           <input type="number" placeholder="Enter marks" name="peer1">
-          <p>Description: {{ desc2 }}</p>
+          <p>File: <a target="_blank" href="{{ desc2.assign_file.url }}">View Doc</a></p>
           <input type="number" placeholder="Enter marks" name="peer2">
           <input type="text" name="caller" value="call" style="display: none">
-          <a class="btn btn-outline-success">Submit</a>
+          <button type="submit" class="btn btn-outline-success">Submit</button>
       </form>
       {% endif %}
     {% endif %}
