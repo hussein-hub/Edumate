@@ -1,0 +1,90 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+
+<style>
+
+    .calendar {
+        width: 50%;
+        margin: auto;
+        font-size: 13px;
+      }
+      
+      .calendar tr, .calendar td {
+        border: 1px solid black;
+      }
+      
+      .calendar th {
+        padding: 10px;
+        text-align: center;
+        font-size: 18px;
+      }
+      
+      .calendar td {
+        width: 200px;
+        height: 80px;
+        padding: 20px 0px 0px 5px;
+      }
+      
+      .month {
+        font-size: 25px;
+      }
+      
+      .date {
+        font-size: 16px;
+      }
+      
+      ul {
+        height: 100%;
+        padding: 0px 5px 0px 20px;
+      }
+      
+      a {
+        color: #17a2b8;
+      }
+
+      .left {
+        float: left;
+      }
+      
+      .right {
+        float: right;
+      }
+      
+      .btn {
+        outline: none;
+        color: black;
+        background-color: transparent;
+        box-shadow: 0 0 0 0;
+      }
+      
+      .clearfix {
+        margin: 15px;
+      } 
+      
+</style>
+
+{% endblock styles %}
+
+
+
+
+
+{% block content %}
+<div class="clearfix">
+	<a class="btn btn-info left" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
+	<a class="btn btn-info right" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
+
+    
+</div>
+
+{{ calendar }}   
+{% endblock content %}
+
+
+
+
+
