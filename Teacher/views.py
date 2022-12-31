@@ -1,12 +1,14 @@
 import calendar
 from datetime import date
 from datetime import datetime, timedelta
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 import string, random
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponseRedirect
+from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
+from Teacher.forms import EventForm
 from .models import ClassTeachers, Assignments, PeerGrade, Announcements, Schedule
 import random
 import copy
@@ -160,3 +162,20 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
+
+def event(request,pk, pk2, id=None):
+    instance = Schedule()
+    if id:
+        instance = get_object_or_404(Schedule, pk=id)
+    else:
+        instance = Schedule()
+    
+    form = EventForm(request.POST or None, instance=instance)
+    if request.POST and form.is_valid():
+
+        eform = form.save(commit = False)
+        eform.teach_id = pk
+        eform.class_code = pk2
+        eform.save()
+        return HttpResponseRedirect(reverse('schedule', args=(instance.teach_id,instance.class_code)))
+    return render(request, 'Teacher/event.html', {'form': form,'pk1':pk,'pk2':pk2})

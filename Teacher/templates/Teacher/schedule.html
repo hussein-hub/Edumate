@@ -43,7 +43,7 @@
       }
       
       a {
-        color: #17a2b8;
+        color: #008374;
       }
 
       .left {
@@ -75,13 +75,18 @@
 
 {% block content %}
 <div class="clearfix">
-	<a class="btn btn-info left" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
-	<a class="btn btn-info right" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
-
+    <a class="btn btn-success left" href="{% url 'classroom' pk=pk1 pk2=pk2%}">Back</a>
+    <a class="btn btn-success left" href="{% url 'event_new' pk2=pk2 pk=pk1 %}"> New Event </a>
+</div>
+<hr style="opacity: 1;">
+<div class="clearfix">
+	<a class="btn btn-success left" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
+	<a class="btn btn-success right" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
     
 </div>
 
 {{ calendar }}   
+
 {% endblock content %}
 
 
