@@ -116,6 +116,7 @@ input:checked + .slider:before {
       <a class="btn btn-success" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
       <a class="btn btn-outline-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
       <a class="btn btn-success" href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
+      <a class="btn btn-success" href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
     </div>
     </div>
 {% endblock content %}

@@ -1,0 +1,97 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+
+{% block styles %}
+<link href="{% static 'Teacher/assets/css/createQuiz1.css' %}" rel="stylesheet">
+{% endblock styles %}
+
+{% block content %}
+{% comment %} <div class="start_btn"><button>Start Quiz</button></div> {% endcomment %}
+
+    <!-- Info Box -->
+    {% comment %} <div class="info_box">
+        <div class="info-title"><span>Some Rules of this Quiz</span></div>
+        <div class="info-list">
+            <div class="info">1. You will have only <span>15 seconds</span> per each question.</div>
+            <div class="info">2. Once you select your answer, it can't be undone.</div>
+            <div class="info">3. You can't select any option once time goes off.</div>
+            <div class="info">4. You can't exit from the Quiz while you're playing.</div>
+            <div class="info">5. You'll get points on the basis of your correct answers.</div>
+        </div>
+        <div class="buttons">
+            <button class="quit">Exit Quiz</button>
+            <button class="restart">Continue</button>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Quiz Box -->
+    <div class="container">
+        <div class="quiz_box">
+            <form method='post'>
+                {% csrf_token %}
+                <header>
+                    <div class="title">Quiz</div>
+                    <input style="border: none; display: none;" id="QuestionCount" name="question_count">
+                    </input>
+                    <input style="border: none; display: none;" id="radioCount" name="radio_count">
+                    </input>
+                    <input style="border: none; display: none;" id="rdc" name="rdc">
+                    </input>
+                    <div class="timer">
+                        <div class="time_left_txt">Time: </div>
+                        <input class="form-control timer_sec" type="number" name="quiz_time">
+                    </div>  
+                </header>
+                <section class="questionInput">
+                    <div class="single_question">
+                        <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1">
+                        <div class="Options1">
+                            <div class="individualOption">
+                                <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
+                                <input class="radioInput" type="radio" placeholder="Options" name="acoption11">
+                            </div>
+                            <div class="individualOption">
+                                <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
+                                <input class="radioInput" type="radio" placeholder="Options" name="acoption12">
+                            </div>
+                        </div>
+                    </div>
+                    <a id="addOptions" class="btn btn-primary" onclick="addOption()">+</a>
+                    <a id="addQuestions" class="btn btn-primary" onclick="addQuestion()">Q+</a>
+                </section>
+                <div style="display: flex; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: center; align-items: center;">
+                    <button onclick="updateAll()" type="submit" class="btn btn-primary">submit</button>
+                </div>
+            </form>
+    
+          
+            {% comment %} <footer>
+                <div class="total_que">
+                  
+                </div>
+                <button class="next_btn">Next Que</button>
+            </footer> {% endcomment %}
+        </div>
+    
+        {% comment %} <!-- Result Box -->
+        <div class="result_box">
+            <div class="icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="complete_text">You've completed the Quiz!</div>
+            <div class="score_text">
+              
+            </div>
+            <div class="buttons">
+                <button class="restart">Replay Quiz</button>
+                <button class="quit">Quit Quiz</button>
+            </div>
+        </div> {% endcomment %}
+    </div>
+{% endblock content %}
+
+
+{% block script %}
+<script src="{% static 'Teacher/assets/js/createQuiz.js' %}"></script>
+{% endblock script %}

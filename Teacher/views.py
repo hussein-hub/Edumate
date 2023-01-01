@@ -179,3 +179,34 @@ def event(request,pk, pk2, id=None):
         eform.save()
         return HttpResponseRedirect(reverse('schedule', args=(instance.teach_id,instance.class_code)))
     return render(request, 'Teacher/event.html', {'form': form,'pk1':pk,'pk2':pk2})
+
+
+def create_quiz(request, pk, pk2):
+    '''
+    Function to create quiz for a particular classroom with id = pk2
+    rdc = number of options per question
+    '''    
+    if request.POST:
+        count = request.POST.get('question_count')
+        c = request.POST.get('radio_count')
+        rdc = request.POST.get('rdc')
+        count, c = int(count), int(c)
+        allRadioButtonState = []
+        questions = []
+        options = []
+        correctOP = []
+        for i in range(1, count+1):
+            val = request.POST.get('question' + str(i))
+            questions.append(val)
+            op = request.POST.getlist('option'+str(i))
+            options.append(op)
+            for j in range(1, int(rdc[i-1])+1):
+                rd = request.POST.get('acoption'+str(i)+str(j))
+                if rd == 'on':
+                    correctOP.append(j)
+                allRadioButtonState.append(rd)
+        print(allRadioButtonState)
+        print(questions)
+        print(options)
+        print(correctOP)
+    return render(request, 'Teacher/createQuiz.html')
