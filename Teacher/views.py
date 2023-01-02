@@ -190,6 +190,15 @@ def create_quiz(request, pk, pk2):
         count = request.POST.get('question_count')
         c = request.POST.get('radio_count')
         rdc = request.POST.get('rdc')
+        rdc = rdc.split(",")
+        finalRdc = []
+        for i in range(0, len(rdc)-1, 2):
+            finalRdc.append([rdc[i], rdc[i+1]])
+        # print(finalRdc)
+        secondValues = []
+        for i in range(len(finalRdc)):
+            secondValues.append(finalRdc[i][1])    
+        # print(secondValues)
         count, c = int(count), int(c)
         allRadioButtonState = []
         questions = []
@@ -200,7 +209,7 @@ def create_quiz(request, pk, pk2):
             questions.append(val)
             op = request.POST.getlist('option'+str(i))
             options.append(op)
-            for j in range(1, int(rdc[i-1])+1):
+            for j in range(1, int(secondValues[i-1])+1):
                 rd = request.POST.get('acoption'+str(i)+str(j))
                 if rd == 'on':
                     correctOP.append(j)
@@ -209,4 +218,4 @@ def create_quiz(request, pk, pk2):
         print(questions)
         print(options)
         print(correctOP)
-    return render(request, 'Teacher/createQuiz.html')
+    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2})

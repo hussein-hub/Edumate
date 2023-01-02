@@ -3,7 +3,7 @@
 
 
 {% block styles %}
-<link href="{% static 'Teacher/assets/css/createQuiz1.css' %}" rel="stylesheet">
+<link href="{% static 'Teacher/assets/css/createQuiz.css' %}" rel="stylesheet">
 {% endblock styles %}
 
 {% block content %}
@@ -26,52 +26,66 @@
     </div> {% endcomment %}
 
     <!-- Quiz Box -->
-    <div class="container">
-        <div class="quiz_box">
-            <form method='post'>
-                {% csrf_token %}
-                <header>
-                    <div class="title">Quiz</div>
-                    <input style="border: none; display: none;" id="QuestionCount" name="question_count">
-                    </input>
-                    <input style="border: none; display: none;" id="radioCount" name="radio_count">
-                    </input>
-                    <input style="border: none; display: none;" id="rdc" name="rdc">
-                    </input>
-                    <div class="timer">
-                        <div class="time_left_txt">Time: </div>
-                        <input class="form-control timer_sec" type="number" name="quiz_time">
-                    </div>  
-                </header>
-                <section class="questionInput">
-                    <div class="single_question">
-                        <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1">
-                        <div class="Options1">
-                            <div class="individualOption">
-                                <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
-                                <input class="radioInput" type="radio" placeholder="Options" name="acoption11">
+    <div class="container-fluid">
+        <div class="row row-content">
+            <div class="col-1">
+                <a class="btn btn-outline-success" href="{% url 'classroom' pk=pk pk2=pk2 %}">Back</a>
+            </div>
+        </div>
+        <div class="row row-content" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+            <div class="quiz_box">
+                <form method='post'>
+                    {% csrf_token %}
+                    <header>
+                        <div class="title">Quiz</div>
+                        <input style="border: none; display: none;" id="QuestionCount" name="question_count">
+                        </input>
+                        <input style="border: none; display: none;" id="radioCount" name="radio_count">
+                        </input>
+                        <input style="border: none; display: none;" id="rdc" name="rdc">
+                        </input>
+                        <div class="timer">
+                            <div class="time_left_txt">Time: </div>
+                            <input class="form-control timer_sec" type="number" name="quiz_time">
+                        </div>  
+                    </header>
+                    <section class="questionInput">
+                        <div id="sq1" class="single_question1">
+                            
+                            {% comment %} Question {% endcomment %}
+                            <div class="individualQuestion">
+                                <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1">
+                                <a class="btn delete_button" id="1" onclick="deleteQuestion(this.id)"><i class="fa fa-trash"></i></a>
                             </div>
-                            <div class="individualOption">
-                                <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
-                                <input class="radioInput" type="radio" placeholder="Options" name="acoption12">
+    
+                            {% comment %} Options {% endcomment %}
+                            <div class="Options1">
+                                <div class="individualOption">
+                                    <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
+                                    <input class="radioInput" type="radio" placeholder="Options" name="acoption11">
+                                </div>
+                                <div class="individualOption">
+                                    <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
+                                    <input class="radioInput" type="radio" placeholder="Options" name="acoption12">
+                                </div>
                             </div>
                         </div>
+                        <a id="addOptions" class="btn btn-primary" onclick="addOption()">+</a>
+                        <a id="addQuestions" class="btn btn-primary" onclick="addQuestion()">Q+</a>
+                    </section>
+                    <div style="display: flex; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: center; align-items: center;">
+                        <button onclick="updateAll()" type="submit" class="btn btn-primary">submit</button>
                     </div>
-                    <a id="addOptions" class="btn btn-primary" onclick="addOption()">+</a>
-                    <a id="addQuestions" class="btn btn-primary" onclick="addQuestion()">Q+</a>
-                </section>
-                <div style="display: flex; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: center; align-items: center;">
-                    <button onclick="updateAll()" type="submit" class="btn btn-primary">submit</button>
-                </div>
-            </form>
-    
-          
-            {% comment %} <footer>
-                <div class="total_que">
-                  
-                </div>
-                <button class="next_btn">Next Que</button>
-            </footer> {% endcomment %}
+                </form>
+        
+              
+                {% comment %} <footer>
+                    <div class="total_que">
+                      
+                    </div>
+                    <button class="next_btn">Next Que</button>
+                </footer> {% endcomment %}
+            </div>
         </div>
     
         {% comment %} <!-- Result Box -->
@@ -93,5 +107,5 @@
 
 
 {% block script %}
-<script src="{% static 'Teacher/assets/js/createQuiz.js' %}"></script>
+<script src="{% static 'Teacher/assets/js/createQuiz1.js' %}"></script>
 {% endblock script %}

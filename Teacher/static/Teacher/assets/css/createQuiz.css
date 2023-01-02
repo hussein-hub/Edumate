@@ -304,11 +304,10 @@ footer button.show{
 
 .container {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
+    flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
-    margin-top: 2%;
 }
 
 .specialInputQuestions, .specialInputOptions {
@@ -328,6 +327,10 @@ footer button.show{
     width: 88%;
 }
 
+.specialInputQuestions {
+    width: 88%;
+}
+
 .individualOption {
     display: flex;
     flex-direction: row;
@@ -336,7 +339,24 @@ footer button.show{
     align-items: center;
 }
 
+.individualQuestion {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
 .radioInput {
     margin-bottom: 10px;
     margin-right: 4px;
+}
+
+.row>* {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.delete_button {
+    color: rgb(199, 27, 27);
 }
