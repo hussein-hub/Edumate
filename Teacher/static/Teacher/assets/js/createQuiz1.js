@@ -8,18 +8,9 @@ var questionRadioCountArray = [[1, 2]];
 
 function addOption() {
 
-    console.log("\nBEFORE UPDATE");
-    console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
-    console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
-    // var parent = document.getElementsByClassName('Options');
-    // console.log(parent);
-    
-    // const option = document.createElement('');
-    // option.innerHTML = `
-    //     <input class="form-control specialInputs" type="text" placeholder="Options" name="option">
-    // `;
-
-    // questionRadioCount = questionRadioCount.slice(0,questionRadioCount.length-1) + String(parseInt(questionRadioCount[questionRadioCount.length-1]) + 1);
+    //console.log("\nBEFORE UPDATE");
+    //console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
+    //console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
 
     var last = questionRadioCountArray.pop();
     var single = last.pop()
@@ -51,24 +42,22 @@ function addOption() {
 
 
     var optionList = document.getElementsByClassName(`Options${totalQuestionCount}`);
-    // console.log(optionList);
     optionList[0].appendChild(individualOption);
     // var parent = optionList.parentNode;
 
-    // ✅ Works
     // parent.appendChild(parent, optionList);
     // parent.insertBefore(option, optionList);
 
-    console.log("AFTER UPDATE");
-    console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
-    console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
+    //console.log("AFTER UPDATE");
+    //console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
+    //console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
 }
 
 function addQuestion() {
 
-    console.log("\nBEFORE UPDATE");
-    console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
-    console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
+    //console.log("\nBEFORE UPDATE");
+    //console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
+    //console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
 
     // important check keeping LOC
     count++;
@@ -83,7 +72,6 @@ function addQuestion() {
     const questionDiv = document.createElement('div');
     questionDiv.setAttribute('id', `sq${totalQuestionCount}`);
     questionDiv.setAttribute('class', `single_question${totalQuestionCount}`);
-    // console.log(question);
 
 
     const individualQuestion = document.createElement('div');
@@ -158,10 +146,9 @@ function addQuestion() {
     questionDiv.appendChild(optionList);
 
     const addButton = document.getElementById('addOptions');
-    // console.log(addButton);
+    // //console.log(addButton);
     var parent = addButton.parentNode;
 
-    // ✅ Works
     // parent.appendChild(parent, option);
     parent.insertBefore(questionDiv, addButton);
     updateRadioCountOnForm(totalRadioCount);
@@ -172,12 +159,11 @@ function addQuestion() {
 
     questionRadioCountArray.push([totalQuestionCount, radioCount]);
 
-    // questionRadioCount = questionRadioCount + String(radioCount);
     rdc(questionRadioCountArray);
     
-    console.log("AFTER UPDATE");
-    console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
-    console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
+    //console.log("AFTER UPDATE");
+    //console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
+    //console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
 }
 
 function updateCountOnForm(count) {
@@ -193,35 +179,30 @@ function updateRadioCountOnForm(totalRadioCount) {
 function rdc(questionRadioCountArray) {
     var questionRadioCountString = document.getElementById('rdc');
     questionRadioCountString.value = questionRadioCountArray;
-
-    // console.log(questionRadioCount);
 }
 
-// function updateAll() {
-//     questionRadioCount = questionRadioCount + String(radioCount);
-//     rdc(questionRadioCount);
-// }
+function updateAll() {
+    updateCountOnForm(count);
+    updateRadioCountOnForm(totalRadioCount);
+    rdc(questionRadioCountArray);
+}
 
 function deleteQuestion(questionID) {
-    console.log("\nBEFORE UPDATE");
-    console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
-    console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
+    //console.log("\nBEFORE UPDATE");
+    //console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
+    //console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
     var classNameOfQuestionToRemove = "sq" + questionID;
     const element = document.getElementById(classNameOfQuestionToRemove);
-    // console.log(element);
+
     element.remove();
     count--;
     updateCountOnForm(count);
     totalRadioCount = totalRadioCount - radioCount;
     updateRadioCountOnForm(totalRadioCount);
-    // console.log(radioCount);
+
     questionID = parseInt(questionID);
 
 
-    /* 
-    questionRadioCountArray = [[1, 2], [2, 4], [3, 2]]
-    
-    */
     var double = questionRadioCountArray.pop();
     radioCount = double.pop();
     double.push(radioCount);
@@ -231,17 +212,12 @@ function deleteQuestion(questionID) {
     for (var i = 0; i < questionRadioCountArray.length; i++) {
         firstArray.push(questionRadioCountArray[i][0]);
     }    
-    console.log(firstArray);
     var index = firstArray.indexOf(questionID);
     questionRadioCountArray.splice(index, 1);
 
-
-    // radioCount = parseInt(questionRadioCount[questionRadioCount.length-1]);
-    // questionRadioCount = questionRadioCount.slice(0,questionID) + questionRadioCount.slice(questionID+1,);
-    // console.log(questionRadioCount);
     rdc(questionRadioCountArray);
 
-    console.log("AFTER UPDATE");
-    console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
-    console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
+    //console.log("AFTER UPDATE");
+    //console.log("Count: " + count, "totalQuestionCount: " + totalQuestionCount);
+    //console.log("questionRadioCount: " + questionRadioCountArray, "radioCount: " + radioCount);
 }

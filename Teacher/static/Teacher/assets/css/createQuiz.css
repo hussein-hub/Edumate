@@ -31,7 +31,7 @@ body{
 .quiz_box{
     width: 42vw;
     background: #fff;
-    border-radius: 5px;
+    border-radius: 10px;
     /* transform: translate(-50%, -50%) scale(0.9); */
     opacity: 1;
     transition: all 0.3s ease;
@@ -43,7 +43,7 @@ body{
     height: 70px;
     padding: 0 30px;
     background: #fff;
-    border-radius: 5px 5px 0 0;
+    border-radius: 10px 10px 0 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -65,7 +65,7 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 15vw;
+    width: 10vw;
 }
 
 .quiz_box header .timer .time_left_txt{
@@ -78,7 +78,7 @@ body{
     font-size: 18px;
     font-weight: 500;
     height: 30px;
-    width: 7vw;
+    width: 4vw;
     color: #fff;
     border-radius: 5px;
     line-height: 30px;

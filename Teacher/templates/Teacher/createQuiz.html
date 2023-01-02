@@ -37,10 +37,12 @@
                 <form method='post'>
                     {% csrf_token %}
                     <header>
-                        <div class="title">Quiz</div>
-                        <input style="border: none; display: none;" id="QuestionCount" name="question_count">
+                        <div class="title">
+                            <input name="quiz_name" style="border: none; outline: none;" value="Quiz" />
+                        </div>
+                        <input style="border: none; display: none;" id="QuestionCount" name="question_count" value=1>
                         </input>
-                        <input style="border: none; display: none;" id="radioCount" name="radio_count">
+                        <input style="border: none; display: none;" id="radioCount" name="radio_count" value=2>
                         </input>
                         <input style="border: none; display: none;" id="rdc" name="rdc">
                         </input>
@@ -70,11 +72,11 @@
                                 </div>
                             </div>
                         </div>
-                        <a id="addOptions" class="btn btn-primary" onclick="addOption()">+</a>
-                        <a id="addQuestions" class="btn btn-primary" onclick="addQuestion()">Q+</a>
+                        <a style="background-color: #008374; color: white;" id="addOptions" class="btn" onclick="addOption()">+</a>
+                        <a id="addQuestions" style="background-color: #008374; color: white;" class="btn" onclick="addQuestion()">Q+</a>
                     </section>
                     <div style="display: flex; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: center; align-items: center;">
-                        <button onclick="updateAll()" type="submit" class="btn btn-primary">submit</button>
+                        <button style="background-color: #008374; color: white;" onclick="updateAll()" type="submit" class="btn ">submit</button>
                     </div>
                 </form>
         

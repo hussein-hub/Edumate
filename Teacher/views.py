@@ -187,6 +187,10 @@ def create_quiz(request, pk, pk2):
     rdc = number of options per question
     '''    
     if request.POST:
+        quizName = request.POST.get('quiz_name')
+        quizTime = request.POST.get('quiz_time')
+        if quizTime == "":
+            quizTime = 10
         count = request.POST.get('question_count')
         c = request.POST.get('radio_count')
         rdc = request.POST.get('rdc')
@@ -194,11 +198,9 @@ def create_quiz(request, pk, pk2):
         finalRdc = []
         for i in range(0, len(rdc)-1, 2):
             finalRdc.append([rdc[i], rdc[i+1]])
-        # print(finalRdc)
         secondValues = []
         for i in range(len(finalRdc)):
-            secondValues.append(finalRdc[i][1])    
-        # print(secondValues)
+            secondValues.append(finalRdc[i][1])
         count, c = int(count), int(c)
         allRadioButtonState = []
         questions = []
@@ -214,6 +216,8 @@ def create_quiz(request, pk, pk2):
                 if rd == 'on':
                     correctOP.append(j)
                 allRadioButtonState.append(rd)
+        print(quizName)
+        print(quizTime)
         print(allRadioButtonState)
         print(questions)
         print(options)
