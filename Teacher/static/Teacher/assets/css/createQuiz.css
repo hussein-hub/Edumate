@@ -65,7 +65,7 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 10vw;
+    width: 150px;
 }
 
 .quiz_box header .timer .time_left_txt{
@@ -78,7 +78,7 @@ body{
     font-size: 18px;
     font-weight: 500;
     height: 30px;
-    width: 4vw;
+    width: 5vw;
     color: #fff;
     border-radius: 5px;
     line-height: 30px;
@@ -183,7 +183,7 @@ footer{
     border-top: 1px solid lightgrey;
 }
 
-footer .total_que span{
+/* footer .total_que span{
     display: flex;
     user-select: none;
 }
@@ -224,7 +224,7 @@ footer button.show{
     opacity: 1;
     pointer-events: auto;
     transform: scale(1);
-}
+} */
 
 .result_box{
     background: #fff;
@@ -359,4 +359,32 @@ footer button.show{
 
 .delete_button {
     color: rgb(199, 27, 27);
+}
+
+.form-control {
+    outline: none;
+}
+
+@media screen and (max-width: 1000px) {
+    .QuizName {
+        width: 110px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .quiz_box {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .quiz_box {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .quiz_box {
+        width: 75%;
+    }
 }

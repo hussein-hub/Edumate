@@ -185,12 +185,22 @@ def create_quiz(request, pk, pk2):
     '''
     Function to create quiz for a particular classroom with id = pk2
     rdc = number of options per question
+    Data Sent to DB = {
+        pk [teacher id],
+        pk2 [classroom id / classCode],
+        Quiz Name,
+        Quiz Time,
+        Question + Answer [for all the questions in the quiz] --> multiple values for single quiz,
+    }
+    [Question + Answer] Format = {
+        question||option1||option2||....||optionN??Answer1??Answer2??...??AnswerN
+    }
     '''    
     if request.POST:
+        test = request.POST.get('test')
+        print(test)
         quizName = request.POST.get('quiz_name')
         quizTime = request.POST.get('quiz_time')
-        if quizTime == "":
-            quizTime = 10
         count = request.POST.get('question_count')
         c = request.POST.get('radio_count')
         rdc = request.POST.get('rdc')
@@ -198,6 +208,7 @@ def create_quiz(request, pk, pk2):
         finalRdc = []
         for i in range(0, len(rdc)-1, 2):
             finalRdc.append([rdc[i], rdc[i+1]])
+        print(f"Finalrdc : {finalRdc}")
         secondValues = []
         for i in range(len(finalRdc)):
             secondValues.append(finalRdc[i][1])
@@ -206,16 +217,21 @@ def create_quiz(request, pk, pk2):
         questions = []
         options = []
         correctOP = []
-        for i in range(1, count+1):
-            val = request.POST.get('question' + str(i))
+        print("secondvalue: " + str(secondValues))
+        for i in finalRdc:
+            val = request.POST.get('question' + i[0])
             questions.append(val)
-            op = request.POST.getlist('option'+str(i))
+            op = request.POST.getlist('option'+ i[0])
             options.append(op)
-            for j in range(1, int(secondValues[i-1])+1):
-                rd = request.POST.get('acoption'+str(i)+str(j))
+            temp = []
+            radioTemp = []
+            for j in range(1, int(i[1])+1):
+                rd = request.POST.get('acoption'+ i[0] + str(j))
                 if rd == 'on':
-                    correctOP.append(j)
-                allRadioButtonState.append(rd)
+                    temp.append(j)
+                radioTemp.append(rd)
+            allRadioButtonState.append(radioTemp)
+            correctOP.append(temp)
         print(quizName)
         print(quizTime)
         print(allRadioButtonState)

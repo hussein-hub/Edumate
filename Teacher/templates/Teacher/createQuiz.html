@@ -27,18 +27,18 @@
 
     <!-- Quiz Box -->
     <div class="container-fluid">
-        <div class="row row-content">
+        {% comment %} <div class="row row-content">
             <div class="col-1">
                 <a class="btn btn-outline-success" href="{% url 'classroom' pk=pk pk2=pk2 %}">Back</a>
             </div>
-        </div>
-        <div class="row row-content" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+        </div> {% endcomment %}
+        <div class="row row-content" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 100vw">
             <div class="quiz_box">
                 <form method='post'>
                     {% csrf_token %}
                     <header>
                         <div class="title">
-                            <input name="quiz_name" style="border: none; outline: none;" value="Quiz" />
+                            <input class="QuizName" name="quiz_name" style="border: none; outline: none;" value="Quiz" />
                         </div>
                         <input style="border: none; display: none;" id="QuestionCount" name="question_count" value=1>
                         </input>
@@ -48,7 +48,7 @@
                         </input>
                         <div class="timer">
                             <div class="time_left_txt">Time: </div>
-                            <input class="form-control timer_sec" type="number" name="quiz_time">
+                            <input style="width: 50px;" value=10 class="form-control" type="number" name="quiz_time">
                         </div>  
                     </header>
                     <section class="questionInput">
@@ -57,36 +57,35 @@
                             {% comment %} Question {% endcomment %}
                             <div class="individualQuestion">
                                 <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1">
-                                <a class="btn delete_button" id="1" onclick="deleteQuestion(this.id)"><i class="fa fa-trash"></i></a>
+                                {% comment %} <textarea placeholder="Question" class="specialInputQuestions" onkeyup="do_resize(this)" style="padding: 5px; border: 1px solid #ced4da; border-radius: 5px; width:100%; outline:none" name="test" cols="40"></textarea> {% endcomment %}
+                                {% comment %} <a class="btn delete_button" id="1" onclick="deleteQuestion(this.id)"><i class="fa fa-trash"></i></a> {% endcomment %}
                             </div>
     
                             {% comment %} Options {% endcomment %}
                             <div class="Options1">
                                 <div class="individualOption">
                                     <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
-                                    <input class="radioInput" type="radio" placeholder="Options" name="acoption11">
+                                    <input class="radioInput" type="checkbox" placeholder="Options" name="acoption11">
                                 </div>
                                 <div class="individualOption">
                                     <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
-                                    <input class="radioInput" type="radio" placeholder="Options" name="acoption12">
+                                    <input class="radioInput" type="checkbox" placeholder="Options" name="acoption12">
                                 </div>
                             </div>
+                            <hr>
                         </div>
                         <a style="background-color: #008374; color: white;" id="addOptions" class="btn" onclick="addOption()">+</a>
                         <a id="addQuestions" style="background-color: #008374; color: white;" class="btn" onclick="addQuestion()">Q+</a>
                     </section>
-                    <div style="display: flex; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: center; align-items: center;">
-                        <button style="background-color: #008374; color: white;" onclick="updateAll()" type="submit" class="btn ">submit</button>
-                    </div>
+
+                    <footer>
+                        <a class="btn" style="background-color: #008374; color: white;" href="{% url 'classroom' pk=pk pk2=pk2 %}"><i class="fa-solid fa-backward"></i></a>
+                        <div style="display: flex; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: space-around; align-items: center;">
+                            <button style="background-color: #008374; color: white;" onclick="updateAll()" type="submit" class="btn ">submit</button>
+                        </div>
+                    </footer>
                 </form>
         
-              
-                {% comment %} <footer>
-                    <div class="total_que">
-                      
-                    </div>
-                    <button class="next_btn">Next Que</button>
-                </footer> {% endcomment %}
             </div>
         </div>
     
