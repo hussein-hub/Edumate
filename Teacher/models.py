@@ -1,6 +1,7 @@
 from datetime import datetime
 from unittest.util import _MAX_LENGTH
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -43,3 +44,19 @@ class Announcements(models.Model):
         db_table = "Announcements"
     def __str__(self):
          return self.announce_data +" - "+ self.class_code
+
+
+class Schedule(models.Model):
+    teach_id = models.IntegerField()
+    class_code = models.CharField(max_length=10)
+    event_data = models.CharField(max_length=1000)
+    event_date = models.DateTimeField(default=datetime.now)
+    class Meta:
+        db_table = "Schedule"
+    def __str__(self):
+         return self.event_data +" - "+ self.class_code
+         
+    @property
+    def get_html_url(self):
+        url = reverse('event_edit', args=(self.teach_id,self.class_code,self.id,))
+        return f'<a href="{url}"> {self.event_data} </a>'

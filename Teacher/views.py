@@ -1,13 +1,22 @@
-from django.shortcuts import render
+import calendar
+from datetime import date
+from datetime import datetime, timedelta
+from django.shortcuts import get_object_or_404, render
 import string, random
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponseRedirect
+from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
-from .models import ClassTeachers, Assignments, PeerGrade, Announcements
+from Teacher.forms import EventForm
+from .models import ClassTeachers, Assignments, PeerGrade, Announcements, Schedule
 import random
 import copy
 from django.shortcuts import redirect, render
+
+from django.views import generic
+from django.utils.safestring import mark_safe
+from .utils import Calendar
 
 # Create your views here.
 
@@ -104,7 +113,7 @@ def announcement(request, pk, pk2):
         announcement.announce_data = request.POST.get('announce_data')
         announcement.teach_id = pk
         announcement.class_code = pk2
-        print(announcement.announce_data, announcement.teach_id, announcement.class_code)
+        # print(announcement.announce_data, announcement.teach_id, announcement.class_code)
         announcement.save()
     announcement_data = Announcements.objects.filter(class_code = pk2).order_by('-date')
     return render(request, 'Teacher/announcement_teach.html', {'pk': pk, 'pk2': pk2, 'announcement_data': announcement_data})
@@ -114,3 +123,123 @@ def delete(request, pk, pk2, id):
     delAnnouncement = Announcements.objects.get(id=id)
     delAnnouncement.delete()
     return redirect('announcementteach', pk, pk2)
+
+
+class schedule(generic.ListView):
+    model = Schedule
+    template_name = 'Teacher/schedule.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        d = get_date(self.request.GET.get('month', None))
+        pk1 = self.kwargs['pk']
+        classcode = self.kwargs['pk2']
+        cal = Calendar(d.year, d.month, classcode)
+        html_cal = cal.formatmonth(withyear=True)
+        context['calendar'] = mark_safe(html_cal)
+        context['prev_month'] = prev_month(d)
+        context['next_month'] = next_month(d)
+        context['pk2'] = classcode
+        context['pk1'] = pk1
+        return context
+
+
+def get_date(req_day):
+    if req_day:
+        year, month = (int(x) for x in req_day.split('-'))
+        return date(year, month, day=1)
+    return datetime.today()
+
+def prev_month(d):
+    first = d.replace(day=1)
+    prev_month = first - timedelta(days=1)
+    month = 'month=' + str(prev_month.year) + '-' + str(prev_month.month)
+    return month
+
+def next_month(d):
+    days_in_month = calendar.monthrange(d.year, d.month)[1]
+    last = d.replace(day=days_in_month)
+    next_month = last + timedelta(days=1)
+    month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
+    return month
+
+def event(request,pk, pk2, id=None):
+    instance = Schedule()
+    if id:
+        instance = get_object_or_404(Schedule, pk=id)
+    else:
+        instance = Schedule()
+    
+    form = EventForm(request.POST or None, instance=instance)
+    if request.POST and form.is_valid():
+
+        eform = form.save(commit = False)
+        eform.teach_id = pk
+        eform.class_code = pk2
+        eform.save()
+        return HttpResponseRedirect(reverse('schedule', args=(instance.teach_id,instance.class_code)))
+    return render(request, 'Teacher/event.html', {'form': form,'pk1':pk,'pk2':pk2})
+
+
+def create_quiz(request, pk, pk2):
+    '''
+    Function to create quiz for a particular classroom with id = pk2
+    rdc = number of options per question
+    Data Sent to DB = {
+        pk [teacher id],
+        pk2 [classroom id / classCode],
+        Quiz Name,
+        Quiz Time,
+        Question + Answer [for all the questions in the quiz] --> multiple values for single quiz,
+    }
+    [Question + Answer] Format = {
+        question||option1||option2||....||optionN??Answer1??Answer2??...??AnswerN
+    }
+    '''    
+    if request.POST:
+        test = request.POST.get('test')
+        print(test)
+        quizName = request.POST.get('quiz_name')
+        quizTime = request.POST.get('quiz_time')
+        count = request.POST.get('question_count')
+        c = request.POST.get('radio_count')
+        rdc = request.POST.get('rdc')
+        rdc = rdc.split(",")
+        finalRdc = []
+        for i in range(0, len(rdc)-1, 2):
+            finalRdc.append([rdc[i], rdc[i+1]])
+        print(f"Finalrdc : {finalRdc}")
+        secondValues = []
+        for i in range(len(finalRdc)):
+            secondValues.append(finalRdc[i][1])
+        count, c = int(count), int(c)
+        allRadioButtonState = []
+        questions = []
+        options = []
+        correctOP = []
+        print("secondvalue: " + str(secondValues))
+        for i in finalRdc:
+            val = request.POST.get('question' + i[0])
+            questions.append(val)
+            # op = request.POST.getlist('option'+ i[0])
+            # options.append(op)
+            temp = []
+            opTemp = []
+            radioTemp = []
+            for j in range(1, int(i[1])+1):
+                op = request.POST.get('option'+ i[0] + str(j))
+                opTemp.append(op)
+                rd = request.POST.get('acoption'+ i[0] + str(j))
+                if rd == 'on':
+                    temp.append(j)
+                radioTemp.append(rd)
+            options.append(opTemp)
+            allRadioButtonState.append(radioTemp)
+            correctOP.append(temp)
+        print(quizName)
+        print(quizTime)
+        print(allRadioButtonState)
+        print(questions)
+        print(options)
+        print(correctOP)
+    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2})
