@@ -42,7 +42,7 @@
             {% csrf_token %}
             <input type="text" placeholder="Enter assignment description" name="description">
             <input type="file" placeholder="Upload pdf file" name="submission">
-            <a class="btn btn-outline-success">Submit</a>
+            <button class="btn btn-outline-success" type="submit">Submit</button>
         </form>
     </div>
     <div>
@@ -55,7 +55,7 @@
           <p>Description: {{ desc2 }}</p>
           <input type="number" placeholder="Enter marks" name="peer2">
           <input type="text" name="caller" value="call" style="display: none">
-          <a class="btn btn-outline-success">Submit</a>
+          <button class="btn btn-outline-success" type="submit">Submit</button>
       </form>
       {% endif %}
     {% endif %}
