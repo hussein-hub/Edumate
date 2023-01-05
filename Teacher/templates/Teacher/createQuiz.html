@@ -3,7 +3,7 @@
 
 
 {% block styles %}
-<link href="{% static 'Teacher/assets/css/createQuiz.css' %}" rel="stylesheet">
+<link href="{% static 'Teacher/assets/css/createQuizz.css' %}" rel="stylesheet">
 {% endblock styles %}
 
 {% block content %}
@@ -32,7 +32,7 @@
                 <a class="btn btn-outline-success" href="{% url 'classroom' pk=pk pk2=pk2 %}">Back</a>
             </div>
         </div> {% endcomment %}
-        <div class="row row-content" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 100vw">
+        <div class="row row-content" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 100vw; margin-top:30px; ">
             <div class="quiz_box">
                 <form method='post'>
                     {% csrf_token %}
@@ -52,11 +52,11 @@
                         </div>  
                     </header>
                     <section class="questionInput">
-                        <div id="sq1" class="single_question1">
+                        <div id="sq1" class="single_question1 Ques">
                             
                             {% comment %} Question {% endcomment %}
                             <div class="individualQuestion">
-                                <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1">
+                                <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1" id="question1">
                                 {% comment %} <textarea placeholder="Question" class="specialInputQuestions" onkeyup="do_resize(this)" style="padding: 5px; border: 1px solid #ced4da; border-radius: 5px; width:100%; outline:none" name="test" cols="40"></textarea> {% endcomment %}
                                 {% comment %} <a class="btn delete_button" id="1" onclick="deleteQuestion(this.id)"><i class="fa fa-trash"></i></a> {% endcomment %}
                             </div>
@@ -64,12 +64,12 @@
                             {% comment %} Options {% endcomment %}
                             <div class="Options1">
                                 <div class="individualOption">
-                                    <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
-                                    <input class="radioInput" type="checkbox" placeholder="Options" name="acoption11">
+                                    <input id="option11" class="form-control specialInputOptions" type="text" placeholder="Options" name="option11">
+                                    <input id="acoption11" onclick="changeInputColor(this.name)" class="radioInput" type="checkbox" placeholder="Options" name="acoption11">
                                 </div>
                                 <div class="individualOption">
-                                    <input class="form-control specialInputOptions" type="text" placeholder="Options" name="option1">
-                                    <input class="radioInput" type="checkbox" placeholder="Options" name="acoption12">
+                                    <input id="option12" class="form-control specialInputOptions" type="text" placeholder="Options" name="option12">
+                                    <input onclick="changeInputColor(this.name)" id="acoption12" class="radioInput" type="checkbox" placeholder="Options" name="acoption12">
                                 </div>
                             </div>
                             <hr>
@@ -108,5 +108,5 @@
 
 
 {% block script %}
-<script src="{% static 'Teacher/assets/js/createQuiz1.js' %}"></script>
+<script src="{% static 'Teacher/assets/js/createQuizz.js' %}"></script>
 {% endblock script %}

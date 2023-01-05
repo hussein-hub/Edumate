@@ -221,15 +221,19 @@ def create_quiz(request, pk, pk2):
         for i in finalRdc:
             val = request.POST.get('question' + i[0])
             questions.append(val)
-            op = request.POST.getlist('option'+ i[0])
-            options.append(op)
+            # op = request.POST.getlist('option'+ i[0])
+            # options.append(op)
             temp = []
+            opTemp = []
             radioTemp = []
             for j in range(1, int(i[1])+1):
+                op = request.POST.get('option'+ i[0] + str(j))
+                opTemp.append(op)
                 rd = request.POST.get('acoption'+ i[0] + str(j))
                 if rd == 'on':
                     temp.append(j)
                 radioTemp.append(rd)
+            options.append(opTemp)
             allRadioButtonState.append(radioTemp)
             correctOP.append(temp)
         print(quizName)

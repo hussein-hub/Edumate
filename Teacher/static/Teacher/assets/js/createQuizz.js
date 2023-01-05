@@ -30,12 +30,15 @@ function addOption() {
 
     var option = document.createElement('input');
     option.setAttribute('class', 'form-control specialInputOptions');
+    option.setAttribute('id', `option${latestQuestionID}${radioCount}`);
     option.setAttribute('type', 'text');
     option.setAttribute('placeholder', 'Options');
-    option.setAttribute('name', `option${latestQuestionID}`);
+    option.setAttribute('name', `option${latestQuestionID}${radioCount}`);
 
     var radioOption = document.createElement('input');
     radioOption.setAttribute('class', 'radioInput');
+    radioOption.setAttribute('onclick', 'changeInputColor(this.name)');
+    radioOption.setAttribute('id', `acoption${latestQuestionID}${radioCount}`);
     radioOption.setAttribute('type', 'checkbox');
     radioOption.setAttribute('placeholder', 'Options');
     radioOption.setAttribute('name', `acoption${latestQuestionID}${radioCount}`);
@@ -45,6 +48,7 @@ function addOption() {
 
 
     var optionList = document.getElementsByClassName(`Options${latestQuestionID}`);
+    console.log(optionList);
     optionList[0].appendChild(individualOption);
     // var parent = optionList.parentNode;
 
@@ -72,12 +76,14 @@ function addQuestion() {
     totalRadioCount++;
     updateCountOnForm(count);
 
+    latestQuestionID = Math.max(latestQuestionID, totalQuestionCount);
+
 
 
 
     const questionDiv = document.createElement('div');
     questionDiv.setAttribute('id', `sq${totalQuestionCount}`);
-    questionDiv.setAttribute('class', `single_question${totalQuestionCount}`);
+    questionDiv.setAttribute('class', `single_question${totalQuestionCount} Ques`);
 
 
     const individualQuestion = document.createElement('div');
@@ -88,6 +94,7 @@ function addQuestion() {
     question.setAttribute('class', 'form-control specialInputQuestions');
     question.setAttribute('type', 'text');
     question.setAttribute('placeholder', 'Question');
+    question.setAttribute('id', `question${totalQuestionCount}`);
     question.setAttribute('name', `question${totalQuestionCount}`);
 
     const deleteButton = document.createElement('a');
@@ -115,14 +122,17 @@ function addQuestion() {
 
     const option1 = document.createElement('input');
     option1.setAttribute('class', 'form-control specialInputOptions');
+    option1.setAttribute('id', `option${latestQuestionID}${radioCount}`);
     option1.setAttribute('type', 'text');
     option1.setAttribute('placeholder', 'Options');
-    option1.setAttribute('name', `option${totalQuestionCount}`);
+    option1.setAttribute('name', `option${totalQuestionCount}${radioCount}`);
 
     const radioOption1 = document.createElement('input');
     radioOption1.setAttribute('class', 'radioInput');
+    radioOption1.setAttribute('onclick', 'changeInputColor(this.name)');
     radioOption1.setAttribute('type', 'checkbox');
     radioOption1.setAttribute('placeholder', 'Options');
+    radioOption1.setAttribute('id', `acoption${latestQuestionID}${radioCount}`);
     radioOption1.setAttribute('name', `acoption${totalQuestionCount}${radioCount}`);
     radioCount++;
     totalRadioCount++;
@@ -133,12 +143,15 @@ function addQuestion() {
     const option2 = document.createElement('input');
     option2.setAttribute('class', 'form-control specialInputOptions');
     option2.setAttribute('type', 'text');
+    option2.setAttribute('id', `option${latestQuestionID}${radioCount}`);
     option2.setAttribute('placeholder', 'Options');
-    option2.setAttribute('name', `option${totalQuestionCount}`);
+    option2.setAttribute('name', `option${totalQuestionCount}${radioCount}`);
 
     const radioOption2 = document.createElement('input');
     radioOption2.setAttribute('class', 'radioInput');
+    radioOption2.setAttribute('onclick', 'changeInputColor(this.name)');
     radioOption2.setAttribute('type', 'checkbox');
+    radioOption2.setAttribute('id', `acoption${latestQuestionID}${radioCount}`);
     radioOption2.setAttribute('placeholder', 'Options');
     radioOption2.setAttribute('name', `acoption${totalQuestionCount}${radioCount}`);
 
@@ -220,10 +233,6 @@ function deleteQuestion(questionID) {
     }
     
     
-    var double = questionRadioCountArray.pop();
-    radioCount = double.pop();
-    double.push(radioCount);
-    questionRadioCountArray.push(double);
     
     
     
@@ -237,6 +246,10 @@ function deleteQuestion(questionID) {
     console.log(questionRadioCountArray[questionRadioCountArray.length-1]);
     latestQuestionID = parseInt(questionRadioCountArray[questionRadioCountArray.length-1][0]);
     
+    var double = questionRadioCountArray.pop();
+    radioCount = double.pop();
+    double.push(radioCount);
+    questionRadioCountArray.push(double);
     rdc(questionRadioCountArray);
 
     console.log("AFTER UPDATE");
@@ -245,18 +258,28 @@ function deleteQuestion(questionID) {
     console.log("Latest QuestionID : " + latestQuestionID);
 }
 
-function do_resize(textbox) {
+function reverseString(str) {
+    const arrayStrings = str.split("");
+    const reverseArray = arrayStrings.reverse();
+    const joinArray = reverseArray.join("");
+    return joinArray;
+}
 
-    var maxrows=5; 
-    var txt=textbox.value;
-    var cols=textbox.cols;
-   
-    var arraytxt=txt.split('\n');
-    var rows=arraytxt.length; 
-   
-    for (i=0;i<arraytxt.length;i++) 
-        rows+=parseInt(arraytxt[i].length/cols);
-   
-    if (rows>maxrows) textbox.rows=maxrows;
-    else textbox.rows=rows;
+function changeInputColor(name) {
+    console.log(name);
+    var number = "";
+    var reverseClassName = reverseString(name);
+    for (let i = 0; i < reverseClassName.length; i++) {
+        if (reverseClassName[i] >= '0' && reverseClassName[i] <= '9') {
+            number += reverseClassName[i];
+        }
+    }
+    console.log(number);
+    number = reverseString(number);
+    var ques = document.getElementById('option' + number);
+    if (ques.style.backgroundColor == "rgb(230, 255, 230)") {
+        ques.style.backgroundColor = "";
+    } else {
+        ques.style.backgroundColor = "rgb(230, 255, 230)";
+    }
 }

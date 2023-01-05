@@ -331,22 +331,6 @@ footer button.show{
     width: 88%;
 }
 
-.individualOption {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.individualQuestion {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
 .radioInput {
     margin-bottom: 10px;
     margin-right: 4px;
@@ -387,4 +371,104 @@ footer button.show{
     .quiz_box {
         width: 75%;
     }
+}
+
+
+
+/* Custom Animations */
+@keyframes slideInTop {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInBottom {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+  
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.quiz_box {
+    animation: fadeInAnimation ease 2s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+footer {
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInBottom;
+}
+
+.QuizName {
+    background: transparent;
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInLeft;
+}
+
+.timer {
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInRight;
+}
+
+#addOptions, #addQuestions {
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInLeft;
+}
+
+.individualOption {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInTop;
+}
+
+
+.individualQuestion {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: baseline;
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInTop;
+}
+
+.Ques {
+    box-shadow: 4px 4px 15px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 4px 4px 15px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 4px 4px 15px -6px rgba(0,0,0,0.75);
+    padding: 37px;
+    border-radius: 15px; 
+    margin-bottom: 20px;
+    animation: fadeInAnimation ease 2s;
 }
