@@ -4,6 +4,8 @@ from .models import *
 admin.site.register(ClassTeachers)
 admin.site.register(Assignments)
 admin.site.register(PeerGrade)
+admin.site.register(Quiz)
+
 
 @admin.register(Announcements)
 class AnnouncementsAdmin(admin.ModelAdmin):
@@ -12,3 +14,13 @@ class AnnouncementsAdmin(admin.ModelAdmin):
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
 	list_display = ("class_code", "event_data", "event_date")
+
+
+class OptionsInline(admin.TabularInline):
+    model = Options
+
+class QuestionAdmin(admin.ModelAdmin):
+    inlines = [OptionsInline]
+
+admin.site.register(Question,QuestionAdmin)
+admin.site.register(Options)
