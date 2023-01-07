@@ -192,13 +192,8 @@ def create_quiz(request, pk, pk2):
         Quiz Time,
         Question + Answer [for all the questions in the quiz] --> multiple values for single quiz,
     }
-    [Question + Answer] Format = {
-        question||option1||option2||....||optionN??Answer1??Answer2??...??AnswerN
-    }
     '''    
     if request.POST:
-        test = request.POST.get('test')
-        print(test)
         quizName = request.POST.get('quiz_name')
         quizTime = request.POST.get('quiz_time')
         count = request.POST.get('question_count')
