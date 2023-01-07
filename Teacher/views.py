@@ -9,7 +9,7 @@ from django.urls import reverse
 from Edumate_app.models import Students, Teachers
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
 from Teacher.forms import EventForm
-from .models import ClassTeachers, Assignments, PeerGrade, Announcements, Schedule
+from .models import *
 import random
 import copy
 from django.shortcuts import redirect, render
@@ -237,4 +237,35 @@ def create_quiz(request, pk, pk2):
         print(questions)
         print(options)
         print(correctOP)
+        quiz_object = Quiz(quiz_name = quizName, description = "Desc", time_limit = quizTime)
+        quiz_object.save()
+
+        for i in range(len(questions)):
+            question_object = Question(quiz = quiz_object, question_name = questions[i], marks = 10)
+            question_object.save()
+            k = 0
+            for j in options[i]:
+                if k+1 in correctOP[i]:
+                    # if correctOP[i][0]-1 == options[i].index(j):
+                    option_object = Options(question = question_object, option_name = j, correct = True)
+                    option_object.save()
+                else:
+                    option_object = Options(question = question_object, option_name = j, correct = False)
+                    option_object.save()
+                k += 1
+
     return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2})
+
+
+'''
+
+Finalrdc : [['1', '3'], ['2', '2']]
+secondvalue: ['3', '2']
+Quiz
+10
+[['on', None, None], ['on', None]]
+['Name', 'Age']
+[['hussein', 'nayan', 'rushabh'], ['21', '5']]
+[[1], [1]]
+
+'''
