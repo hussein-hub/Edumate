@@ -197,6 +197,7 @@ def create_quiz(request, pk, pk2):
         quizName = request.POST.get('quiz_name')
         quizTime = request.POST.get('quiz_time')
         count = request.POST.get('question_count')
+        description = request.POST.get('desc')
         c = request.POST.get('radio_count')
         rdc = request.POST.get('rdc')
         rdc = rdc.split(",")
@@ -237,11 +238,12 @@ def create_quiz(request, pk, pk2):
         print(questions)
         print(options)
         print(correctOP)
-        quiz_object = Quiz(quiz_name = quizName, description = "Desc", time_limit = quizTime)
+        quiz_object = Quiz(quiz_name = quizName, description = description, time_limit = quizTime, teach_id = pk, class_code = pk2)
         quiz_object.save()
+        markForEachQuestion = 1
 
         for i in range(len(questions)):
-            question_object = Question(quiz = quiz_object, question_name = questions[i], marks = 10)
+            question_object = Question(quiz = quiz_object, question_name = questions[i], marks = markForEachQuestion)
             question_object.save()
             k = 0
             for j in options[i]:
@@ -253,8 +255,10 @@ def create_quiz(request, pk, pk2):
                     option_object = Options(question = question_object, option_name = j, correct = False)
                     option_object.save()
                 k += 1
+        
+    allQuiz = Quiz.objects.filter(teach_id = pk, class_code = pk2)
 
-    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2})
+    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2, 'allQuiz': allQuiz})
 
 
 '''

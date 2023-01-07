@@ -29,7 +29,7 @@ body{
 } 
 
 .quiz_box{
-    width: 42vw;
+    width: 75%;
     background: #fff;
     border-radius: 10px;
     /* transform: translate(-50%, -50%) scale(0.9); */
@@ -471,4 +471,8 @@ footer {
     border-radius: 15px; 
     margin-bottom: 20px;
     animation: fadeInAnimation ease 2s;
+}
+
+.description {
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInTop;
 }
