@@ -4,7 +4,7 @@ from Edumate_app.models import Teachers
 
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
 from Student.utils import Calendar
-from Teacher.models import ClassTeachers, Assignments, PeerGrade, Announcements, Schedule
+from Teacher.models import *
 import calendar
 from datetime import date
 from datetime import datetime, timedelta
@@ -122,4 +122,17 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
+
+def quiz(request, pk, pk2):
+    quiz = Quiz.objects.filter(class_code = pk2)
+    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz})
+
+def ansquiz(request,pk,pk2,pk3):
+    quiz = Quiz.objects.get(id = pk3)
+    questions = Question.objects.filter(quiz=quiz)
+    ops=[]
+    for i in questions:
+        options = Options.objects.filter(question=i)
+        ops.append(options)
+    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops})
 

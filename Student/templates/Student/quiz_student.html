@@ -1,0 +1,23 @@
+{% extends './base_student.html' %}
+{% load static %}
+
+{% block content %}
+<br><br>
+
+
+<div class="Container">
+    <h1>All Quizes</h1>
+    <div class="row">
+        {% for i in quiz %}
+            <div class="card mx-2 my-2" style="width: 23%;">
+                <div class="card-body">
+                <h5 class="card-title">{{i.quiz_name}}</h5>
+                <p class="card-text">{{i.description}}</p>
+                <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.id %}" class="btn btn-primary">Go somewhere</a>
+                </div>
+                </div>
+        {% endfor %}
+    </div>
+    </div>
+
+{% endblock content %}
