@@ -125,7 +125,20 @@ def next_month(d):
 
 def quiz(request, pk, pk2):
     quiz = Quiz.objects.filter(class_code = pk2)
-    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz})
+    stud = Students.objects.get(stud_id=pk)
+    answered=Quiz_marks.objects.filter(student=stud).values_list('student','quiz')
+    quiz_list = []
+    for i in quiz:
+        a=(pk,i.id)
+        answer = False
+        if a in answered:
+            answer = True
+        quiz_list.append([i,answer])
+    print(quiz_list)
+    print(quiz)
+    print(answered)
+    
+    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz_list})
 
 def ansquiz(request,pk,pk2,pk3):
     quiz = Quiz.objects.get(id = pk3)

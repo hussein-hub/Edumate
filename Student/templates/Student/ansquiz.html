@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <br><br>
+<a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a>
 <div class="container">
 
     <form class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
