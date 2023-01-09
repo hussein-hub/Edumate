@@ -1,8 +1,8 @@
 from django.http import QueryDict
 from django.shortcuts import render
-from Edumate_app.models import Teachers
+from Edumate_app.models import Students, Teachers
 import json
-from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
+from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments, PeerStudents
 from Student.utils import Calendar
 from Teacher.models import *
 import calendar
@@ -168,7 +168,9 @@ def ansquiz(request,pk,pk2,pk3):
                 mk=0
             ind_mks.append(mk)
             mks += mk
-                
-        print(json.dumps(ind_mks))
-    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops})
 
+
+        stud = Students.objects.get(stud_id = pk)
+        quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=pk2,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks))
+        quiz_mks.save()
+    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops})

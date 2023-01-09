@@ -1,5 +1,7 @@
 from django.db import models
 import os
+from Teacher.models import *
+from Edumate_app.models import *
 
 # Create your models here.
 
@@ -29,3 +31,16 @@ class PeerStudents(models.Model):
     as_2_marks = models.FloatField()
     class Meta:
         db_table = "PeerStudents"
+
+
+class Quiz_marks(models.Model):
+    quiz = models.ForeignKey('Teacher.Quiz', on_delete=models.CASCADE, default=0)
+    student = models.ForeignKey('Edumate_app.Students', on_delete=models.CASCADE, default=0)
+    class_id = models.CharField(max_length=10)
+    student_responses = models.TextField(null=True)
+    correct_responses = models.TextField(null=True)
+    total_marks = models.PositiveSmallIntegerField(default=0)
+    marks_breakup = models.TextField(null=True)
+
+    def __str__(self):
+         return self.quiz.quiz_name +" - "+ self.student.name +" - "+ str(self.total_marks)

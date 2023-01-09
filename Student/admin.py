@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(ClassStudents)
 admin.site.register(SubmittedAssignments)
 admin.site.register(PeerStudents)
+admin.site.register(Quiz_marks)
