@@ -14,7 +14,7 @@
                 <h5 class="card-title">{{i.0.quiz_name}}</h5>
                 <p class="card-text">{{i.0.description}}</p>
                 {% if i.1 %}
-                <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Review</a>
+                <a href="{% url 'review_quiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Review</a>
                 {% else %}
                 <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Answer Quiz</a>
                 {% endif %}

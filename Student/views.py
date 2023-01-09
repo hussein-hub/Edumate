@@ -186,4 +186,19 @@ def ansquiz(request,pk,pk2,pk3):
         stud = Students.objects.get(stud_id = pk)
         quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=pk2,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks))
         quiz_mks.save()
-    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops})
+    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2,'pk3':pk3, 'quiz': ops})
+
+def revquiz(request,pk,pk2,pk3):
+    quiz = Quiz.objects.get(id = pk3)
+    questions = Question.objects.filter(quiz=quiz)
+    ops=[]
+    answer = Quiz_marks.objects.get(quiz=quiz,student_id = pk)
+    k=0
+    for i in questions:
+        options = Options.objects.filter(question=i)
+        stud_res=answer.student_responses
+        cor_res=answer.correct_responses
+        ops.append([options,stud_res,cor_res])
+        k+=1
+    print(ops)
+    return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
