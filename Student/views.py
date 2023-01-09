@@ -1,7 +1,7 @@
 from django.http import QueryDict
 from django.shortcuts import render
 from Edumate_app.models import Teachers
-
+import json
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
 from Student.utils import Calendar
 from Teacher.models import *
@@ -131,14 +131,44 @@ def ansquiz(request,pk,pk2,pk3):
     quiz = Quiz.objects.get(id = pk3)
     questions = Question.objects.filter(quiz=quiz)
     ops=[]
+    correct_ans=[]
     for i in questions:
         options = Options.objects.filter(question=i)
         correct_count=0
+        c_ops=[]
         for j in options:
             if j.correct == True:
+                c_ops.append(j.option_name)
                 correct_count += 1
-            
-        
         ops.append([options,correct_count])
+        multi = i.marks / correct_count
+        correct_ans.append([c_ops,multi])
+    total_questions = len(ops)
+    stud_responses =[]
+    if request.method=='POST':
+        for i in range(total_questions):
+            op = request.POST.getlist('op_'+str(i+1))
+            stud_responses.append(op)
+        mks = 0
+        ind_mks = []
+        for i in range(len(stud_responses)):
+            mk=0
+            for j in stud_responses[i]:
+                if len(correct_ans[i][0])>1:
+                    if j in correct_ans[i][0]:
+                        mk += correct_ans[i][1]
+                    else :
+                        mk -= correct_ans[i][1]
+                    
+                else:
+                    if j in correct_ans[i][0]:
+                        mk += correct_ans[i][1]
+
+            if mk<0:
+                mk=0
+            ind_mks.append(mk)
+            mks += mk
+                
+        print(json.dumps(ind_mks))
     return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops})
 

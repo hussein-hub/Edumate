@@ -15,12 +15,12 @@
           
             <div class="form-check mx-4">
               {% if q.1 == 1 %}
-              <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" >
+              <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
               {% else %}
-              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" >
+              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
               {% endif %}
               
-              <label class="form-check-label" for="op_{{outercount}}">
+              <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
                 {{ops}}
               </label>
             </div>
@@ -37,3 +37,9 @@
 
 
 {% endblock content %}
+
+{% block script %}
+<script>
+
+</script>
+{% endblock script %}
