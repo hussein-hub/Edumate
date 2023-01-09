@@ -13,7 +13,7 @@
                 <div class="card-body">
                 <h5 class="card-title">{{i.quiz_name}}</h5>
                 <p class="card-text">{{i.description}}</p>
-                <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.id %}" class="btn btn-primary">Go somewhere</a>
+                <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.id %}" class="btn btn-primary">Answer Quiz</a>
                 </div>
                 </div>
         {% endfor %}

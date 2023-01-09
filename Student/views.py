@@ -133,6 +133,12 @@ def ansquiz(request,pk,pk2,pk3):
     ops=[]
     for i in questions:
         options = Options.objects.filter(question=i)
-        ops.append(options)
+        correct_count=0
+        for j in options:
+            if j.correct == True:
+                correct_count += 1
+            
+        
+        ops.append([options,correct_count])
     return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops})
 

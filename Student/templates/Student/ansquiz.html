@@ -8,24 +8,29 @@
       {% csrf_token %}
       <h1 style="text-align: center;">{{course.course_name}}</h1>
       {% for q in quiz%}
-      <h4 class="text">{{ forloop.counter }}. {{q.0.question}}</h4><h4 style="text-align: right;">[Marks {{q.0.question.marks}}]</h4>
+      <h4 class="text">{{ forloop.counter }}. {{q.0.0.question}}</h4><h4 style="text-align: right;">[Marks {{q.0.0.question.marks}}]</h4>
       
-          
-          {% for ops in q  %}
+      {% with outercount=forloop.counter %} 
+          {% for ops in q.0  %}
           
             <div class="form-check mx-4">
-              <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="ops" value="Option1">
-              <label class="form-check-label" for="option1">
+              {% if q.1 == 1 %}
+              <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" >
+              {% else %}
+              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" >
+              {% endif %}
+              
+              <label class="form-check-label" for="op_{{outercount}}">
                 {{ops}}
               </label>
             </div>
         {% endfor %}
-          
+        {% endwith %} 
             
   
           {% endfor %}
           <br>
-          {% comment %} <input class="btn btn-success"   type="submit" value="Submit">   {% endcomment %}
+          <input class="btn btn-success"   type="submit" value="Submit">  
       </form>
     </div>
 
