@@ -8,25 +8,30 @@
     <form class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
       {% csrf_token %}
       <h1 style="text-align: center;">{{course.course_name}}</h1>
-      {% for q in quiz%}
-      <h4 class="text">{{ forloop.counter }}. {{q.0.0.question}}</h4><h4 style="text-align: right;">[Marks {{q.0.0.question.marks}}]</h4>
-      
+      {% for q in quiz %}
+      <h4 class="text">{{ forloop.counter }}. {{q.0.0.question}}</h4><h4 style="text-align: right;">[Marks {{q.3}}/{{q.0.0.question.marks}}.0]</h4>
+
       {% with outercount=forloop.counter %} 
-          {% for ops in q.0 %}
+          {% for op in q.0 %}
           
             <div class="form-check mx-4">
-              <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" disabled >
+              {% if op|slugify in q.1 %}
+              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled checked>
+              {% else %}
+              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled>
+              {% endif %}
               
               
               <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
-                {{ops}}
+                {{op}}
               </label>
             </div>
         {% endfor %}
         {% endwith %} 
-
-        <p>Your responses: {{q.1}}</p>
-        <p>correct options: {{q.2}}</p>
+        <div>Correct options: {{q.2.0}}</div>
+        <div>
+          Marks: {{q.3}} 
+        </div>
             
   
           {% endfor %}

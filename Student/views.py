@@ -35,7 +35,7 @@ def stud_home(request, pk):
         classObject=ClassTeachers.objects.filter(class_code=i.class_code)
         teacherObject=Teachers.objects.filter(teach_id=classObject[0].teach_id)
         data.append([i.class_code, classObject[0].class_name, teacherObject[0].name])
-    print(data)
+    # print(data)
     return render(request, 'Student/student_home.html', {"data": data, 'pk': pk})
 
 def classroom(request, pk, pk2):
@@ -134,9 +134,9 @@ def quiz(request, pk, pk2):
         if a in answered:
             answer = True
         quiz_list.append([i,answer])
-    print(quiz_list)
-    print(quiz)
-    print(answered)
+    # print(quiz_list)
+    # print(quiz)
+    # print(answered)
     
     return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz_list})
 
@@ -186,6 +186,7 @@ def ansquiz(request,pk,pk2,pk3):
         stud = Students.objects.get(stud_id = pk)
         quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=pk2,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks))
         quiz_mks.save()
+        
     return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2,'pk3':pk3, 'quiz': ops})
 
 def revquiz(request,pk,pk2,pk3):
@@ -196,9 +197,13 @@ def revquiz(request,pk,pk2,pk3):
     k=0
     for i in questions:
         options = Options.objects.filter(question=i)
-        stud_res=answer.student_responses
-        cor_res=answer.correct_responses
-        ops.append([options,stud_res,cor_res])
+        jsonDec = json.decoder.JSONDecoder()
+        stud_res = jsonDec.decode(answer.student_responses)
+        stud_res = stud_res[k]
+        cor_res = jsonDec.decode(answer.correct_responses)
+        cor_res = cor_res[k]
+        indmarks = jsonDec.decode(answer.marks_breakup)
+        indmarks = indmarks[k]
+        ops.append([options,stud_res,cor_res,indmarks])
         k+=1
-    print(ops)
     return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
