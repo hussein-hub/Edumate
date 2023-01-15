@@ -2,7 +2,6 @@ from datetime import datetime
 from unittest.util import _MAX_LENGTH
 from django.db import models
 from django.urls import reverse
-from ckeditor_uploader.fields import RichTextUploadingField
 
 # Create your models here.
 
@@ -74,11 +73,11 @@ class Quiz(models.Model):
 
 class Question(models.Model):
     quiz = models.ForeignKey('Quiz', on_delete=models.CASCADE, default=0)
-    question_name = RichTextUploadingField()
+    question_name = models.CharField(max_length=1000)
     marks= models.PositiveIntegerField(null=True,default=0)
     
     def __str__(self):
-        return str(self.quiz.quiz_name)
+        return str(self.question_name)
     
 
 class Options(models.Model):
