@@ -13,7 +13,7 @@
         <div class="row row-content">
             <div style="margin-top: 3vh; margin-left: 3vh;" class="col-xl-4 col-lg-4 col-md-2 col-sm-12">
                 {% for i in allQuiz %}
-                    <div class="card" style="width: 12rem;">
+                    <div class="card" style="width: 12rem; display: inline-block">
                         <div class="card-body">
                         <h5 class="card-title">{{i.quiz_name}}</h5>
                         <p class="card-text">{{i.description}}</p>
@@ -46,7 +46,11 @@
                                 
                                 {% comment %} Question {% endcomment %}
                                 <div class="individualQuestion">
-                                    <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1" id="question1">
+                                    <div class="question_del_align">
+                                        <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1" id="question1">
+                                    </div>
+
+
                                     <input class="form-control specialInputQuestions" multiple="multiple" type="file" accept="image/*" name="question_img1" id="question_img1">
                                     {% comment %} <textarea placeholder="Question" class="specialInputQuestions" onkeyup="do_resize(this)" style="padding: 5px; border: 1px solid #ced4da; border-radius: 5px; width:100%; outline:none" name="test" cols="40"></textarea> {% endcomment %}
                                     {% comment %} <a class="btn delete_button" id="1" onclick="deleteQuestion(this.id)"><i class="fa fa-trash"></i></a> {% endcomment %}

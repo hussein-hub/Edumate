@@ -89,6 +89,9 @@ function addQuestion() {
     const individualQuestion = document.createElement('div');
     individualQuestion.setAttribute('class', 'individualQuestion');
 
+    const divP = document.createElement('div');
+    divP.setAttribute('class', 'question_del_align');
+
     
     const question = document.createElement('input');
     question.setAttribute('class', 'form-control specialInputQuestions');
@@ -116,9 +119,13 @@ function addQuestion() {
     
     deleteButton.appendChild(deleteIcon);
 
-    individualQuestion.appendChild(question);
+    divP.appendChild(question);
+    divP.appendChild(deleteButton);
+
+    individualQuestion.appendChild(divP);
+    // individualQuestion.appendChild(question);
     individualQuestion.appendChild(imageInput);
-    individualQuestion.appendChild(deleteButton);
+    // individualQuestion.appendChild(deleteButton);
 
 
     const optionList = document.createElement('div');

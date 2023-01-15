@@ -421,6 +421,15 @@ footer button.show{
     }
 }
 
+@keyframes fadeOutAnimation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 .quiz_box {
     animation: fadeInAnimation ease 2s;
     animation-iteration-count: 1;
@@ -455,7 +464,7 @@ footer {
 
 
 .individualQuestion {
-    display: flex;
+    display: column;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
@@ -475,4 +484,11 @@ footer {
 
 .description {
     animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInTop;
+}
+
+.question_del_align {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }

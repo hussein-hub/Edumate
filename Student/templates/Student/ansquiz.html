@@ -9,35 +9,35 @@
       {% csrf_token %}
       <h1 style="text-align: center;">{{course.course_name}}</h1>
       {% for q in quiz%}
-      <h4 class="text">{{ forloop.counter }}. {{q.0.0.question}}</h4>
-      <h4 style="text-align: right;">[Marks {{q.0.0.question.marks}}]</h4>
+      <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; margin-bottom: 1.5vh; margin-top: 0.5vh;">
+        <div style="display:inline-block; font-size: 22px; " class="text">{{ forloop.counter }}. {{q.0.0.question}}</div>
+        <div style="text-align: right; display:inline-block;">[Marks {{q.0.0.question.marks}}]</div>
+      </div>
+
+      {% for img in q.2  %}
+        <div class="form-check mx-4">
+          <img height=250 src={{img.image.url}} />
+        </div>
+      {% endfor %}
       
       {% with outercount=forloop.counter %} 
-          {% for ops in q.0  %}
-          
-            <div class="form-check mx-4">
-              {% if q.1 == 1 %}
-              <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
-              {% else %}
-              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
-              {% endif %}
-              
-              <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
-                {{ops}}
-              </label>
-            </div>
+        {% for ops in q.0  %}
+        
+          <div class="form-check mx-4">
+            {% if q.1 == 1 %}
+            <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
+            {% else %}
+            <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
+            {% endif %}
+            
+            <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
+              {{ops}}
+            </label>
+          </div>
         {% endfor %}
-
-          {% for img in q.2  %}
-          
-            <div class="form-check mx-4">
-              <img height=250 src={{img.image.url}} />
-            </div>
-        {% endfor %}
-
       {% endwith %} 
             
-  
+		  <hr>
           {% endfor %}
           <br>
           <input class="btn btn-success"   type="submit" value="Submit">  
