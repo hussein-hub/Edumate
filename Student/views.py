@@ -202,8 +202,9 @@ def revquiz(request,pk,pk2,pk3):
         stud_res = stud_res[k]
         cor_res = jsonDec.decode(answer.correct_responses)
         cor_res = cor_res[k]
+        num_cor = len(cor_res[0])
         indmarks = jsonDec.decode(answer.marks_breakup)
         indmarks = indmarks[k]
-        ops.append([options,stud_res,cor_res,indmarks])
+        ops.append([options,stud_res,cor_res,indmarks,num_cor])
         k+=1
     return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
