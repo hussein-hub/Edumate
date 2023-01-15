@@ -97,6 +97,15 @@ function addQuestion() {
     question.setAttribute('id', `question${totalQuestionCount}`);
     question.setAttribute('name', `question${totalQuestionCount}`);
 
+    const imageInput = document.createElement('input');
+    imageInput.setAttribute('class', 'form-control specialInputQuestions');
+    imageInput.setAttribute('type', 'file');
+    imageInput.setAttribute('accept', 'image/*');
+    imageInput.setAttribute('multiple', 'multiple');
+    imageInput.setAttribute('id', `question_img${totalQuestionCount}`);
+    imageInput.setAttribute('name', `question_img${totalQuestionCount}`);
+
+
     const deleteButton = document.createElement('a');
     deleteButton.setAttribute('class', 'btn delete_button');
     deleteButton.setAttribute('id', `${totalQuestionCount}`);
@@ -108,6 +117,7 @@ function addQuestion() {
     deleteButton.appendChild(deleteIcon);
 
     individualQuestion.appendChild(question);
+    individualQuestion.appendChild(imageInput);
     individualQuestion.appendChild(deleteButton);
 
 

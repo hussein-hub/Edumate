@@ -87,3 +87,11 @@ class Options(models.Model):
     
     def __str__(self):
         return str(self.option_name)
+
+
+class QuestionImage(models.Model):
+    question = models.ForeignKey('Question', on_delete=models.CASCADE, default=0)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    
+    def __str__(self):
+        return str(self.question.question_name)

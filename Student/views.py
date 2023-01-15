@@ -147,13 +147,14 @@ def ansquiz(request,pk,pk2,pk3):
     correct_ans=[]
     for i in questions:
         options = Options.objects.filter(question=i)
+        img = QuestionImage.objects.filter(question=i)
         correct_count=0
         c_ops=[]
         for j in options:
             if j.correct == True:
                 c_ops.append(j.option_name)
                 correct_count += 1
-        ops.append([options,correct_count])
+        ops.append([options,correct_count,img])
         multi = i.marks / correct_count
         correct_ans.append([c_ops,multi])
     total_questions = len(ops)

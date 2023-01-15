@@ -24,18 +24,15 @@
             </div>
             <div style="margin-top: 3vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;" class="col-xl-7 col-lg-7 col-md-9 col-sm-12">
                 <div class="quiz_box">
-                    <form method='post'>
+                    <form method='post' enctype="multipart/form-data">
                         {% csrf_token %}
                         <header>
                             <div class="title">
                                 <input class="QuizName" name="quiz_name" style="border: none; outline: none;" value="Quiz" />
                             </div>
                             <input style="border: none; display: none;" id="QuestionCount" name="question_count" value=1>
-                            </input>
                             <input style="border: none; display: none;" id="radioCount" name="radio_count" value=2>
-                            </input>
                             <input style="border: none; display: none;" id="rdc" name="rdc">
-                            </input>
                             <div class="timer">
                                 <div class="time_left_txt">Time: </div>
                                 <input style="width: 50px;" value=10 class="form-control" type="number" name="quiz_time">
@@ -50,6 +47,7 @@
                                 {% comment %} Question {% endcomment %}
                                 <div class="individualQuestion">
                                     <input class="form-control specialInputQuestions" type="text" placeholder="Question" name="question1" id="question1">
+                                    <input class="form-control specialInputQuestions" multiple="multiple" type="file" accept="image/*" name="question_img1" id="question_img1">
                                     {% comment %} <textarea placeholder="Question" class="specialInputQuestions" onkeyup="do_resize(this)" style="padding: 5px; border: 1px solid #ced4da; border-radius: 5px; width:100%; outline:none" name="test" cols="40"></textarea> {% endcomment %}
                                     {% comment %} <a class="btn delete_button" id="1" onclick="deleteQuestion(this.id)"><i class="fa fa-trash"></i></a> {% endcomment %}
                                 </div>
