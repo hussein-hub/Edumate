@@ -9,7 +9,7 @@ from django.urls import reverse
 from Edumate_app.models import Students, Teachers
 from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
 from Teacher.forms import EventForm
-from .models import ClassTeachers, Assignments, PeerGrade, Announcements, Schedule
+from .models import *
 import random
 import copy
 from django.shortcuts import redirect, render
@@ -192,16 +192,13 @@ def create_quiz(request, pk, pk2):
         Quiz Time,
         Question + Answer [for all the questions in the quiz] --> multiple values for single quiz,
     }
-    [Question + Answer] Format = {
-        question||option1||option2||....||optionN??Answer1??Answer2??...??AnswerN
-    }
-    '''    
+    '''   
     if request.POST:
-        test = request.POST.get('test')
-        print(test)
+
         quizName = request.POST.get('quiz_name')
         quizTime = request.POST.get('quiz_time')
         count = request.POST.get('question_count')
+        description = request.POST.get('desc')
         c = request.POST.get('radio_count')
         rdc = request.POST.get('rdc')
         rdc = rdc.split(",")
@@ -242,4 +239,46 @@ def create_quiz(request, pk, pk2):
         print(questions)
         print(options)
         print(correctOP)
-    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2})
+        quiz_object = Quiz(quiz_name = quizName, description = description, time_limit = quizTime, teach_id = pk, class_code = pk2)
+        quiz_object.save()
+        markForEachQuestion = 1
+
+        
+
+        for i in range(len(questions)):
+            question_object = Question(quiz = quiz_object, question_name = questions[i], marks = markForEachQuestion)
+            question_object.save()
+
+            img = request.FILES.getlist('question_img' + str(i+1))
+            for j in img:
+                img_object = QuestionImage(question = question_object, image = j)
+                img_object.save()
+            
+            k = 0
+            for j in options[i]:
+                if k+1 in correctOP[i]:
+                    # if correctOP[i][0]-1 == options[i].index(j):
+                    option_object = Options(question = question_object, option_name = j, correct = True)
+                    option_object.save()
+                else:
+                    option_object = Options(question = question_object, option_name = j, correct = False)
+                    option_object.save()
+                k += 1
+        
+    allQuiz = Quiz.objects.filter(teach_id = pk, class_code = pk2)
+
+    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2, 'allQuiz': allQuiz})
+
+
+'''
+
+Finalrdc : [['1', '3'], ['2', '2']]
+secondvalue: ['3', '2']
+Quiz
+10
+[['on', None, None], ['on', None]]
+['Name', 'Age']
+[['hussein', 'nayan', 'rushabh'], ['21', '5']]
+[[1], [1]]
+
+'''

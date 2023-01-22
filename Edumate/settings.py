@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,7 +87,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'edumate_db',
         'USER': 'root',
+<<<<<<< HEAD
         'PASSWORD': 'Nayan@123',
+=======
+        'PASSWORD': config('DATABASE_PASSWORD'),
+>>>>>>> 8c811f629df49dbaf855e2c2e1695aac1ae656af
         'HOST':'localhost',
         'PORT':'3306',
     }

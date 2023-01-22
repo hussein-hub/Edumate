@@ -89,6 +89,9 @@ function addQuestion() {
     const individualQuestion = document.createElement('div');
     individualQuestion.setAttribute('class', 'individualQuestion');
 
+    const divP = document.createElement('div');
+    divP.setAttribute('class', 'question_del_align');
+
     
     const question = document.createElement('input');
     question.setAttribute('class', 'form-control specialInputQuestions');
@@ -96,6 +99,15 @@ function addQuestion() {
     question.setAttribute('placeholder', 'Question');
     question.setAttribute('id', `question${totalQuestionCount}`);
     question.setAttribute('name', `question${totalQuestionCount}`);
+
+    const imageInput = document.createElement('input');
+    imageInput.setAttribute('class', 'form-control specialInputQuestions');
+    imageInput.setAttribute('type', 'file');
+    imageInput.setAttribute('accept', 'image/*');
+    imageInput.setAttribute('multiple', 'multiple');
+    imageInput.setAttribute('id', `question_img${totalQuestionCount}`);
+    imageInput.setAttribute('name', `question_img${totalQuestionCount}`);
+
 
     const deleteButton = document.createElement('a');
     deleteButton.setAttribute('class', 'btn delete_button');
@@ -107,8 +119,13 @@ function addQuestion() {
     
     deleteButton.appendChild(deleteIcon);
 
-    individualQuestion.appendChild(question);
-    individualQuestion.appendChild(deleteButton);
+    divP.appendChild(question);
+    divP.appendChild(deleteButton);
+
+    individualQuestion.appendChild(divP);
+    // individualQuestion.appendChild(question);
+    individualQuestion.appendChild(imageInput);
+    // individualQuestion.appendChild(deleteButton);
 
 
     const optionList = document.createElement('div');

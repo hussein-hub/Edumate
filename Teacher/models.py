@@ -60,3 +60,38 @@ class Schedule(models.Model):
     def get_html_url(self):
         url = reverse('event_edit', args=(self.teach_id,self.class_code,self.id,))
         return f'<a href="{url}"> {self.event_data} </a>'
+
+class Quiz(models.Model):
+    quiz_name = models.CharField(max_length=200)
+    description= models.CharField(max_length=100, null=True)
+    time_limit = models.PositiveBigIntegerField(default=10)
+    teach_id = models.IntegerField()
+    class_code = models.CharField(max_length=10)
+    
+    def __str__(self):
+        return str(self.quiz_name)
+
+class Question(models.Model):
+    quiz = models.ForeignKey('Quiz', on_delete=models.CASCADE, default=0)
+    question_name = models.CharField(max_length=1000)
+    marks= models.PositiveIntegerField(null=True,default=0)
+    
+    def __str__(self):
+        return str(self.question_name)
+    
+
+class Options(models.Model):
+    question = models.ForeignKey('Question', on_delete=models.CASCADE, default=0)
+    option_name = models.CharField(max_length=1000)
+    correct = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return str(self.option_name)
+
+
+class QuestionImage(models.Model):
+    question = models.ForeignKey('Question', on_delete=models.CASCADE, default=0)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    
+    def __str__(self):
+        return str(self.question.question_name)

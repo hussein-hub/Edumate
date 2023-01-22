@@ -1,0 +1,28 @@
+{% extends './base_student.html' %}
+{% load static %}
+
+{% block content %}
+<br><br>
+
+<a class="btn btn-success" href="{% url 'classroom1' pk=pk pk2=pk2%}">Back</a>
+<div class="Container">
+    <h1>All Quizes</h1>
+    <div class="row">
+        {% for i in quiz %}
+            <div class="card mx-2 my-2" style="width: 23%;">
+                <div class="card-body">
+                <h5 class="card-title">{{i.0.quiz_name}}</h5>
+                <p class="card-text">{{i.0.description}}</p>
+                {% if i.1 %}
+                <a href="{% url 'review_quiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Review</a>
+                {% else %}
+                <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Answer Quiz</a>
+                {% endif %}
+                
+                </div>
+                </div>
+        {% endfor %}
+    </div>
+    </div>
+
+{% endblock content %}

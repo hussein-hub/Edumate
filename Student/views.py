@@ -1,10 +1,10 @@
 from django.http import QueryDict
 from django.shortcuts import render
-from Edumate_app.models import Teachers
-
-from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
+from Edumate_app.models import Students, Teachers
+import json
+from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments, PeerStudents
 from Student.utils import Calendar
-from Teacher.models import ClassTeachers, Assignments, PeerGrade, Announcements, Schedule
+from Teacher.models import *
 import calendar
 from datetime import date
 from datetime import datetime, timedelta
@@ -35,7 +35,7 @@ def stud_home(request, pk):
         classObject=ClassTeachers.objects.filter(class_code=i.class_code)
         teacherObject=Teachers.objects.filter(teach_id=classObject[0].teach_id)
         data.append([i.class_code, classObject[0].class_name, teacherObject[0].name])
-    print(data)
+    # print(data)
     return render(request, 'Student/student_home.html', {"data": data, 'pk': pk})
 
 def classroom(request, pk, pk2):
@@ -123,3 +123,89 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
+def quiz(request, pk, pk2):
+    quiz = Quiz.objects.filter(class_code = pk2)
+    stud = Students.objects.get(stud_id=pk)
+    answered=Quiz_marks.objects.filter(student=stud).values_list('student','quiz')
+    quiz_list = []
+    for i in quiz:
+        a=(pk,i.id)
+        answer = False
+        if a in answered:
+            answer = True
+        quiz_list.append([i,answer])
+    # print(quiz_list)
+    # print(quiz)
+    # print(answered)
+    
+    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz_list})
+
+def ansquiz(request,pk,pk2,pk3):
+    quiz = Quiz.objects.get(id = pk3)
+    questions = Question.objects.filter(quiz=quiz)
+    ops=[]
+    correct_ans=[]
+    for i in questions:
+        options = Options.objects.filter(question=i)
+        img = QuestionImage.objects.filter(question=i)
+        correct_count=0
+        c_ops=[]
+        for j in options:
+            if j.correct == True:
+                c_ops.append(j.option_name)
+                correct_count += 1
+        ops.append([options,correct_count,img])
+        multi = i.marks / correct_count
+        correct_ans.append([c_ops,multi])
+    total_questions = len(ops)
+    stud_responses =[]
+    if request.method=='POST':
+        for i in range(total_questions):
+            op = request.POST.getlist('op_'+str(i+1))
+            stud_responses.append(op)
+        mks = 0
+        ind_mks = []
+        for i in range(len(stud_responses)):
+            mk=0
+            for j in stud_responses[i]:
+                if len(correct_ans[i][0])>1:
+                    if j in correct_ans[i][0]:
+                        mk += correct_ans[i][1]
+                    else :
+                        mk -= correct_ans[i][1]
+                    
+                else:
+                    if j in correct_ans[i][0]:
+                        mk += correct_ans[i][1]
+
+            if mk<0:
+                mk=0
+            ind_mks.append(mk)
+            mks += mk
+
+
+        stud = Students.objects.get(stud_id = pk)
+        quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=pk2,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks))
+        quiz_mks.save()
+        
+    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2,'pk3':pk3, 'quiz': ops})
+
+def revquiz(request,pk,pk2,pk3):
+    quiz = Quiz.objects.get(id = pk3)
+    questions = Question.objects.filter(quiz=quiz)
+    ops=[]
+    answer = Quiz_marks.objects.get(quiz=quiz,student_id = pk)
+    k=0
+    for i in questions:
+        options = Options.objects.filter(question=i)
+        jsonDec = json.decoder.JSONDecoder()
+        stud_res = jsonDec.decode(answer.student_responses)
+        stud_res = stud_res[k]
+        cor_res = jsonDec.decode(answer.correct_responses)
+        cor_res = cor_res[k]
+        num_cor = len(cor_res[0])
+        indmarks = jsonDec.decode(answer.marks_breakup)
+        indmarks = indmarks[k]
+        ops.append([options,stud_res,cor_res,indmarks,num_cor])
+        k+=1
+    return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
