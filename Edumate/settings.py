@@ -80,17 +80,8 @@ WSGI_APPLICATION = 'Edumate.wsgi.application'
 
 DATABASES = {
     'default': {
-<<<<<<< HEAD
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-=======
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'edumate_db',
-        'USER': 'root',
-        'PASSWORD': 'Nayan@123',
-        'HOST':'localhost',
-        'PORT':'3306',
->>>>>>> 53a5b2a762dcb028c6ef984bf699cd1b17b2c60e
     }
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
