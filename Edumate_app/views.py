@@ -3,6 +3,7 @@ from .models import Students, Teachers
 import string, random
 from Student import views as stud_views
 from Teacher import views as teach_views
+from django.contrib import messages
 # Create your views here.
 
 
@@ -37,9 +38,13 @@ def login_student(request):
         try:
             student=Students.objects.get(email=request.POST.get('email'))
         except:
-            return render(request, 'Edumate_app/login.html')
+            messages.error(request, 'Invalid credentials')
+            return redirect('login_student')
         if(student!=None and student.password==request.POST.get('password')):
              return redirect(stud_views.stud_home, pk=student.stud_id)
+        else:
+            messages.error(request, 'Invalid credentials')
+            return redirect('login_student')
     return render(request, 'Edumate_app/login.html')
 
 def login_teacher(request):

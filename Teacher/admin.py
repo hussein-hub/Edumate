@@ -19,8 +19,15 @@ class ScheduleAdmin(admin.ModelAdmin):
 class OptionsInline(admin.TabularInline):
     model = Options
 
+
+class ImageInline(admin.TabularInline):
+    model = QuestionImage
+
 class QuestionAdmin(admin.ModelAdmin):
-    inlines = [OptionsInline]
+    inlines = [OptionsInline, ImageInline]
+
+
+admin.site.register(QuestionImage)
 
 admin.site.register(Question,QuestionAdmin)
 admin.site.register(Options)

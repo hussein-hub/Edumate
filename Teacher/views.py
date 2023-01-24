@@ -192,8 +192,9 @@ def create_quiz(request, pk, pk2):
         Quiz Time,
         Question + Answer [for all the questions in the quiz] --> multiple values for single quiz,
     }
-    '''    
+    '''   
     if request.POST:
+
         quizName = request.POST.get('quiz_name')
         quizTime = request.POST.get('quiz_time')
         count = request.POST.get('question_count')
@@ -242,9 +243,17 @@ def create_quiz(request, pk, pk2):
         quiz_object.save()
         markForEachQuestion = 1
 
+        
+
         for i in range(len(questions)):
             question_object = Question(quiz = quiz_object, question_name = questions[i], marks = markForEachQuestion)
             question_object.save()
+
+            img = request.FILES.getlist('question_img' + str(i+1))
+            for j in img:
+                img_object = QuestionImage(question = question_object, image = j)
+                img_object.save()
+            
             k = 0
             for j in options[i]:
                 if k+1 in correctOP[i]:
