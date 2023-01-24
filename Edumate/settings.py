@@ -27,8 +27,11 @@ SECRET_KEY = 'django-insecure-0iyvtesrm#ev*_+jme4%&*n*9vk-%+v3)y!11c(fll1f5_d5os
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    # 'https://rushabhgandhi13-symmetrical-space-xpv77j4xj6pfx97-8000.preview.app.github.dev/',
+    "*"
+]
 
 # Application definition
 
