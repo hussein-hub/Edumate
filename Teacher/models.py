@@ -95,3 +95,20 @@ class QuestionImage(models.Model):
     
     def __str__(self):
         return str(self.question.question_name)
+    
+class Attendance(models.Model):
+    teacher_id = models.IntegerField(default=None)
+    class_id = models.CharField(max_length=10, default=None)
+    att_id = models.AutoField(primary_key=True)
+    start_time = models.CharField(max_length=100)
+    end_time = models.CharField(max_length=100)
+    code = models.CharField(max_length=10)
+    class Meta:
+        db_table = "Attendance"
+
+class AttStud(models.Model):
+    att_id = models.IntegerField()
+    stud_id = models.IntegerField()
+    att_time = models.CharField(max_length=100)
+    class Meta:
+        db_table = "AttStud"

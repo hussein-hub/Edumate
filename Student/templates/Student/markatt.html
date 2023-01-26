@@ -1,0 +1,25 @@
+{% extends './base_student.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="container" style="margin-top: 100px">
+    {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  
+         <script>alert('{{ message }}')</script>
+        {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        Please enter code: <input type="text" name="code">
+        <button class="btn btn-outline-success" type="submit">Mark</button>
+    </form>
+    <a href="{% url 'classroom1' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to home page</a>
+</div>
+
+{% endblock %}

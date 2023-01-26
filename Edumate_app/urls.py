@@ -11,6 +11,7 @@ urlpatterns = [
     path('final_registration/', views.final_reg, name="final_register"),
     path('login_student/', views.login_student, name='login_student'),
     path('login_teacher/', views.login_teacher, name='login_teacher'),
+    path('change_pass/<int:pk>/<pk2>', views.change_pass, name='change_pass'),
     path('student/<int:pk>/', include('Student.urls')),
     path('teacher/<int:pk>/', include('Teacher.urls')),
 ]

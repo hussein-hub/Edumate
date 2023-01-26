@@ -7,7 +7,7 @@ from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
-from Student.models import ClassStudents, SubmittedAssignments, PeerStudents
+from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Attendance
 from Teacher.forms import EventForm
 from .models import *
 import random
@@ -17,6 +17,8 @@ from django.shortcuts import redirect, render
 from django.views import generic
 from django.utils.safestring import mark_safe
 from .utils import Calendar
+
+from django.contrib import messages
 
 # Create your views here.
 
@@ -268,6 +270,31 @@ def create_quiz(request, pk, pk2):
     allQuiz = Quiz.objects.filter(teach_id = pk, class_code = pk2)
 
     return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2, 'allQuiz': allQuiz})
+
+
+def attendance(request, pk, pk2):
+    all_att = Attendance.objects.filter(teacher_id=pk, class_id=pk2)
+    if request.method=="POST":
+        new_att=Attendance()
+        new_att.teacher_id=pk
+        new_att.class_id=pk2
+        new_att.start_time=request.POST.get('atttimes')
+        new_att.end_time=request.POST.get('atttimee')
+        new_att.code=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 6)))
+        new_att.save()
+        messages.success(request, 'Attendance created and code is = '+new_att.code)
+        return redirect('attendance', pk=pk, pk2=pk2)
+    return render(request, 'Teacher/attendance.html', {'pk': pk, 'pk2': pk2, 'all_att': all_att})
+
+def view_att(request, pk, pk2, pk3):
+    all_att_id=AttStud.objects.filter(att_id=pk3)
+    all_att=[]
+    for i in all_att_id:
+        val={}
+        val['name']=Students.objects.get(stud_id=i.stud_id).name
+        val['time']=i.att_time
+        all_att.append(val)
+    return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att})
 
 
 '''

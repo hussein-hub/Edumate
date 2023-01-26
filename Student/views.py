@@ -1,5 +1,5 @@
 from django.http import QueryDict
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from Edumate_app.models import Students, Teachers
 import json
 from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments, PeerStudents
@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from django.utils.safestring import mark_safe
 from django.views import generic
 from django.shortcuts import get_object_or_404, render
+from django.contrib import messages
 # Create your views here.
 
 def stud_home(request, pk):
@@ -209,3 +210,35 @@ def revquiz(request,pk,pk2,pk3):
         ops.append([options,stud_res,cor_res,indmarks,num_cor])
         k+=1
     return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
+
+def submitatt(request, pk, pk2):
+    if(request.method=="POST"):
+        att_obj=Attendance.objects.filter(code=request.POST.get('code'))
+        if(len(att_obj)!=0):
+            if(att_obj[0].class_id!=pk2):
+                messages.error(request, 'Please enter the code in the correct classroom')
+                return redirect('submitatt', pk=pk, pk2=pk2)
+            obj=AttStud.objects.filter(att_id=att_obj[0].att_id,stud_id=pk)
+            if(len(obj)>0):
+                messages.error(request, 'Attendance already marked')
+                return redirect('submitatt', pk=pk, pk2=pk2)
+            curr=datetime.now()
+            if(curr.timestamp()<datetime(int(att_obj[0].start_time[0:4]), int(att_obj[0].start_time[5:7]), int(att_obj[0].start_time[8:10]), int(att_obj[0].start_time[11:13]), int(att_obj[0].start_time[14:16])).timestamp()):
+                messages.error(request, 'Attendance marking not started yet')
+                return redirect('submitatt', pk=pk, pk2=pk2)
+            if(curr.timestamp()>datetime(int(att_obj[0].end_time[0:4]), int(att_obj[0].end_time[5:7]), int(att_obj[0].end_time[8:10]), int(att_obj[0].end_time[11:13]), int(att_obj[0].end_time[14:16])).timestamp()):
+                messages.error(request, 'Attendance marking finished please contact teacher')
+                return redirect('submitatt', pk=pk, pk2=pk2)
+            # print(datetime(int(att_obj[0].start_time[0:4]), int(att_obj[0].start_time[5:7]), int(att_obj[0].start_time[8:10]), int(att_obj[0].start_time[11:13]), int(att_obj[0].start_time[14:16])).timestamp())
+            # print(datetime(int(att_obj[0].end_time[0:4]), int(att_obj[0].end_time[5:7]), int(att_obj[0].end_time[8:10]), int(att_obj[0].end_time[11:13]), int(att_obj[0].end_time[14:16])).timestamp())
+            att=AttStud()
+            att.att_id=att_obj[0].att_id
+            att.stud_id=pk
+            att.att_time=curr
+            att.save()
+            messages.success(request, 'Attendance Marked')
+            return redirect('classroom1', pk=pk, pk2=pk2)
+        else:
+            messages.error(request, 'Incorrect code')
+            return redirect('submitatt', pk=pk, pk2=pk2)
+    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2})
