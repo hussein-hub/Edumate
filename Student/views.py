@@ -7,6 +7,7 @@ from Student.utils import Calendar
 from Teacher.models import *
 import calendar
 from datetime import date
+from django.utils import timezone
 from datetime import datetime, timedelta
 from django.utils.safestring import mark_safe
 from django.views import generic
@@ -135,15 +136,20 @@ def quiz(request, pk, pk2):
         if a in answered:
             answer = True
         quiz_list.append([i,answer])
+    today = timezone.now()
+    # print(quiz[1].quiz_date)
+    # print(today)
+    # print(quiz[1].quiz_date > today)
     # print(quiz_list)
     # print(quiz)
     # print(answered)
     
-    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz_list})
+    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz_list,'today':today})
 
 def ansquiz(request,pk,pk2,pk3):
     quiz = Quiz.objects.get(id = pk3)
     questions = Question.objects.filter(quiz=quiz)
+    q_time = quiz.time_limit
     ops=[]
     correct_ans=[]
     for i in questions:
@@ -189,7 +195,7 @@ def ansquiz(request,pk,pk2,pk3):
         quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=pk2,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks))
         quiz_mks.save()
         
-    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2,'pk3':pk3, 'quiz': ops})
+    return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2,'pk3':pk3, 'quiz': ops,'q_time':q_time})
 
 def revquiz(request,pk,pk2,pk3):
     quiz = Quiz.objects.get(id = pk3)

@@ -4,6 +4,7 @@
 {% block content %}
 <br><br>
 
+
 <a class="btn btn-success" href="{% url 'classroom1' pk=pk pk2=pk2%}">Back</a>
 <div class="Container">
     <h1>All Quizes</h1>
@@ -16,7 +17,9 @@
                 {% if i.1 %}
                 <a href="{% url 'review_quiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Review</a>
                 {% else %}
-                <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Answer Quiz</a>
+                    {% if i.0.quiz_date <= today %}
+                    <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-primary">Answer Quiz</a>
+                    {% endif %}
                 {% endif %}
                 
                 </div>
@@ -26,3 +29,5 @@
     </div>
 
 {% endblock content %}
+
+

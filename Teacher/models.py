@@ -65,6 +65,7 @@ class Quiz(models.Model):
     quiz_name = models.CharField(max_length=200)
     description= models.CharField(max_length=100, null=True)
     time_limit = models.PositiveBigIntegerField(default=10)
+    quiz_date = models.DateTimeField(default=datetime.now)
     teach_id = models.IntegerField()
     class_code = models.CharField(max_length=10)
     

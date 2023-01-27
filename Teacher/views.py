@@ -198,6 +198,7 @@ def create_quiz(request, pk, pk2):
     if request.POST:
 
         quizName = request.POST.get('quiz_name')
+        quizdate = request.POST.get('quiz_date')
         quizTime = request.POST.get('quiz_time')
         count = request.POST.get('question_count')
         description = request.POST.get('desc')
@@ -235,13 +236,13 @@ def create_quiz(request, pk, pk2):
             options.append(opTemp)
             allRadioButtonState.append(radioTemp)
             correctOP.append(temp)
-        print(quizName)
-        print(quizTime)
-        print(allRadioButtonState)
-        print(questions)
-        print(options)
-        print(correctOP)
-        quiz_object = Quiz(quiz_name = quizName, description = description, time_limit = quizTime, teach_id = pk, class_code = pk2)
+        # print(quizName)
+        # print(quizTime)
+        # print(allRadioButtonState)
+        # print(questions)
+        # print(options)
+        # print(correctOP)
+        quiz_object = Quiz(quiz_name = quizName, description = description, time_limit = quizTime,quiz_date = quizdate, teach_id = pk, class_code = pk2)
         quiz_object.save()
         markForEachQuestion = 1
 

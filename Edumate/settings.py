@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
-    # 'https://rushabhgandhi13-symmetrical-space-xpv77j4xj6pfx97-8000.preview.app.github.dev/',
+    'https://rushabhgandhi13-symmetrical-space-xpv77j4xj6pfx97-8000.preview.app.github.dev/',
     "*"
 ]
 
@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
