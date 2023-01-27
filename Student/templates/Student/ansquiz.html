@@ -8,7 +8,9 @@
 <h2 id="end"></h2>
 <br><br>
 <a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a>
-<div class="container">
+<button class="btn btn-success" onclick="openFullscreen();">Open test in Fullscreen Mode</button>
+
+<div class="container" id="mytest">
 
     <form class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
       {% csrf_token %}
@@ -63,8 +65,7 @@
     var myfunc = setInterval(function() {
 
     var now = new Date().getTime();
-    var timeleft = countDownDate - now;
-    console.log(typeof timeleft)    
+    var timeleft = countDownDate - now;  
     // Calculating the days, hours, minutes and seconds left
     var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
     var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -87,6 +88,47 @@
         document.getElementById("end").innerHTML = "TIME UP!!";
     }
     }, 1000);
+
+
+    count = 0;
+        $(document).ready(function() {
+            var hidden, visibilityState, visibilityChange;
+
+            if (typeof document.hidden !== "undefined") {
+                hidden = "hidden", visibilityChange = "visibilitychange", visibilityState = "visibilityState";
+            } else if (typeof document.msHidden !== "undefined") {
+                hidden = "msHidden", visibilityChange = "msvisibilitychange", visibilityState = "msVisibilityState";
+            }
+
+            var document_hidden = document[hidden];
+
+            document.addEventListener(visibilityChange, function() {
+                if(document_hidden != document[hidden]) {
+                if(document[hidden]) {
+                    count+=1;
+                     console.log("Cheating Detected")
+                    if(count == 2){
+                        console.log("Cheating Detected second time")
+                        
+                    }
+                }
+                document_hidden = document[hidden];
+                }
+            });
+            });
+            {% comment %} window.onbeforeunload = function() { return "Your work will be lost."; }; {% endcomment %}
+
+            var elem = document.getElementById("mytest");
+            function openFullscreen() {
+              if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+              } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+              } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+              }
+            }      
+
     </script>
 
 {% endblock %}
