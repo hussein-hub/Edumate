@@ -30,7 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
     'https://rushabhgandhi13-symmetrical-space-xpv77j4xj6pfx97-8000.preview.app.github.dev/',
-    # '*'
+    'https://hussein-hub-bookish-orbit-754qpqqxxxw2x94p-8000.preview.app.github.dev/',
+    # '*',
     'http://127.0.0.1:8000/'
 ]
 
