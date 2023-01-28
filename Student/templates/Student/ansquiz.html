@@ -12,18 +12,70 @@ html, *:fullscreen, *:-webkit-full-screen, *:-moz-full-screen {
     background-color: white !important;
     z-index:1;
 }
+
+h1 {
+  font-weight: normal;
+  letter-spacing: .125rem;
+  text-transform: uppercase;
+}
+
+li {
+  display: inline-block;
+  font-size: 1.5em;
+  list-style-type: none;
+  padding: 1em;
+  text-transform: uppercase;
+}
+
+li span {
+  display: block;
+  font-size: 4.5rem;
+}
+
+.emoji {
+  display: none;
+  padding: 1rem;
+}
+
+.emoji span {
+  font-size: 4rem;
+  padding: 0 .5rem;
+}
+
+@media all and (max-width: 768px) {
+  h1 {
+    font-size: calc(1.5rem * var(--smaller));
+  }
+  
+  li {
+    font-size: calc(1.125rem * var(--smaller));
+  }
+  
+  li span {
+    font-size: calc(3.375rem * var(--smaller));
+  }
+}
+.timer {
+  font-size: 28px;
+}
 </style>
 {% endblock styles %}
 
 
 {% block content %}
-<p id="days"></p>
+{% comment %} <p id="days"></p>
 <p id="hours"></p>
 <p id="mins"></p>
-<p id="secs"></p>
+<p id="secs"></p> {% endcomment %}
+<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; font-size: 12px; margin-top: 2.5vh;">
+  <li style="display: none;"><span id="days"></span>days</li>
+  <li><span class="timer" id="hours"></span>Hours</li>
+  <li><span class="timer" id="mins"></span>Minutes</li>
+  <li><span class="timer" id="secs"></span>Seconds</li>
+</div>
 <h2 id="end"></h2>
 <br><br>
-<a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a>
+{% comment %} <a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a> {% endcomment %}
 <button class="btn btn-success" onclick="openFullscreen();">Open test in Fullscreen Mode</button>
 
 <div class="container" id="mytest">
@@ -63,7 +115,7 @@ html, *:fullscreen, *:-webkit-full-screen, *:-moz-full-screen {
 		  <hr>
           {% endfor %}
           <br>
-          <input class="btn btn-success"   type="submit" value="Submit">  
+          <input id="submit_button" class="btn btn-success" type="submit" value="Submit">  
       </form>
     </div>
 
@@ -144,6 +196,17 @@ html, *:fullscreen, *:-webkit-full-screen, *:-moz-full-screen {
                 elem.msRequestFullscreen();
               }
             }      
+            if (window.performance) {
+              console.info("window.performance works fine on this browser");
+            }
+            console.info(performance.navigation.type);
+            if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+              console.info( "This page is reloaded" );
+              // press the input button with id 'submit_button'
+              document.getElementById("submit_button").click();
+            } else {
+              console.info( "This page is not reloaded");
+            }
 
     </script>
 

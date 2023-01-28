@@ -194,6 +194,7 @@ def ansquiz(request,pk,pk2,pk3):
         stud = Students.objects.get(stud_id = pk)
         quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=pk2,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks))
         quiz_mks.save()
+        return redirect('quiz_stud',pk=pk,pk2=pk2)
         
     return render(request, 'Student/ansquiz.html', {'pk': pk, 'pk2': pk2,'pk3':pk3, 'quiz': ops,'q_time':q_time})
 
