@@ -1,0 +1,33 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+
+
+{% block content %}
+
+<div class="container">
+    <div>
+        <h5>
+            Students who have given quiz
+        </h5>
+        <div>
+            {% for response in quiz_responses %}
+                {{response}}
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        <div>
+            <h5>
+                Students who have not yet given quiz
+            </h5>
+            <div>
+                {% for response in quiz_responses %}
+                    {{response}}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

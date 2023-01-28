@@ -7,7 +7,7 @@ from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
-from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Attendance
+from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Attendance, Quiz_marks
 from Teacher.forms import EventForm
 from .models import *
 import random
@@ -298,15 +298,12 @@ def view_att(request, pk, pk2, pk3):
     return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att})
 
 
-'''
-
-Finalrdc : [['1', '3'], ['2', '2']]
-secondvalue: ['3', '2']
-Quiz
-10
-[['on', None, None], ['on', None]]
-['Name', 'Age']
-[['hussein', 'nayan', 'rushabh'], ['21', '5']]
-[[1], [1]]
-
-'''
+def quiz_info(request, pk, pk2, pk3):
+    quiz = Quiz.objects.get(id = pk3)
+    quiz_responses = Quiz_marks.objects.filter(quiz = quiz)
+    # print(quiz_responses[0].student)
+    # student_gave_quiz = []
+    # for i in quiz_responses:
+    #     s = Students(id=i.student)
+    #     print(s)
+    return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': quiz_responses})

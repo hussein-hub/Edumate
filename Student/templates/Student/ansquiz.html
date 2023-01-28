@@ -154,6 +154,8 @@ li span {
         document.getElementById("mins").innerHTML = ""
         document.getElementById("secs").innerHTML = ""
         document.getElementById("end").innerHTML = "TIME UP!!";
+        {% comment %} await new Promise(r => setTimeout(r, 1000)); {% endcomment %}
+        document.getElementById("submit_button").click();
     }
     }, 1000);
 
@@ -184,7 +186,6 @@ li span {
                 }
             });
             });
-            {% comment %} window.onbeforeunload = function() { return "Your work will be lost."; }; {% endcomment %}
 
             var elem = document.getElementById("mytest");
             function openFullscreen() {
