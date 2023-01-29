@@ -17,6 +17,7 @@ class SubmittedAssignments(models.Model):
     assign_file = models.FileField(upload_to='Student/static/upload/')
     assignment_id = models.IntegerField()
     stud_id = models.IntegerField(default=0)
+    marks = models.FloatField(default=None, null=True)
     class Meta:
         db_table = "SubAssigns"
     

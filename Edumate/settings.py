@@ -28,12 +28,12 @@ SECRET_KEY = 'django-insecure-0iyvtesrm#ev*_+jme4%&*n*9vk-%+v3)y!11c(fll1f5_d5os
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = [
-    'https://rushabhgandhi13-symmetrical-space-xpv77j4xj6pfx97-8000.preview.app.github.dev/',
-    'https://hussein-hub-bookish-orbit-754qpqqxxxw2x94p-8000.preview.app.github.dev/',
-    # '*',
-    'http://127.0.0.1:8000/'
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://rushabhgandhi13-symmetrical-space-xpv77j4xj6pfx97-8000.preview.app.github.dev/',
+#     'https://hussein-hub-bookish-orbit-754qpqqxxxw2x94p-8000.preview.app.github.dev/',
+#     # '*',
+#     'http://127.0.0.1:8000/'
+# ]
 
 # Application definition
 
@@ -84,18 +84,18 @@ WSGI_APPLICATION = 'Edumate.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
     # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'edumate_db',
-    #     'USER': 'root',
-    #     'PASSWORD': config('DATABASE_PASSWORD'),
-    #     'HOST':'localhost',
-    #     'PORT':'3306',
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'edumate_db',
+        'USER': 'root',
+        'PASSWORD': 'Nayan@123',
+        'HOST':'localhost',
+        'PORT':'3306',
+    }
 }
 
 

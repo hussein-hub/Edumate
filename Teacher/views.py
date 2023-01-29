@@ -104,10 +104,18 @@ def assignmentsub(request, pk, pk2, pk3):
 
 def assignmentgrade(request, pk, pk2, pk3,pk4):
     submitted=SubmittedAssignments.objects.get(assignment_id=pk3,stud_id = pk4)
+    assignment=Assignments.objects.get(assignment_id=pk3)
     stud = Students.objects.get(stud_id = pk4)
-    print(submitted.assign_file.url)
     file_url = "http://127.0.0.1:8000"+submitted.assign_file.url
-    return render(request, 'Teacher/grade_assignments.html', {'student_name':stud.name,'file':file_url,'submit': submitted, 'pk': pk, 'pk2': pk2})
+    if request.method=="POST":
+        if(float(request.POST.get('marks')) < float(assignment.max_marks)):
+            submitted.marks=request.POST.get('marks')
+            submitted.save()
+            return redirect('grade', pk=pk, pk2=pk2, pk3=pk3, pk4=pk4)
+        else:
+            messages.error(request, "Marks cant be greater than maximum marks")
+            return redirect('grade', pk=pk, pk2=pk2, pk3=pk3, pk4=pk4)
+    return render(request, 'Teacher/grade_assignments.html', {'student_name':stud.name,'file':file_url,'submit': submitted, 'pk': pk, 'pk2': pk2, 'pk3': pk3,'assign': assignment})
 
 def announcement(request, pk, pk2):
     if (request.method == 'POST'):

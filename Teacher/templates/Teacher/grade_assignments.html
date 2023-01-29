@@ -1,10 +1,30 @@
 {% extends './base_teacher.html' %}
 {% load static %}
 
+{% block styles %}
+<style>
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+</style>
+{% endblock %}
+
 
 {% block navbar %}
 <header id="header" class="header d-flex align-items-center">
+  {% if messages %}
+  {% for message in messages %}
+   {% if message.tags %}  
+   <script>alert('{{ message }}')</script>
+  {% endif %}
 
+  {% endfor %}
+
+{% endif %}
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
       <a href="#" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
@@ -50,9 +70,18 @@
                 <iframe src={{ submit.assign_file.url }} style="width:718px; height:700px;"frameborder="0"></iframe>
             </div>
             <div class="col-6">
+              <form method="POST">
+                {% csrf_token %}
                 <p>Enter Marks</p>
-                <input type="number" name="marks" placeholder="Enter Marks">
+                <p>Max marks: {{ assign.max_marks }}</p>
+                {% if submit.marks %}
+                <input type="number" name="marks" placeholder="Enter Marks" value={{submit.marks}} step="0.01">
+                {% else %}
+                <input type="number" name="marks" placeholder="Enter Marks" step="0.01">
+                {% endif %}
                 <button class="btn btn-outline-success">Submit</button>
+                <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=pk3 %}" class="card-link btn btn-outline-success">Go to Assignments</a>
+              </form>
             </div>
         </div>
         
