@@ -67,18 +67,19 @@ li span {
 <p id="hours"></p>
 <p id="mins"></p>
 <p id="secs"></p> {% endcomment %}
-<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; font-size: 12px; margin-top: 2.5vh;">
-  <li style="display: none;"><span id="days"></span>days</li>
-  <li><span class="timer" id="hours"></span>Hours</li>
-  <li><span class="timer" id="mins"></span>Minutes</li>
-  <li><span class="timer" id="secs"></span>Seconds</li>
-</div>
+
 <h2 id="end"></h2>
 <br><br>
 {% comment %} <a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a> {% endcomment %}
 <button class="btn btn-success" onclick="openFullscreen();">Open test in Fullscreen Mode</button>
 
 <div class="container" id="mytest">
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; font-size: 12px; margin-top: 2.5vh;">
+    <li style="display: none;"><span id="days"></span>days</li>
+    <li><span class="timer" id="hours"></span>Hours</li>
+    <li><span class="timer" id="mins"></span>Minutes</li>
+    <li><span class="timer" id="secs"></span>Seconds</li>
+  </div>
 
     <form class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
       {% csrf_token %}
