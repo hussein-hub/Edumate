@@ -33,33 +33,9 @@
   <!-- Template Main CSS File -->
   <link href="{% static 'Edumate_app/assets/css/index.css' %}" rel="stylesheet">
 
-  <!-- =======================================================
-  * Template Name: Impact - v1.1.1
-  * Template URL: https://bootstrapmade.com/impact-bootstrap-business-website-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
-
-  <!-- ======= Header ======= -->
-  {% comment %} <section id="topbar" class="topbar d-flex align-items-center">
-    <div class="container d-flex justify-content-center justify-content-md-between">
-      <div class="contact-info d-flex align-items-center">
-        <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">contact@example.com</a></i>
-        <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
-      </div>
-      <div class="social-links d-none d-md-flex align-items-center">
-        <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-        <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
-      </div>
-    </div>
-  </section><!-- End Top Bar --> {% endcomment %}
-
-  
 
   {% block navbar %}
   <header id="header" class="header d-flex align-items-center">
@@ -71,16 +47,7 @@
         <h1>EDUMATE<span>.</span></h1>
       </a>
       <nav id="navbar" class="navbar">
-        <ul>
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="{% url 'login_student' %}">Student Login</a></li>
-          <li><a href="{% url 'login_teacher' %}">Teacher Login</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
+        
       </nav><!-- .navbar -->
 
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
@@ -99,96 +66,12 @@
   {% block content %}
   {% endblock content %}
 
-  {% comment %}  USE THIS PART FOR GENERIC PAGES AND COMMENT THE ABOVE SECTION CODE  
-  
- 
-  <main id="main">
-
-    <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs">
-      <div class="page-header d-flex align-items-center" style="background-image: url('');">
-        <div class="container position-relative">
-          <div class="row d-flex justify-content-center">
-            <div class="col-lg-6 text-center">
-              <h2>Edumate</h2>
-              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <nav>
-        <div class="container">
-          <ol>
-            <li><a href="index.html">Home</a></li>
-            <li>Edumate</li>
-          </ol>
-        </div>
-      </nav>
-    </div><!-- End Breadcrumbs -->
-
-    <section class="sample-page">
-      <div class="container" data-aos="fade-up">
-
-        <p>
-          You can duplicate this sample page and create any number of inner pages you like!
-        </p>
-
-      </div>
-    </section>
-
-  </main><!-- End #main --> {% endcomment %}
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
 
     <div class="container">
-      <div class="row gy-4">
-        <div class="col-lg-5 col-md-12 footer-info">
-          <a href="#" class="logo d-flex align-items-center">
-            <span>EDUMATE</span>
-          </a>
-          <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
-          <div class="social-links d-flex mt-4">
-            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-          </div>
-        </div>
-
-        <div class="col-lg-2 col-6 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About us</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">Terms of service</a></li>
-            <li><a href="#">Privacy policy</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-6 footer-links">
-          <h4>Our Services</h4>
-          <ul>
-            <li><a href="#">Web Design</a></li>
-            <li><a href="#">Web Development</a></li>
-            <li><a href="#">Product Management</a></li>
-            <li><a href="#">Marketing</a></li>
-            <li><a href="#">Graphic Design</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
-          <h4>Contact Us</h4>
-          <p>
-            KJ Somaiya College <br>
-            Mumbai <br>
-            India <br><br>
-            <strong>Phone:</strong> 02223864095<br>
-            <strong>Email:</strong> kjsce@gmail.com<br>
-          </p>
-
-        </div>
+     
 
       </div>
     </div>
