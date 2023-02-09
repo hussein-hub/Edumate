@@ -14,12 +14,31 @@
         {% endfor %}
 
     {% endif %}
+    <div class="container">
+    
+    
     <form method="post">
-        {% csrf_token %}
-        Please enter code: <input type="text" name="code">
-        <button class="btn btn-outline-success" type="submit">Mark</button>
+    {% csrf_token %}
+    <div class="form-group row">
+        <div class="form-group row">
+        {% comment %} <label for="code" class="col-sm-2 col-form-label">Enter code</label> {% endcomment %}
+        <div class="col-sm-8">
+        <input type="text" class="form-control mx-1" id="code" name="code" placeholder="Enter Attendance Code">
+        </div>
+        
+        <div class="col-sm-4">
+        <button class="btn btn-outline-success mx-1 my-1" type="submit">Mark Attendance</button>
+        </div>
+        
+    </div>
+    </div>
+
+        
+    
     </form>
+    <br>
     <a href="{% url 'classroom1' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to home page</a>
+</div>
 </div>
 
 {% endblock %}
