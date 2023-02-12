@@ -1,0 +1,14 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block content %}
+
+{% for assignment in assignments %}
+    <div style="display: flex; flex-direction: row; flex-wrap: nowrap;">
+        <a href="{{ assignment.0.assign_file.url }}" target=_blank>Assignment Id : {{assignment.0.assign_id}}</a>
+        <div style="margin-left: 10px"> Student Name : {{assignment.1.0.name}}</div>
+    </div>
+{% endfor %}
+
+<a class="btn btn-outline-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=pk3 %}">Back</a>
+{% endblock content %}

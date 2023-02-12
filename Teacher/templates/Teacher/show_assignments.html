@@ -122,6 +122,9 @@
           {% endfor %}
         </table>
         {% endif %}
-        <a href="{% url 'classroom' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to classroom</a>
+        <div>
+          <a href="{% url 'classroom' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to classroom</a>
+          <a href="{% url 'assignmentSimilarityCheck' pk=pk pk2=pk2 pk3=pk3 %}" class="btn btn-outline-success">Check Similarity</a>
+        </div>
     </div>
 {% endblock content %}

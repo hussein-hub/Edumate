@@ -315,3 +315,13 @@ def quiz_info(request, pk, pk2, pk3):
     #     s = Students(id=i.student)
     #     print(s)
     return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': quiz_responses})
+
+
+def assignmentSimilarityCheck(request, pk, pk2, pk3):
+    assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)
+    data = []
+    for i in assignments:
+        student = Students.objects.filter(stud_id=i.stud_id)
+        data.append([i, student])
+    print(data)
+    return render(request, 'Teacher/assignmentSimilarityCheck.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignments': data})
