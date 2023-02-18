@@ -42,6 +42,7 @@ def login_student(request):
             messages.error(request, 'Invalid credentials')
             return redirect('login_student')
         if(student!=None and student.password==request.POST.get('password')):
+            request.session['sname']=student.name
             if(student.is_change==0):
                 return redirect('change_pass', pk=student.stud_id, pk2="S")    
             return redirect(stud_views.stud_home, pk=student.stud_id)
@@ -56,11 +57,16 @@ def login_teacher(request):
         try:
             teacher=Teachers.objects.get(email=request.POST.get('email'))
         except:
+            messages.error(request, 'Invalid credentials')
             return render(request, 'Edumate_app/login_teacher.html')
         if(teacher!=None and teacher.password==request.POST.get('password')):
+            request.session['tname']=teacher.name
             if(teacher.is_change==0):
                 return redirect('change_pass', pk=teacher.teach_id, pk2="T")    
             return redirect(teach_views.teach_home, pk=teacher.teach_id)
+        else:
+            messages.error(request, 'Invalid credentials')
+            return redirect('login_teacher')
     return render(request, 'Edumate_app/login_teacher.html')
 
 
@@ -84,3 +90,4 @@ def change_pass(request, pk, pk2):
             return redirect(stud_views.stud_home, pk=pk)
         return redirect(teach_views.teach_home, pk=pk)
     return render(request, 'Edumate_app/change_password.html', {'pk': pk, 'pk2': pk2})
+

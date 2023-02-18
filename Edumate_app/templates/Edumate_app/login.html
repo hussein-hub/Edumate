@@ -49,14 +49,14 @@
                     </button>
                   </div>
                   <div class="form__group">
-                    <p class="form__text">Forgot your password? Reset it from 
+                    {% comment %} <p class="form__text">Forgot your password? Reset it from 
                       <a href="#" class="form__link"> here</a>.
                     </p>
-                    {% comment %} <p class="form__text">Don't have an account yet? Sign up from 
+                     <p class="form__text">Don't have an account yet? Sign up from 
                       <a href={% url 'register' %} class="form__link"> here</a>.
                     </p> {% endcomment %}
                     <p class="form__text">
-                        <a href={% url 'home' %}>Back to home page</a>
+                        <a class="form__link" href={% url 'home' %}>Back to home page</a>
                     </p>
                   </div>
                 </form>

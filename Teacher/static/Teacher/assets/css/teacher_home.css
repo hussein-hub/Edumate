@@ -5,3 +5,23 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+}
+
+.btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+}
+
+.card-header {
+    /* background-color: #008374 !important;
+    color: white !important; */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    font-size: 1.5rem;
+}

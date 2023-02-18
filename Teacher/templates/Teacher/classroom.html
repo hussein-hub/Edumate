@@ -1,6 +1,70 @@
 {% extends './base_teacher.html' %}
 {% load static %}
 
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li class="dropdown">
+            <a href="#">
+              <span>Options</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                <a type="button" class="btn " data-toggle="modal" data-target="#ModalCenter">
+                  Create Assignment
+                </a>
+              </li>
+              <li>
+                <a class="btn " href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
+              </li>
+              <li>
+                <a class="btn " href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
+              </li>
+              <li>
+                <a class="btn " href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
+              </li>
+              <li>
+                <a class="btn " href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
+              </li>
+              <li>
+                <a class="btn " href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
+
+
 
 
 
@@ -68,32 +132,71 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+.btn-success, .btn-success:active, .btn-success:visited {
+  background-color: #008374 !important;
+}
+
+.btn-success:hover {
+  border-color: #008374 !important;
+  background-color: white !important;
+  color: #008374 !important;
+}
+
+
 </style>
 <br><br>
 <div class="container ">
   <div class="container" >
-      <form method="post"class="form-group row">
-        {% csrf_token %}
-        <div class="col-sm-3">
-        <input class="form-control" type="text" placeholder="Enter assignment name" name="name">
+
+
+      <div>
+        {% comment %} <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalCenter">
+          Create Assignment
+        </button> {% endcomment %}
       </div>
-        <div class="col-sm-5">
-        <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+
+      <!--  model body -->
+      <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 70vw;">
+          <div class="modal-content" style="height: 30vh;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Create a New Assignment</h5>
+              <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form method="post"class="form-group row">
+                  {% csrf_token %}
+                  <div class="col-sm-3">
+                  <input class="form-control" type="text" placeholder="Enter assignment name" name="name">
+                </div>
+                  <div class="col-sm-5">
+                  <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+                </div>
+                  <div class="col-sm-2">
+                  <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks">
+                </div>
+                <div class="col-sm-2" style="display: flex; align-items: center">
+                  Peer grading
+                  <label class="switch">
+                    <input type="checkbox" name="peer">
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+                  <div class="col-sm-2">
+                  <button class="btn btn-outline-success" type="submit">create</button>
+                </div>
+                </form>
+            </div>
+            {% comment %} <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> {% endcomment %}
+          </div>
+        </div>
       </div>
-        <div class="col-sm-2">
-        <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks">
-      </div>
-      <div class="col-sm-2" style="display: flex; align-items: center">
-        Peer grading
-        <label class="switch">
-          <input type="checkbox" name="peer">
-          <span class="slider round"></span>
-        </label>
-      </div>
-        <div class="col-sm-2">
-        <button class="btn btn-outline-success" type="submit">create</button>
-      </div>
-      </form>
+
 
       <br>
 
@@ -101,23 +204,52 @@ input:checked + .slider:before {
       {% for i in assign %}
           
 
-        <div class="card mr-2 mb-2" style="width: 23%;">
+        {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
           <div class="card-body">
             <h5 class="card-title">Name:  {{ i.assignment_name }}</h5>
             <h6 class="card-subtitle mb-2 text-muted"> Max marks: {{ i.max_marks }} </h6>
             <p class="card-text">Description : {{ i.assignment_description }}</p>
             <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link">Go to submitted assignments</a>
-            
+          </div>
+        </div> {% endcomment %}
+
+
+        <div class="card my-2" style="width: 30%; margin-left: 3%; padding: 0;">
+          <div class="card-header">
+            <div>
+              {{ i.assignment_name }}
+            </div>
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0">
+              <p><small>Max marks: {{ i.max_marks }}</small></p>
+              <p><small>Description : {{ i.assignment_description }}</small></p>
+              <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>
+            </blockquote>
           </div>
         </div>
+
+
       {% endfor %}
     </div>
     <br>
-      <a class="btn btn-outline-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
+      {% comment %} <a class="btn btn-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
       <a class="btn btn-success" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
       <a class="btn btn-success" href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
       <a class="btn btn-success" href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
-      <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a>
+      <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a> {% endcomment %}
     </div>
     </div>
 {% endblock content %}
+{% block script %}
+<script>
+
+  $(document).ready(function() {
+    $('.nav-link-collapse').on('click', function() {
+      $('.nav-link-collapse').not(this).removeClass('nav-link-show');
+      $(this).toggleClass('nav-link-show');
+    });
+  });
+  
+</script>
+{% endblock %}

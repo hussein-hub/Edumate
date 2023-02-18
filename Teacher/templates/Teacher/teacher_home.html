@@ -10,30 +10,82 @@
         <div style="margin-top: 10vh">
             <form class="adjust" method="post">
                 {% csrf_token %}
-                <input style="width: 70%" class="form-control" type="text" placeholder="Enter class Name" name="name">
-                <button class="btn btn-outline-success" type="submit">create</button>
+                <input style="width: 100%; margin-right: 15px;" class="form-control" type="text" placeholder="Enter class Name" name="name" required>
+                <button class="btn btn-success" type="submit">create</button>
             </form>
         </div>
         <div class="row row-content my-4">
-          {% for i in class_data %}
-          <div class="col-6">
+          {% for i, j in class_data %}
+          <div style="margin-bottom: 20px;" class="col-4">
             <div class="card">
               <div class="card-header">
-                {{ i.class_code }}
+                <div>
+                {{ i.class_name }}
+                </div>
+              <div>
+                <button type="button" style="border-color:red;" class="btn btn-outline-danger" data-toggle="modal" data-target="#ModalCenter{{forloop.counter}}">
+                  <i class="fa fa-trash"></i>
+                </button>
               </div>
+
+              <!--  model body -->
+              <div class="modal fade" id="ModalCenter{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Classroom ?</h5>
+                      <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <button class="btn btn-danger"  onclick="deleteclass('{{i.class_code}}')" >
+                        Delete
+                      </button>
+                    </div>
+                    {% comment %} <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> {% endcomment %}
+                  </div>
+                </div>
+              </div>
+
+            </div><!--  card header end -->
+
               <div class="card-body">
                 <blockquote class="blockquote mb-0">
-                  <p>{{ i.class_name }}</p>
-                  <a class="blockquote-footer" href="{% url 'classroom' pk=teacher.teach_id pk2=i.class_code %}">Goto classroom</a>
+                  <p><small>Class Code: </small>{{ i.class_code }}</p>
+                  <p><small>Number of Students: </small>{{ j }}</p>
+                  <a class="btn btn-success" style="background-color: #008374; color: white;" href="{% url 'classroom' pk=teacher.teach_id pk2=i.class_code %}">Go to classroom</a>
                 </blockquote>
               </div>
             </div>
           </div>
-              {% comment %} <div>Class Code : {{ i.class_code }}</div>
-              <div>Class Name : {{ i.class_name }}</div>
-              <a href="{% url 'classroom' pk=teacher.teach_id pk2=i.class_code %}">Goto classroom</a> {% endcomment %}
               <br>
           {% endfor %}
       </div>
     </div>
 {% endblock content %}
+
+{% block script%}
+<script>
+  function deleteclass(id)
+{
+  $.ajax(
+      {
+          type:"POST",
+          url: "{% url 'deleteclass' pk=pk %}",
+          data:{
+            class_code: id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function( data ) 
+          {
+              location.reload();
+          }
+      })
+
+}
+</script>
+{% endblock script %}

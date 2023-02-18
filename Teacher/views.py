@@ -31,20 +31,32 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 from huggingface_hub import from_pretrained_keras
 
+from django.http import JsonResponse
+
 # Create your views here.
 similarity_sentence_transformer_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 def teach_home(request, pk):
     teacher_c = Teachers.objects.get(teach_id=pk)
     class_data = ClassTeachers.objects.filter(teach_id=pk)
+    studs=[]
+    for i in class_data:
+        studs.append(len(ClassStudents.objects.filter(class_code=i.class_code)))
+    
     if(request.method=="POST"):
         class_room=ClassTeachers()
         class_room.teach_id=pk
         class_room.class_name=request.POST.get('name')
         class_room.class_code=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 6)))
         class_room.save() 
-        return render(request, 'Teacher/teacher_home.html', {'class_data': class_data, 'teacher': teacher_c})
-    return render(request, 'Teacher/teacher_home.html', {'class_data': class_data, 'teacher': teacher_c})
+        return render(request, 'Teacher/teacher_home.html', {'class_data': zip(class_data, studs), 'teacher': teacher_c, 'pk': pk})
+    
+    return render(request, 'Teacher/teacher_home.html', {'class_data': zip(class_data, studs), 'teacher': teacher_c, 'pk': pk})
+
+def deleteclass(request, pk):
+    if request.method == "POST":
+        ClassTeachers.objects.get(class_code=request.POST['class_code']).delete()
+        return JsonResponse({'info': 'succ'})
 
 def classroom(request, pk, pk2):
     context={'pk': pk, 'pk2': pk}
@@ -152,7 +164,6 @@ class schedule(generic.ListView):
     template_name = 'Teacher/schedule.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         d = get_date(self.request.GET.get('month', None))
         pk1 = self.kwargs['pk']
         classcode = self.kwargs['pk2']
@@ -163,6 +174,7 @@ class schedule(generic.ListView):
         context['next_month'] = next_month(d)
         context['pk2'] = classcode
         context['pk1'] = pk1
+        # context['pk'] = pk1
         return context
 
 
@@ -200,7 +212,7 @@ def event(request,pk, pk2, id=None):
         eform.class_code = pk2
         eform.save()
         return HttpResponseRedirect(reverse('schedule', args=(instance.teach_id,instance.class_code)))
-    return render(request, 'Teacher/event.html', {'form': form,'pk1':pk,'pk2':pk2})
+    return render(request, 'Teacher/event.html', {'form': form,'pk1':pk,'pk2':pk2, 'pk': pk})
 
 
 def create_quiz(request, pk, pk2):
@@ -417,4 +429,7 @@ def predict_similarity(embeddings,students):
             similarities.append({'stud_1':students[j],'stud_2':students[i],'similarity_score':score})
     return similarities
     
+def logout(request, pk):
+    request.session.flush()
+    return redirect('home')
 
