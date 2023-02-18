@@ -1,10 +1,79 @@
 {% extends './base_student.html' %}
 {% load static %}
 
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
 
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a href="{% url 'student_home' pk=pk %}" class="btn">Back to home page</a>
+          </li>
+          <li class="dropdown">
+            <a href="#">
+              <span>More</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                <a class="btn" href="{% url 'schedule_student' pk=pk pk2=pk2 %}">Schedule</a>
+              </li>
+              <li>
+                <a class="btn" href="{% url 'quiz_stud' pk=pk pk2=pk2 %}">Quizes</a>
+              </li>
+              <li>
+                <a class="btn" href="{% url 'submitatt' pk=pk pk2=pk2 %}">Mark Attendance</a>
+              </li>
+              <li>
+                <a class="btn" href="{% url 'announcement_stud' pk=pk pk2=pk2 %}">Announcements</a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
 
 
 {% block content %}
+
+<style>
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
+  
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
+
+</style>
+
 <br><br><br><br>
 <div class="container">
   {% if messages %}
@@ -17,7 +86,7 @@
 
     {% endif %}
   <h1>Assignments</h1>
-<div class="row">
+  <div class="row">
         {% for i in assign %}
         {% comment %} <div>Assignment name : {{ i.assignment_name }}</div>
         <div>Assignment description : {{ i.assignment_description }}</div>
@@ -25,7 +94,7 @@
         <a href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.assignment_id %}">Goto assignment</a>
         <br> {% endcomment %}
 
-        <div class="card mr-2 mb-2" style="width: 23%;">
+        {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
           <div class="card-body">
             <h5 class="card-title">Name:  {{ i.assignment_name }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">Description: {{ i.assignment_description }} </h6>
@@ -33,17 +102,34 @@
             <a href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link">Go to Assignment</a>
             
           </div>
+        </div> {% endcomment %}
+
+        <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+          <div class="card-header">
+            <div style="font-weight: 600; font-size: 18px">
+              {{ i.assignment_name }}
+            </div>
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0">
+              <p><small>Description : {{ i.assignment_description }}</small></p>
+              <p><small>Max marks: {{ i.max_marks }}</small></p>
+              <a class="btn btn-success" href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link"><small>Go to Assignments</small></a>
+            </blockquote>
+          </div>
         </div>
+
+
       {% endfor %}
 
 
 </div>
 <br>
-<a class="btn btn-outline-success" href="{% url 'announcement_stud' pk=pk pk2=pk2 %}">Announcements</a>
+{% comment %} <a class="btn btn-outline-success" href="{% url 'announcement_stud' pk=pk pk2=pk2 %}">Announcements</a>
 <a class="btn btn-outline-success" href="{% url 'schedule_student' pk=pk pk2=pk2 %}">Schedule</a>
 <a class="btn btn-outline-success" href="{% url 'quiz_stud' pk=pk pk2=pk2 %}">Quizes</a>
 <a class="btn btn-outline-success" href="{% url 'submitatt' pk=pk pk2=pk2 %}">Mark Attendance</a>
-<a href="{% url 'student_home' pk=pk %}" class="btn btn-outline-success">Back to home page</a>
+<a href="{% url 'student_home' pk=pk %}" class="btn btn-outline-success">Back to home page</a> {% endcomment %}
 
 </div>
 {% endblock content %}

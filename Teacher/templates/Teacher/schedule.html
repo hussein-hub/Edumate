@@ -1,6 +1,48 @@
 {% extends './base_teacher.html' %}
 {% load static %}
 
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn" href="{% url 'classroom' pk=pk1 pk2=pk2%}">Back</a>
+          </li>
+          <li>
+            <a class="btn" href="{% url 'event_new' pk2=pk2 pk=pk1 %}"> New Event </a>
+          </li>
+          
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
 {% block styles %}
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
@@ -64,6 +106,20 @@
       .clearfix {
         margin: 15px;
       } 
+      .btn-success, .btn-success:active, .btn-success:visited {
+        background-color: #008374 !important;
+      }
+      
+      .btn-success:hover {
+        border-color: #008374 !important;
+        background-color: white !important;
+        color: #008374 !important;
+      }
+
+      .table {
+        width: 75%;
+        max-width: 75%;
+      }
       
 </style>
 
@@ -74,20 +130,32 @@
 
 
 {% block content %}
-<div class="clearfix">
+{% comment %} <div class="clearfix">
     <a class="btn btn-success left" href="{% url 'classroom' pk=pk1 pk2=pk2%}">Back</a>
     <a class="btn btn-success left" href="{% url 'event_new' pk2=pk2 pk=pk1 %}"> New Event </a>
-</div>
+</div> {% endcomment %}
 <hr style="opacity: 1;">
 <div class="clearfix">
-	<a class="btn btn-success left" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
-	<a class="btn btn-success right" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
+	<a style="color: white;" class="btn btn-success left" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
+	<a style="color: white;" class="btn btn-success right" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
     
 </div>
 
-{{ calendar }}   
+<div style="margin-top: 10vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+  {{ calendar }}   
+
+</div>  
 
 {% endblock content %}
+
+{% block script %}
+<script>
+  var table = document.getElementsByClassName("calendar")[0];
+  table.setAttribute("class", "table table-bordered");
+
+</script>
+{% endblock script %}
+
 
 
 
