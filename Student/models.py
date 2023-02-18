@@ -20,6 +20,9 @@ class SubmittedAssignments(models.Model):
     marks = models.FloatField(default=None, null=True)
     class Meta:
         db_table = "SubAssigns"
+    def __str__(self):
+         a = Students.objects.get(stud_id=self.stud_id)
+         return str(a.name)
     
 
 class PeerStudents(models.Model):

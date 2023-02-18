@@ -28,49 +28,86 @@
     background-color: #04AA6D;
     color: white;
   }
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
   
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
 
 </style>
 
 <header id="header" class="header d-flex align-items-center">
 
-    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-      <a href="#" class="logo d-flex align-items-center">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
-        <h1>EDUMATE<span>.</span></h1>
-      </a>
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="{% url 'login_student' %}">Student Login</a></li>
-          <li><a href="{% url 'login_teacher' %}">Teacher Login</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav><!-- .navbar -->
-  
-      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-  
-    </div>
-  </header>
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="#" class="logo d-flex align-items-center">
+      <!-- Uncomment the line below if you also wish to use an image logo -->
+      <!-- <img src="assets/img/logo.png" alt=""> -->
+      <h1>EDUMATE<span>.</span></h1>
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li>
+          <a href="{% url 'classroom' pk=pk pk2=pk2 %}" class="btn">Back to classroom</a>
+        </li>
+        <li>
+          <a href="{% url 'assignmentSimilarityCheck' pk=pk pk2=pk2 pk3=pk3 %}" class="btn">Check Similarity</a>
+        </li>
+        <li class="dropdown">
+          <a href="#">
+            <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+          </a>
+          <ul>
+            <li>
+              {% if pk %}
+              <a href="{% url 'logout' pk=pk %}">logout</a>
+              {% else %}
+              <a href="{% url 'logout' pk=pk1 %}">logout</a>
+              {% endif %}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav><!-- .navbar -->
+
+    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+  </div>
+</header>
 {% endblock navbar %}
 
 {% block content %}
 <div class="row">
+  <h1 style="margin-top: 20px">Assignment</h1>
   {% for i in submit %}
 
-  <div class="card mr-2 mb-2" style="width: 23%;">
+  {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
     <div class="card-body">
       <h5 class="card-title">id:  {{ i.stud_id }}</h5>
       <h6 class="card-subtitle mb-2 text-muted">Description: {{ i.assign_desc }} </h6>
       <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
       <p>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" >{{ i.stud_id }}</a></p> 
       <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" class="card-link btn btn-outline-success">Go to Assignment</a>
+    </div>
+  </div> {% endcomment %}
+
+  <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+    <div class="card-header">
+      <div style="font-weight: 600; font-size: 18px">
+        id:  {{ i.stud_id }}
+      </div>
+    </div>
+    <div class="card-body">
+      <blockquote class="blockquote mb-0">
+        <p><small>Description: {{ i.assign_desc }}</small></p>
+        <p><small>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></small></p>
+        <p><small>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" >{{ i.stud_id }}</a></small></p>
+        <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" class="card-link btn btn-success">Go to Assignment</a>
+      </blockquote>
     </div>
   </div>
 {% endfor %}
@@ -124,8 +161,8 @@
         </table>
         {% endif %}
         <div>
-          <a href="{% url 'classroom' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to classroom</a>
-          <a href="{% url 'assignmentSimilarityCheck' pk=pk pk2=pk2 pk3=pk3 %}" class="btn btn-outline-success">Check Similarity</a>
+          {% comment %} <a href="{% url 'classroom' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to classroom</a>
+          <a href="{% url 'assignmentSimilarityCheck' pk=pk pk2=pk2 pk3=pk3 %}" class="btn btn-outline-success">Check Similarity</a> {% endcomment %}
         </div>
     </div>
 {% endblock content %}

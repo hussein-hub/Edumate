@@ -4,8 +4,13 @@ from .models import *
 admin.site.register(ClassTeachers)
 admin.site.register(Assignments)
 admin.site.register(PeerGrade)
-admin.site.register(Plagarism)
 admin.site.register(Quiz)
+
+
+@admin.register(Plagarism)
+class PlagarismAdmin(admin.ModelAdmin):
+	list_display = ("assignment_id", "stud_assignment1", "stud_assignment2", "percentage_similarity")
+
 
 
 @admin.register(Announcements)
