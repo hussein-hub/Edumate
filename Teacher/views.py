@@ -144,7 +144,7 @@ def announcement(request, pk, pk2):
 def delete(request, pk, pk2, id):
     delAnnouncement = Announcements.objects.get(id=id)
     delAnnouncement.delete()
-    return redirect('announcementteach', pk, pk2)
+    return redirect('announcementteach', pk=pk, pk2=pk2)
 
 
 class schedule(generic.ListView):
