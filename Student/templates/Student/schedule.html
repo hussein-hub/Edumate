@@ -16,19 +16,7 @@
           <li>
             <a class="btn" href="{% url 'classroom1' pk=pk1 pk2=pk2%}">Back</a>
           </li>
-          <li class="dropdown">
-            <a href="#">
-              <span>More</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
-            </a>
-            <ul>
-              <li>
-                <a class="btn" href="{% url 'schedule_student' pk2=pk2 pk=pk1 %}?{{ prev_month }}">Previous Month</a>
-              </li>
-              <li>
-                <a class="btn" href="{% url 'schedule_student' pk2=pk2 pk=pk1 %}?{{ next_month }}">Next Month</a>
-              </li>
-            </ul>
-          </li>
+          
           <li class="dropdown">
             <a href="#">
               <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
@@ -130,8 +118,8 @@
       }
 
       .table {
-        width: 60%;
-        max-width: 60%;
+        width: 75%;
+        max-width: 75%;
       }
 
     
@@ -145,20 +133,19 @@
 
 
 {% block content %}
-{% comment %} <div class="clearfix">
-    <a class="btn btn-success left" href="{% url 'classroom1' pk=pk1 pk2=pk2%}">Back</a>
-</div> {% endcomment %}
-{% comment %} <hr style="opacity: 1;">
+<br><br>
+<div class="container">
 <div class="clearfix">
-	<a class="btn btn-success left" href="{% url 'schedule_student' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
-	<a class="btn btn-success right" href="{% url 'schedule_student' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
+	<a style="color: white;" class="btn btn-success left" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
+	<a style="color: white;" class="btn btn-success right" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
     
-</div> {% endcomment %}
-<div style="margin-top: 25vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-  {{ calendar }}   
-
 </div>
 
+<div style="margin-top: 10vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+  {{ calendar }}   
+
+</div>  
+</div>
 {% endblock content %}
 
 

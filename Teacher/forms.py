@@ -1,4 +1,4 @@
-from django.forms import ModelForm, DateInput
+from django.forms import ModelForm, DateInput, TextInput, Textarea
 from .models import Schedule
 
 class EventForm(ModelForm):
@@ -6,7 +6,8 @@ class EventForm(ModelForm):
     model = Schedule
     # datetime-local is a HTML5 input type, format to make date time show on fields
     widgets = {
-      'event_date': DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
+      'event_date': DateInput(attrs={'type': 'datetime-local','class':'form-control'}, format='%Y-%m-%dT%H:%M'),
+      'event_data': Textarea(attrs={'type': 'text','class':'form-control','placeholder':'Event Description','rows':"10"}),
     }
     fields = ['event_data','event_date']
 
