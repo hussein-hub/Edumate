@@ -77,6 +77,9 @@ def classroom(request, pk, pk2):
 
 def assignmentsub(request, pk, pk2, pk3):
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
+    stud_names=[]
+    # for i in submitted:
+    #     stud_names.append(Students.object.get(stud_id=i.stud_id).name)
     peerassign=PeerStudents.objects.filter(assign_id=pk3)
     assign_grade=Assignments.objects.filter(assignment_id =pk3)
     assign_flag=assign_grade[0].peer_grade
