@@ -6,7 +6,7 @@
 {% endblock styles %}
 
 {% block navbar %}
-<header id="header" class="header d-flex align-items-center">
+  <header id="header" class="header d-flex align-items-center">
 
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
       <a href="#" class="logo d-flex align-items-center">
@@ -16,23 +16,35 @@
       </a>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="{% url 'login_student' %}">Student Login</a></li>
-          <li><a href="{% url 'login_teacher' %}">Teacher Login</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li>
+            <a class="btn" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back</a>
+          </li>
+          
+          
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav><!-- .navbar -->
-  
+
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-  
+
+
     </div>
   </header>
-{% endblock navbar %}
+  {% endblock navbar %}
 
 {% block content %}
     <div class="container">
@@ -47,14 +59,31 @@
       {% endfor %} {% endcomment %}
       <div class="row row-content">
         {% for i in announcements %}
+        
         <div style="margin-top: 1%" class="col-4">
+          
             <div class="card">
                 <div class="card-header">
                     {{ i.date }}
                 </div>
+                <div class="modal fade" id="exampleModalAnnounce{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{i.date}}</h5>
+                        <button class="btn btn-secondary" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p id="datain">{{i.announce_data}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="card-body">
                     <blockquote class="blockquote mb-0">
-                    <p>{{ i.announce_data }}</p>
+                    <p style="text-overflow: ellipsis; word-wrap: nowrap; overflow: hidden">{{ i.announce_data|slice:":50" }} <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModalAnnounce{{forloop.counter}}">..Read more</a> </p>
                     {% comment %} <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer> {% endcomment %}
                     </blockquote>
                 </div>
@@ -63,7 +92,6 @@
         {% endfor %}
     </div>
       <br>
-      <a class="btn btn-primary" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back</a>
 
       <br><br><br>
     </div>

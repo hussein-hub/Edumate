@@ -157,7 +157,7 @@ def announcement(request, pk, pk2):
     return render(request, 'Teacher/announcement_teach.html', {'pk': pk, 'pk2': pk2, 'announcement_data': announcement_data})
 
 
-def delete(request, pk, pk2, id):
+def ann_delete(request, pk, pk2, id):
     delAnnouncement = Announcements.objects.get(id=id)
     delAnnouncement.delete()
     return redirect('announcementteach', pk=pk, pk2=pk2)
