@@ -138,6 +138,7 @@ def assignmentgrade(request, pk, pk2, pk3,pk4):
         if(float(request.POST.get('marks')) < float(assignment.max_marks)):
             submitted.marks=request.POST.get('marks')
             submitted.save()
+            messages.error(request, "Marks updated successfully")
             return redirect('grade', pk=pk, pk2=pk2, pk3=pk3, pk4=pk4)
         else:
             messages.error(request, "Marks cant be greater than maximum marks")
