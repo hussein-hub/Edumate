@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest.util import _MAX_LENGTH
 from django.db import models
 from django.urls import reverse
+from Student.models import *
 
 # Create your models here.
 
@@ -113,3 +114,12 @@ class AttStud(models.Model):
     att_time = models.CharField(max_length=100)
     class Meta:
         db_table = "AttStud"
+
+class Plagarism(models.Model):
+    assignment_id = models.ForeignKey('Assignments', on_delete=models.CASCADE, default=0)
+    stud_assignment1 = models.ForeignKey('Student.SubmittedAssignments', on_delete=models.CASCADE, default=0, related_name='assignment1')
+    stud_assignment2 = models.ForeignKey('Student.SubmittedAssignments', on_delete=models.CASCADE, default=0, related_name="assignment2")
+    percentage_similarity = models.FloatField(default=0)
+    class Meta:
+        db_table = "similarity"
+    

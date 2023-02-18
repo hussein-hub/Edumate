@@ -73,7 +73,7 @@ li span {
 {% comment %} <a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a> {% endcomment %}
 <button class="btn btn-success" onclick="openFullscreen();">Open test in Fullscreen Mode</button>
 
-<div class="container" id="mytest">
+<div class="container" id="mytest" hidden>
   <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; font-size: 12px; margin-top: 2.5vh;">
     <li style="display: none;"><span id="days"></span>days</li>
     <li><span class="timer" id="hours"></span>Hours</li>
@@ -84,6 +84,7 @@ li span {
     <form class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
       {% csrf_token %}
       <h1 style="text-align: center;">{{course.course_name}}</h1>
+      <input type="text" hidden id="cheat" name="cheat" value="not_cheated">
       {% for q in quiz%}
       <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; margin-bottom: 1.5vh; margin-top: 0.5vh;">
         <div style="display:inline-block; font-size: 22px; " class="text">{{ forloop.counter }}. {{q.0.0.question}}</div>
@@ -127,11 +128,10 @@ li span {
 {% block script %} 
 <script>
     // The data/time we want to countdown to
-    currenttime = new Date().getTime();
-    var countDownDate = new Date(currenttime + {{q_time}} * 60 * 1000);
-
-    // Run myfunc every second
-    var myfunc = setInterval(function() {
+    var countDownDate, currenttime,flag;
+    flag = 0;
+    
+    function myfunc(e) {
 
     var now = new Date().getTime();
     var timeleft = countDownDate - now;  
@@ -158,7 +158,22 @@ li span {
         {% comment %} await new Promise(r => setTimeout(r, 1000)); {% endcomment %}
         document.getElementById("submit_button").click();
     }
-    }, 1000);
+
+    document.addEventListener('fullscreenchange', exitHandler);
+    document.addEventListener('webkitfullscreenchange', exitHandler);
+    document.addEventListener('mozfullscreenchange', exitHandler);
+    document.addEventListener('MSFullscreenChange', exitHandler);
+
+    function exitHandler() {
+        if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+          //alert("You have exited the fullscreen mode, please do not do it again");
+          flag=1
+          $("#mytest").attr('hidden', true);
+          return
+        }
+}
+
+    };
 
 
     count = 0;
@@ -176,12 +191,13 @@ li span {
             document.addEventListener(visibilityChange, function() {
                 if(document_hidden != document[hidden]) {
                 if(document[hidden]) {
-                    count+=1;
-                     console.log("Cheating Detected")
-                    if(count == 2){
-                        console.log("Cheating Detected second time")
-                        
-                    }
+                  count+=1;
+                  console.log("Cheating Detected")
+                  alert("Cheating Detected first time, if you do it again test will be automatically submitted");
+                 if(count == 2){
+                     document.getElementById("cheat").value = "cheated";
+                     document.getElementById("submit_button").click();
+                 }
                 }
                 document_hidden = document[hidden];
                 }
@@ -189,7 +205,14 @@ li span {
             });
 
             var elem = document.getElementById("mytest");
-            function openFullscreen() {
+            function openFullscreen(e) {
+              if (flag==0){
+                currenttime = new Date().getTime();
+                countDownDate = new Date(currenttime + {{q_time}} * 60 * 1000);
+                setInterval(myfunc, 1000);
+              }
+              //setInterval(myfunc, 1000);
+              $("#mytest").attr('hidden', false);
               if (elem.requestFullscreen) {
                 elem.requestFullscreen();
               } else if (elem.webkitRequestFullscreen) { /* Safari */

@@ -4,6 +4,7 @@ from .models import *
 admin.site.register(ClassTeachers)
 admin.site.register(Assignments)
 admin.site.register(PeerGrade)
+admin.site.register(Plagarism)
 admin.site.register(Quiz)
 
 

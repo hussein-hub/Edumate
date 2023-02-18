@@ -13,6 +13,8 @@ from django.utils.safestring import mark_safe
 from django.views import generic
 from django.shortcuts import get_object_or_404, render
 from django.contrib import messages
+from django.conf import settings
+from django.core.mail import send_mail
 # Create your views here.
 
 def stud_home(request, pk):
@@ -167,6 +169,14 @@ def ansquiz(request,pk,pk2,pk3):
     total_questions = len(ops)
     stud_responses =[]
     if request.method=='POST':
+        cheat_check = request.POST.get('cheat')
+        if str(cheat_check) == 'cheated':
+            teacher_email = Teachers.objects.get(teach_id = quiz.teach_id).email
+            student_name = Students.objects.get(stud_id=pk).name
+            subject = 'Cheating detecting in quiz'
+            message = 'Cheating detected in quiz ' + str(quiz.quiz_name) + ' of class ' + str(quiz.class_code) + ' by student ' + str(student_name)
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [teacher_email], fail_silently = False)
+
         for i in range(total_questions):
             op = request.POST.getlist('op_'+str(i+1))
             stud_responses.append(op)

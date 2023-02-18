@@ -20,7 +20,19 @@ from .utils import Calendar
 
 from django.contrib import messages
 
+from PyPDF2 import PdfReader
+import os
+from sklearn.metrics.pairwise import cosine_similarity        # function to measure similarity between two vectors
+import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from sentence_transformers import SentenceTransformer
+import numpy as np
+from huggingface_hub import from_pretrained_keras
+
 # Create your views here.
+similarity_sentence_transformer_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 def teach_home(request, pk):
     teacher_c = Teachers.objects.get(teach_id=pk)
@@ -318,10 +330,91 @@ def quiz_info(request, pk, pk2, pk3):
 
 
 def assignmentSimilarityCheck(request, pk, pk2, pk3):
+    global similarity_sentence_transformer_model
     assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)
     data = []
     for i in assignments:
         student = Students.objects.filter(stud_id=i.stud_id)
         data.append([i, student])
-    print(data)
+
+    all_assignments = SubmittedAssignments.objects.filter(assignment_id = pk3)
+    files = []
+    students = []
+    for i in all_assignments:
+        files.append(i.assign_file.url)
+        students.append(i.stud_id)
+    print(files)
+    files_text = getTextFromPDF(files)
+    embeddings = similarity_sentence_transformer_model.encode(files_text)
+    similarities = predict_similarity(embeddings,students)
+    # print(similarities)
+    for j in similarities:
+        # print(j)
+        plag = Plagarism()
+        plag.assignment_id = Assignments.objects.get(assignment_id = pk3)
+        plag.percentage_similarity = j['similarity_score']
+        plag.stud_assignment1 = SubmittedAssignments.objects.get(stud_id=j['stud_1'], assignment_id=pk3)
+        plag.stud_assignment2 = SubmittedAssignments.objects.get(stud_id=j['stud_2'], assignment_id=pk3)
+        plag.save()
+
+    # print(data)
     return render(request, 'Teacher/assignmentSimilarityCheck.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignments': data})
+
+def preprocess_text(text):
+    # Remove HTML tags
+    text = re.sub(r'<[^>]+>', '', text)
+    
+    # Remove non-alphabetic characters and other special characters
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    
+    # Convert the text to lowercase
+    text = text.lower()
+    
+    # Remove extra whitespaces
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Tokenize the text
+    tokens = word_tokenize(text)
+    
+    # Remove stop words
+    stop_words = set(stopwords.words('english'))
+    tokens = [token for token in tokens if token not in stop_words]
+    
+    # Lemmatize the tokens
+    lemmatizer = WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(token) for token in tokens]
+    
+    # Join the tokens back into a string
+    preprocessed_text = ' '.join(tokens)
+    
+    return preprocessed_text
+
+def getTextFromPDF(files):
+    data = []
+    for f in files:
+        # print(f)
+        reader = PdfReader("." + f)
+
+        header = os.path.commonprefix([i.extract_text() for i in reader.pages])
+        pages = []
+
+        for i in reader.pages:
+            pages.append(preprocess_text(i.extract_text()[len(header):]))
+
+        text = ' '.join(pages)
+        data.append(text)
+
+    return data
+
+def predict_similarity(embeddings,students):
+    similarities = []
+    for i in range(len(embeddings)):
+        for j in range(len(embeddings)):
+            if i>=j:
+                continue
+            score = float(cosine_similarity(np.expand_dims(embeddings[i],axis=0),np.expand_dims(embeddings[j],axis=0))[0][0])
+            similarities.append({'stud_1':students[i],'stud_2':students[j],'similarity_score':score})
+            similarities.append({'stud_1':students[j],'stud_2':students[i],'similarity_score':score})
+    return similarities
+    
+
