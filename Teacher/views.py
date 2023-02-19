@@ -1,9 +1,10 @@
 import calendar
 from datetime import date
 from datetime import datetime, timedelta
+import cv2
 from django.shortcuts import get_object_or_404, render
 import string, random
-from django.http import FileResponse, Http404, HttpResponseRedirect
+from django.http import FileResponse, Http404, HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
@@ -16,7 +17,7 @@ from django.shortcuts import redirect, render
 
 from django.views import generic
 from django.utils.safestring import mark_safe
-from .utils import Calendar
+from .utils import Calendar, gen_bounding_boxes
 
 from django.contrib import messages
 
@@ -30,8 +31,10 @@ from nltk.tokenize import word_tokenize
 from sentence_transformers import SentenceTransformer
 import numpy as np
 from huggingface_hub import from_pretrained_keras
-
+from keras.models import load_model
 from django.http import JsonResponse
+capture = 0
+frame = None
 
 # Create your views here.
 similarity_sentence_transformer_model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -156,12 +159,10 @@ def announcement(request, pk, pk2):
     announcement_data = Announcements.objects.filter(class_code = pk2).order_by('-date')
     return render(request, 'Teacher/announcement_teach.html', {'pk': pk, 'pk2': pk2, 'announcement_data': announcement_data})
 
-
 def ann_delete(request, pk, pk2, id):
     delAnnouncement = Announcements.objects.get(id=id)
     delAnnouncement.delete()
     return redirect('announcementteach', pk=pk, pk2=pk2)
-
 
 class schedule(generic.ListView):
     model = Schedule
@@ -180,7 +181,6 @@ class schedule(generic.ListView):
         context['pk1'] = pk1
         # context['pk'] = pk1
         return context
-
 
 def get_date(req_day):
     if req_day:
@@ -217,7 +217,6 @@ def event(request,pk, pk2, id=None):
         eform.save()
         return HttpResponseRedirect(reverse('schedule', args=(instance.teach_id,instance.class_code)))
     return render(request, 'Teacher/event.html', {'form': form,'pk1':pk,'pk2':pk2, 'pk': pk})
-
 
 def create_quiz(request, pk, pk2):
     '''
@@ -310,6 +309,7 @@ def create_quiz(request, pk, pk2):
 
 
 def attendance(request, pk, pk2):
+
     all_att = Attendance.objects.filter(teacher_id=pk, class_id=pk2)
     if request.method=="POST":
         new_att=Attendance()
@@ -319,9 +319,41 @@ def attendance(request, pk, pk2):
         new_att.end_time=request.POST.get('atttimee')
         new_att.code=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 6)))
         new_att.save()
+        att_list = request.FILES.getlist('attimg')
+        for i in att_list:
+            attimg = Attendance_images()
+            attimg.att_id = new_att
+            attimg.att_image = i
+            attimg.save()
+            model = load_model(os.path.join('./Teacher/static/Teacher',"model.h5"))
+            temp_i = str(i)
+            gen_bounding_boxes(temp_i,model)
+        
+
         messages.success(request, 'Attendance created and code is = '+new_att.code)
         return redirect('attendance', pk=pk, pk2=pk2)
     return render(request, 'Teacher/attendance.html', {'pk': pk, 'pk2': pk2, 'all_att': all_att})
+
+def video_feed(request, pk):
+    return StreamingHttpResponse(gen_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
+
+def gen_frames():
+    camera = cv2.VideoCapture(0)
+
+    global capture,frame
+    while True:
+        success, frame = camera.read()
+        if success:
+            try:
+                ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))
+                frame = buffer.tobytes()
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                
+            except Exception as e:
+                pass
+        else:
+            pass       
 
 def view_att(request, pk, pk2, pk3):
     all_att_id=AttStud.objects.filter(att_id=pk3)
@@ -333,17 +365,10 @@ def view_att(request, pk, pk2, pk3):
         all_att.append(val)
     return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att})
 
-
 def quiz_info(request, pk, pk2, pk3):
     quiz = Quiz.objects.get(id = pk3)
     quiz_responses = Quiz_marks.objects.filter(quiz = quiz)
-    # print(quiz_responses[0].student)
-    # student_gave_quiz = []
-    # for i in quiz_responses:
-    #     s = Students(id=i.student)
-    #     print(s)
     return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': quiz_responses})
-
 
 def assignmentSimilarityCheck(request, pk, pk2, pk3):
     global similarity_sentence_transformer_model
@@ -436,4 +461,3 @@ def predict_similarity(embeddings,students):
 def logout(request, pk):
     request.session.flush()
     return redirect('home')
-

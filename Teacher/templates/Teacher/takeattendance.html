@@ -1,0 +1,36 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+{% block content %}
+<form method="POST" action="" style="margin-left: 30%; margin-top: 50px;width: 40%; text-align: center;"
+    enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <fieldset class="form-group">
+        <legend class='border-bottom mb-4' style="text-align: center;">Smart Attendance (Face Detection)</legend>
+        <div class="form-group">
+            {{ form.image.label(class='form-control-label') }}
+            {% if form.image.errors %}
+            {{ form.image(class='form-control form-control-lg is-invalid') }}
+            <div class="invalid-feedback">
+                {% for error in form.image.errors %}
+                <span>
+                    {{error}}
+                </span>
+                {% endfor %}
+            </div>
+            {% else %}
+            {{ form.image(class='form-control form-control-lg') }}
+            {% endif %}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{ form.submit(class='btn btn-outline-info') }}
+        <br>
+        <img src="{{ url_for('video_feed') }}" height="80%">
+    </div>
+    <div>
+    </div>
+    <div>
+    </div>
+</form>
+
+{% endblock content %}

@@ -123,3 +123,11 @@ class Plagarism(models.Model):
     class Meta:
         db_table = "similarity"
     
+class Attendance_images(models.Model):
+    att_id = models.ForeignKey("Attendance", on_delete=models.CASCADE)
+    att_image = models.ImageField(upload_to='images/', null=True, blank=True)
+    class Meta:
+        db_table = "attendance_images"
+    # def __str__(self):
+    #     return str(self.att_image)
+    

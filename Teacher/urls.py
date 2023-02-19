@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from . import views
 urlpatterns = [
     path('', views.teach_home, name='teacher_home'),
-    path('classroom/<pk2>/', views.classroom, name="classroom"),
+    path('classroom/<pk2>/', views.classroom, name="classroom"),\
     path('deleteclass/', views.deleteclass, name="deleteclass"),
     path('classroom/<pk2>/assignment/<pk3>/', views.assignmentsub, name='assignmentteach'),
     path('classroom/<pk2>/assignment/<pk3>/similarity_check', views.assignmentSimilarityCheck, name='assignmentSimilarityCheck'),
@@ -20,6 +20,7 @@ urlpatterns = [
     path('classroom/<pk2>/attendance', views.attendance, name="attendance"),
     path('classroom/<pk2>/attendance/<int:pk3>/', views.view_att, name="viewatt"),
     path('classroom/<pk2>/create_quiz/quiz_info/<pk3>', views.quiz_info, name="quiz_info"),
+    path('video_feed', views.video_feed, name='video_feed'),
     path('logout/', views.logout, name="logout")
 ]
     

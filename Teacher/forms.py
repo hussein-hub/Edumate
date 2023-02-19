@@ -1,6 +1,8 @@
 from django.forms import ModelForm, DateInput, TextInput, Textarea
 from .models import Schedule
 
+
+
 class EventForm(ModelForm):
   class Meta:
     model = Schedule

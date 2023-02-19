@@ -81,7 +81,7 @@ input:checked + .slider:before {
 
     {% endif %}
   <div class="container" >
-      <form method="post"class="form-group row">
+      <form method="post"class="form-group row" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="col-3">
             Start time: <input type="datetime-local" id="atttimes" name="atttimes">
@@ -89,6 +89,12 @@ input:checked + .slider:before {
         <div class="col-3">
             End time: <input type="datetime-local" id="atttimee" name="atttimee">
         </div>
+        <div class="form-goup">
+          <input type="file" id="attimg" name="attimg" accept="image/*" multiple>
+        </div>
+        {% comment %} <div>
+          <img src="{% url 'video_feed' pk=pk %}" height="80%">
+        </div> {% endcomment %}
         <div class="col-3">
             <button class="btn btn-outline-success" type="submit">Create</button>
         </div>
@@ -114,5 +120,6 @@ input:checked + .slider:before {
     <br>
       <a class="btn btn-outline-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
     </div>
+  
     </div>
 {% endblock content %}

@@ -32,8 +32,14 @@ class ImageInline(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [OptionsInline, ImageInline]
 
+class att_img_inline(admin.TabularInline):
+    model = Attendance_images
+class AttendanceAdmin(admin.ModelAdmin):
+    inlines = [att_img_inline]
 
 admin.site.register(QuestionImage)
 
 admin.site.register(Question,QuestionAdmin)
 admin.site.register(Options)
+admin.site.register(Attendance,AttendanceAdmin)
+admin.site.register(Attendance_images)
