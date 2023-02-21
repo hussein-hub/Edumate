@@ -172,6 +172,8 @@ def get_boxes(boxes, labels, thresh):
 
 def draw_boxes(image_file_name,v_boxes):
     img = cv2.imread(os.path.join(os.path.join('./images',image_file_name)))
+    copy_img = cv2.imread(os.path.join(os.path.join('./images',image_file_name)))
+    img_file_name = image_file_name.split('.')[0]
     for i in range(len(v_boxes)):
         box = v_boxes[i]
         y1, x1, y2, x2 = box.ymin, box.xmin, box.ymax, box.xmax
@@ -179,7 +181,10 @@ def draw_boxes(image_file_name,v_boxes):
         end_point = (x2, y2)  
         color = (0, 0, 255) 
         thickness = 2
+        os.makedirs(f'./images/{img_file_name}/', exist_ok=True)
+        cv2.imwrite(os.path.join(f'./images/{img_file_name}', str(i) + ".jpg"),copy_img[y1:y2,x1:x2])
         img = cv2.rectangle(img, start_point, end_point, color, thickness)
+        # print(img[x1:x2, y1:y2])
     cv2.imwrite(os.path.join(os.path.join('./images',"a"+image_file_name)),img)
 
 

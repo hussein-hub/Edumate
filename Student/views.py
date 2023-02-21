@@ -1,7 +1,7 @@
 from django.http import QueryDict
 from django.shortcuts import render, redirect
 from Edumate_app.models import Students, Teachers
-import json
+import json, os
 from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments, PeerStudents
 from Student.utils import Calendar
 from Teacher.models import *
@@ -229,6 +229,7 @@ def revquiz(request,pk,pk2,pk3):
     return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
 
 def submitatt(request, pk, pk2):
+    imagePath = None
     if(request.method=="POST"):
         att_obj=Attendance.objects.filter(code=request.POST.get('code'))
         if(len(att_obj)!=0):
@@ -253,9 +254,18 @@ def submitatt(request, pk, pk2):
             att.stud_id=pk
             att.att_time=curr
             att.save()
-            messages.success(request, 'Attendance Marked')
-            return redirect('classroom1', pk=pk, pk2=pk2)
+            # messages.success(request, 'Attendance Marked')
+            mainAttObj = Attendance_images.objects.get(att_id=att_obj[0].att_id)
+            imagePath = mainAttObj.att_image.url.split('/')
+            folderName = "."+"/".join(imagePath[:-1]) + "/" + imagePath[-1].split('.')[0]
+            # os.listdir(f'{folderName}')
+            allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
+            imagePath[-1] = "a" + imagePath[-1]
+            imagePath = '/'.join(imagePath)
+            print(imagePath)
+
+            return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath, 'folderName': folderName, 'allImages': allImages})
         else:
             messages.error(request, 'Incorrect code')
-            return redirect('submitatt', pk=pk, pk2=pk2)
-    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2})
+            return redirect('submitatt', pk=pk, pk2=pk2, imagePath=imagePath)
+    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath})

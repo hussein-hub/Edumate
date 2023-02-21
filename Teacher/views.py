@@ -38,6 +38,7 @@ frame = None
 
 # Create your views here.
 similarity_sentence_transformer_model = SentenceTransformer('all-MiniLM-L6-v2')
+model = load_model(os.path.join('./Teacher/static/Teacher',"model.h5"))
 
 def teach_home(request, pk):
     teacher_c = Teachers.objects.get(teach_id=pk)
@@ -309,7 +310,7 @@ def create_quiz(request, pk, pk2):
 
 
 def attendance(request, pk, pk2):
-
+    global model
     all_att = Attendance.objects.filter(teacher_id=pk, class_id=pk2)
     if request.method=="POST":
         new_att=Attendance()
@@ -325,7 +326,7 @@ def attendance(request, pk, pk2):
             attimg.att_id = new_att
             attimg.att_image = i
             attimg.save()
-            model = load_model(os.path.join('./Teacher/static/Teacher',"model.h5"))
+            
             temp_i = str(i)
             gen_bounding_boxes(temp_i,model)
         
