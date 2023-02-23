@@ -37,17 +37,16 @@
 
 
 
-        </form>
 
         <img src={{imagePath}} alt="">
         <ul>
-            {% for i in allImages %}
+            {% for i in final_list_list %}
             <li>
-                <img src={{i}} alt="">
-                {% if forloop.counter in marked_img_numbers %}
-                <button  class="btn btn-outline-success" onclick="marker('{{forloop.counter}}')" disabled>Button</button>
+                <img src={{i.0}} alt="">
+                {% if i.1 != "" %}
+                <button  class="btn btn-outline-success" onclick="marker('{{forloop.counter0}}')" disabled>Button: {{i.1}}</button>
                 {% else %}
-                <a href ="#" class="btn btn-success" onclick="marker('{{forloop.counter}}')">Button</a>
+                <a href ="#" class="btn btn-success" onclick="marker('{{forloop.counter0}}')">Button</a>
                 {% endif %}
             </li>
             {% endfor %}
@@ -70,7 +69,7 @@
             type:"POST",
             url: "",
             data:{
-                img_id: id-1,
+                img_id: id,
                 code: "{{class_code}}",
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },

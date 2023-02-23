@@ -230,12 +230,12 @@ def revquiz(request,pk,pk2,pk3):
 
 def submitatt(request, pk, pk2):
     imagePath = None
+    final_list_list = []
     
     if(request.method=="POST"):
-        att_obj=Attendance.objects.get(code=request.POST.get('code'))
-        att=AttStud()
+        att_obj = Attendance.objects.get(code=request.POST.get('code'))
+        att = AttStud()
         if 'img_id' in request.POST:
-            att.img_number = request.POST.get('img_id')
             if(att_obj.class_id!=pk2):
                 messages.error(request, 'Please enter the code in the correct classroom')
                 return redirect('submitatt', pk=pk, pk2=pk2)
@@ -250,25 +250,47 @@ def submitatt(request, pk, pk2):
             if(curr.timestamp()>datetime(int(att_obj.end_time[0:4]), int(att_obj.end_time[5:7]), int(att_obj.end_time[8:10]), int(att_obj.end_time[11:13]), int(att_obj.end_time[14:16])).timestamp()):
                 messages.error(request, 'Attendance marking finished please contact teacher')
                 return redirect('submitatt', pk=pk, pk2=pk2)
+            img_obj = AttStud.objects.filter(att_id=att_obj.att_id,img_number=request.POST.get('img_id'))
+            if(len(img_obj)>0):
+                messages.error(request, 'Attendance already marked for image')
+                return redirect('submitatt', pk=pk, pk2=pk2)
+            att.img_number = request.POST.get('img_id')
             att.att_id=att_obj
             att.stud_id=Students.objects.get(stud_id=pk)
             att.att_time=curr
-            att.save()        
+            att.save()       
         if(att_obj != None):
             mainAttObj = Attendance_images.objects.get(att_id=att_obj.att_id)
             imagePath = mainAttObj.att_image.url.split('/')
             folderName = "."+"/".join(imagePath[:-1]) + "/" + imagePath[-1].split('.')[0]
             # os.listdir(f'{folderName}')
-            marked_img_numbers = AttStud.objects.filter(att_id=att_obj.att_id).values_list('img_number', flat=True)
-            print(list(marked_img_numbers))
-            marked_img_numbers= [int(j)+1 for j in list(marked_img_numbers)]
-            print(marked_img_numbers)
+            att_objects = AttStud.objects.filter(att_id=att_obj.att_id)
+            marked_img_numbers = att_objects.values_list('img_number', flat=True)
+            names = att_objects
+            # for z in att_objects:
+            #     a = z.stud_id.name
+            #     print(a)
+            #     names.append(a)
+            # print(names)
+            marked_img_numbers = list(marked_img_numbers)
+            marked_img_numbers= {marked_img_numbers[j]:names[j] for j in range(len(marked_img_numbers))}
+            # print(marked_img_numbers)
             allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
+            allImages = {allImages[j]:j for j in range(len(allImages))}
+            # final_list_list = [[folderName[1:]+"/"+i] for i in os.listdir(folderName)]
+            for i, j in allImages.items():
+                print(i)
+                print(j)
+                if j in marked_img_numbers.keys():
+                    final_list_list.append([i, marked_img_numbers[j].stud_id.name])
+                else:
+                    final_list_list.append([i, ""])
+            print(final_list_list)
             imagePath[-1] = "a" + imagePath[-1]
             imagePath = '/'.join(imagePath)
             # print(imagePath)
-
-            return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath, 'folderName': folderName, 'allImages': allImages,'class_code':att_obj.code,"marked_img_numbers":marked_img_numbers})
+            # print(allImages)
+            return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath, 'folderName': folderName, 'final_list_list': final_list_list,'class_code':att_obj.code})
         else:
             messages.error(request, 'Incorrect code')
             return redirect('submitatt', pk=pk, pk2=pk2, imagePath=imagePath)
