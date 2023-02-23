@@ -230,42 +230,48 @@ def revquiz(request,pk,pk2,pk3):
 
 def submitatt(request, pk, pk2):
     imagePath = None
+    
     if(request.method=="POST"):
-        att_obj=Attendance.objects.filter(code=request.POST.get('code'))
-        if(len(att_obj)!=0):
-            if(att_obj[0].class_id!=pk2):
+        att_obj=Attendance.objects.get(code=request.POST.get('code'))
+        att=AttStud()
+        if 'img_id' in request.POST:
+            att.img_number = request.POST.get('img_id')
+            if(att_obj.class_id!=pk2):
                 messages.error(request, 'Please enter the code in the correct classroom')
                 return redirect('submitatt', pk=pk, pk2=pk2)
-            obj=AttStud.objects.filter(att_id=att_obj[0].att_id,stud_id=pk)
+            obj=AttStud.objects.filter(att_id=att_obj.att_id,stud_id=pk)
             if(len(obj)>0):
                 messages.error(request, 'Attendance already marked')
                 return redirect('submitatt', pk=pk, pk2=pk2)
             curr=datetime.now()
-            if(curr.timestamp()<datetime(int(att_obj[0].start_time[0:4]), int(att_obj[0].start_time[5:7]), int(att_obj[0].start_time[8:10]), int(att_obj[0].start_time[11:13]), int(att_obj[0].start_time[14:16])).timestamp()):
+            if(curr.timestamp()<datetime(int(att_obj.start_time[0:4]), int(att_obj.start_time[5:7]), int(att_obj.start_time[8:10]), int(att_obj.start_time[11:13]), int(att_obj.start_time[14:16])).timestamp()):
                 messages.error(request, 'Attendance marking not started yet')
                 return redirect('submitatt', pk=pk, pk2=pk2)
-            if(curr.timestamp()>datetime(int(att_obj[0].end_time[0:4]), int(att_obj[0].end_time[5:7]), int(att_obj[0].end_time[8:10]), int(att_obj[0].end_time[11:13]), int(att_obj[0].end_time[14:16])).timestamp()):
+            if(curr.timestamp()>datetime(int(att_obj.end_time[0:4]), int(att_obj.end_time[5:7]), int(att_obj.end_time[8:10]), int(att_obj.end_time[11:13]), int(att_obj.end_time[14:16])).timestamp()):
                 messages.error(request, 'Attendance marking finished please contact teacher')
                 return redirect('submitatt', pk=pk, pk2=pk2)
-            # print(datetime(int(att_obj[0].start_time[0:4]), int(att_obj[0].start_time[5:7]), int(att_obj[0].start_time[8:10]), int(att_obj[0].start_time[11:13]), int(att_obj[0].start_time[14:16])).timestamp())
-            # print(datetime(int(att_obj[0].end_time[0:4]), int(att_obj[0].end_time[5:7]), int(att_obj[0].end_time[8:10]), int(att_obj[0].end_time[11:13]), int(att_obj[0].end_time[14:16])).timestamp())
-            att=AttStud()
-            att.att_id=att_obj[0].att_id
-            att.stud_id=pk
+            att.att_id=att_obj
+            att.stud_id=Students.objects.get(stud_id=pk)
             att.att_time=curr
-            att.save()
-            # messages.success(request, 'Attendance Marked')
-            mainAttObj = Attendance_images.objects.get(att_id=att_obj[0].att_id)
+            att.save()        
+        if(att_obj != None):
+            mainAttObj = Attendance_images.objects.get(att_id=att_obj.att_id)
             imagePath = mainAttObj.att_image.url.split('/')
             folderName = "."+"/".join(imagePath[:-1]) + "/" + imagePath[-1].split('.')[0]
             # os.listdir(f'{folderName}')
+            marked_img_numbers = AttStud.objects.filter(att_id=att_obj.att_id).values_list('img_number', flat=True)
+            print(list(marked_img_numbers))
+            marked_img_numbers= [int(j)+1 for j in list(marked_img_numbers)]
+            print(marked_img_numbers)
             allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
             imagePath[-1] = "a" + imagePath[-1]
             imagePath = '/'.join(imagePath)
-            print(imagePath)
+            # print(imagePath)
 
-            return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath, 'folderName': folderName, 'allImages': allImages})
+            return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath, 'folderName': folderName, 'allImages': allImages,'class_code':att_obj.code,"marked_img_numbers":marked_img_numbers})
         else:
             messages.error(request, 'Incorrect code')
             return redirect('submitatt', pk=pk, pk2=pk2, imagePath=imagePath)
+        
+        
     return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath})

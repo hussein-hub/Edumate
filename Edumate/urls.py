@@ -9,7 +9,7 @@ admin.site.index_title = 'Edumate Admin'
 admin.site.site_title = 'Edumate Admin'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     path('', include('Edumate_app.urls')),
     
 ]

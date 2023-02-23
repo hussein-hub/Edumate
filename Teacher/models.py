@@ -3,6 +3,7 @@ from unittest.util import _MAX_LENGTH
 from django.db import models
 from django.urls import reverse
 from Student.models import *
+from Edumate_app.models import *
 
 # Create your models here.
 
@@ -109,9 +110,10 @@ class Attendance(models.Model):
         db_table = "Attendance"
 
 class AttStud(models.Model):
-    att_id = models.IntegerField()
-    stud_id = models.IntegerField()
+    att_id = models.ForeignKey("Attendance", on_delete=models.CASCADE)
+    stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE)
     att_time = models.CharField(max_length=100)
+    img_number = models.IntegerField(default=0)
     class Meta:
         db_table = "AttStud"
 
