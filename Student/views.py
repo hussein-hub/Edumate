@@ -292,4 +292,4 @@ def submitatt(request, pk, pk2):
             return redirect('submitatt', pk=pk, pk2=pk2, imagePath=imagePath)
         
     print("laptop2", mess)
-    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath, 'mess': mess})
+    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': None, 'mess': mess})

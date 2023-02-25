@@ -361,7 +361,7 @@ def view_att(request, pk, pk2, pk3):
     all_att=[]
     for i in all_att_id:
         val={}
-        val['name']=Students.objects.get(stud_id=i.stud_id).name
+        val['name']=i.stud_id.name
         val['time']=i.att_time
         all_att.append(val)
     return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att})
