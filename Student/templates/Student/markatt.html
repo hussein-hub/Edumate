@@ -50,25 +50,30 @@
 
         
         <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-            <img height="500" width="500" src={{imagePath}}>
+            {% comment %} <img height="500" width="500" src={{imagePath}}> {% endcomment %}
+            <canvas id="draw"></canvas>
         </div>
         {% comment %} <ul> {% endcomment %}
             <div class="container">
-                <div class="row row-content">
+                <div class="row">
 
                     {% for i in final_list_list %}
                     {% comment %} <li> {% endcomment %}
                         {% comment %} <img height="150" width="150" src={{i.0}} alt="" style="border-radius: 6px;"> {% endcomment %}
         
-                        <div style="padding: 0; width: auto;" class="card col-sm-2">
+                        <div style="padding: 0; display: flex; flex-direction: row; flex-wrap: wrap; align-content: center; align-items: center; height: fit-content;" class="card col-lg-3 col-md-4 col-sm-12">
                             <img height="100" width="100" src={{i.0}} alt="" style="border-radius: 6px;">
                             <div class="card-body">
                                 {% comment %} <h5 class="card-title">Card title</h5> {% endcomment %}
                                 {% if i.1 != "" %}
-                                    <button  class="btn btn-success" onclick="marker('{{forloop.counter0}}')" disabled>Button: {{i.1}}</button>
-                                    <i class="fa-circle-check"></i>
+                                    {% comment %} <button class="btn btn-success" onclick="marker('{{forloop.counter0}}')" disabled>Button: {{i.1}}</button> {% endcomment %}
+                                    <div>
+                                        <i style="border-radius: 10px; background-color: #008374; color: white;" class="fa-regular fa-circle-check"></i>
+                                        <span style="width: 130px; display: block;"><small>Marked by: {{ i.1 }}</small></span>
+                                    </div>
                                 {% else %}
-                                    <a href ="#" class="btn btn-success" onclick="marker('{{forloop.counter0}}')">Button</a>
+                                    <a href ="#" class="btn btn-success" onclick="marker('{{forloop.counter0}}')"><small>Mark </small></a>
+                                    {% comment %} <i class="fa-regular fa-hand"></i> {% endcomment %}
                                 {% endif %}
                             </div>
                         </div> 
@@ -113,5 +118,111 @@
             }
         })
     }
+    var canvas = document.getElementById("draw");
+    
+    var ctx = canvas.getContext("2d");
+    
+    // draw an image inside the canvas 
+    var img = new Image();
+    img.src = "{{imagePath}}";
+    canvas.width = 650;
+    canvas.height = 500;
+
+    var hRatio = canvas.width  / img.naturalWidth;
+    var vRatio =  canvas.height / img.naturalHeight;
+    var ratio  = Math.min ( hRatio, vRatio );
+    var centerShift_x = ( canvas.width - img.naturalWidth*ratio ) / 2;
+    var centerShift_y = ( canvas.height - img.naturalHeight*ratio ) / 2;  
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+
+
+    console.log(img);
+    img.onload = function() {
+        // ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0,0, img.naturalWidth, img.naturalHeight,0,0,img.naturalWidth*ratio, img.naturalHeight*ratio);
+    }
+
+    var element = document.getElementById("draw");
+    var rect = element.getBoundingClientRect();
+    console.log(rect.top, rect.right, rect.bottom, rect.left);
+
+    var c = 0;
+
+    // resize canvas when window is resized
+    // function resize() {
+    //   ctx.canvas.width = window.innerWidth;
+    //   ctx.canvas.height = window.innerHeight;
+    // }
+
+    // initialize position as 0,0
+    var pos = { x: 0, y: 0, a: 0, b: 0 };
+    var actualPos = { x: 0, y: 0, a: 0, b: 0 };
+
+    // new position from mouse events
+    function setPosition(e) {
+    if (c == 0) {
+        pos.x = e.clientX - 12 - rect.left + 8;
+        pos.y = e.clientY - 40 - rect.top;
+    } else {
+        pos.a = e.clientX - 12 - rect.left + 8;
+        pos.b = e.clientY - 30 - rect.top + 29;
+    }
+    }
+
+    function draw(e) {
+    if (e.buttons !== 1) return; // if mouse is not clicked, do not go further
+
+    else if (c == 1) {
+        // var color = document.getElementById("hex").value;
+
+        ctx.beginPath(); // begin the drawing path
+
+        ctx.lineWidth = 1.5; // width of line
+        ctx.lineCap = "round"; // rounded end cap
+        // ctx.strokeStyle = color; // hex color of line
+        setPosition(e);
+        ctx.rect(pos.x, pos.y, (pos.a-pos.x), (pos.b-pos.y));
+        console.log(pos, actualPos, "inside draw");
+        actualPos.x = pos.x;
+        actualPos.y = pos.y;
+        actualPos.a = pos.a;
+        actualPos.b = pos.b;
+        ctx.stroke(); // draw it!
+        c = 0;
+    }
+    else {
+        setPosition(e);
+        c++;
+    }
+    }
+
+    // clear canvas when clicked
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var img = new Image();
+        img.src = "{{imagePath}}";
+        img.onload = function() {
+            ctx.drawImage(img, 10, 10);
+        }
+    }
+
+    // crop the image when clicked
+    function cropImage() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // ctx.drawImage(img, pos.x, pos.y, (pos.a-pos.x), (pos.b-pos.y), 0, 0, (pos.a-pos.x), (pos.b-pos.y));
+        console.log(pos, actualPos, "inside crop");
+        ctx.drawImage(img, actualPos.x, actualPos.y, (actualPos.a-actualPos.x), (actualPos.b-actualPos.y), 0, 0, (actualPos.a-actualPos.x), (actualPos.b-actualPos.y));
+
+    }
+
+
+
+    // add window event listener to trigger when window is resized
+    // window.addEventListener("resize", resize);
+
+    // add event listeners to trigger on different mouse events
+    document.addEventListener("mousedown", draw);
+    document.addEventListener("mouseup", setPosition);
+    document.addEventListener("click", setPosition);
 </script>
 {% endblock script %}
