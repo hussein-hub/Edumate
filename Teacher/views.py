@@ -33,6 +33,9 @@ import numpy as np
 from huggingface_hub import from_pretrained_keras
 from keras.models import load_model
 from django.http import JsonResponse
+from django.utils.dateparse import parse_datetime
+
+
 capture = 0
 frame = None
 
@@ -311,7 +314,11 @@ def create_quiz(request, pk, pk2):
 
 def attendance(request, pk, pk2):
     global model
-    all_att = Attendance.objects.filter(teacher_id=pk, class_id=pk2)
+    all_att = Attendance.objects.filter(teacher_id=pk, class_id=pk2).order_by('-att_id')
+    attdates=[]
+    for i in all_att:
+        date_single = parse_datetime(i.start_time)
+        attdates.append(date_single)
     if request.method=="POST":
         new_att=Attendance()
         new_att.teacher_id=pk
@@ -333,7 +340,7 @@ def attendance(request, pk, pk2):
 
         messages.success(request, 'Attendance created and code is = '+new_att.code)
         return redirect('attendance', pk=pk, pk2=pk2)
-    return render(request, 'Teacher/attendance.html', {'pk': pk, 'pk2': pk2, 'all_att': all_att})
+    return render(request, 'Teacher/attendance.html', {'pk': pk, 'pk2': pk2, 'all_att': zip(all_att, attdates)})
 
 def video_feed(request, pk):
     return StreamingHttpResponse(gen_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
