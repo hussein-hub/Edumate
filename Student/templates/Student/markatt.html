@@ -26,31 +26,11 @@
     {% endfor %}
 
     {% endif %}
+    
     <div class="container">
-
-
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group row">
-                <div class="form-group row">
-                    {% comment %} <label for="code" class="col-sm-2 col-form-label">Enter code</label> {% endcomment %}
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control mx-1" id="code" name="code"
-                            placeholder="Enter Attendance Code">
-                        <input type="text" id="code_flag" name="code_flag" style="display: none">
-                    </div>
-
-                    <div class="col-sm-4">
-                        <button class="btn btn-outline-success mx-1 my-1" type="submit">Mark Attendance</button>
-                    </div>
-
-                </div>
-            </div>
-            {% comment %} {% endblock %} {% endcomment %}
-
         
         <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-            {% comment %} <img height="500" width="500" src={{imagePath}}> {% endcomment %}
+            <img height="500" width="500" src={{imagePath}}>
             <canvas id="draw"></canvas>
         </div>
         {% comment %} <ul> {% endcomment %}
@@ -72,8 +52,14 @@
                                         <span style="width: 130px; display: block;"><small>Marked by: {{ i.1 }}</small></span>
                                     </div>
                                 {% else %}
-                                    <a href ="#" class="btn btn-success" onclick="marker('{{forloop.counter0}}')"><small>Mark </small></a>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {% comment %} <input name="img_id" style="display: none" id="img_catch" /> {% endcomment %}
+                                    <input type="text" name="img_id"  hidden value="{{forloop.counter0}}">
+                                    <button type="submit"  class="btn btn-success"><small>Mark </small></button>
                                     {% comment %} <i class="fa-regular fa-hand"></i> {% endcomment %}
+                                
+                                </form>
                                 {% endif %}
                             </div>
                         </div> 
@@ -82,7 +68,7 @@
                         {% comment %} {% if i.1 != "" %}
                         <button  class="btn btn-outline-success" onclick="marker('{{forloop.counter0}}')" disabled>Button: {{i.1}}</button>
                         {% else %}
-                        <a href ="#" class="btn btn-success" onclick="marker('{{forloop.counter0}}')">Button</a>
+                        <button class="btn btn-success" onclick="marker('{{forloop.counter0}}')">Button</button>
                         {% endif %} {% endcomment %}
                     {% comment %} </li> {% endcomment %}
                     {% endfor %}
@@ -102,23 +88,10 @@
     
     function marker(id)
     {
-        $.ajax(
-        {
-            type:"POST",
-            url: "",
-            data:{
-                img_id: id,
-                code: "{{class_code}}",
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            success: function( data ) 
-            {
-                console.log('{{mess}}');
-                alert('{{mess}}');
-            }
-        })
+        $('#img_catch').val(id);
+        console.log($('#img_catch').val());
     }
-    var canvas = document.getElementById("draw");
+    {% comment %} var canvas = document.getElementById("draw");
     
     var ctx = canvas.getContext("2d");
     
@@ -223,6 +196,6 @@
     // add event listeners to trigger on different mouse events
     document.addEventListener("mousedown", draw);
     document.addEventListener("mouseup", setPosition);
-    document.addEventListener("click", setPosition);
+    document.addEventListener("click", setPosition); {% endcomment %}
 </script>
 {% endblock script %}

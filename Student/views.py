@@ -228,68 +228,58 @@ def revquiz(request,pk,pk2,pk3):
         k+=1
     return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
 
-def submitatt(request, pk, pk2):
-    imagePath = None
-    mess=""
-    final_list_list = []
-    if 'message' in request.session:
-        mess=request.session['message']
-        del request.session['message']
-    print("laptop1", mess)
-    if(request.method=="POST"):
-        att_obj = Attendance.objects.get(code=request.POST.get('code'))
-        att = AttStud()
-        if 'img_id' in request.POST:
-            if(att_obj.class_id!=pk2):
-                messages.error(request, 'Please enter the code in the correct classroom')
-                request.session['message']='Please enter the code in the correct classroom'
-                return redirect('submitatt', pk=pk, pk2=pk2)
-            obj=AttStud.objects.filter(att_id=att_obj.att_id,stud_id=pk)
-            if(len(obj)>0):
-                messages.error(request, 'Attendance already marked')
-                request.session['message']='Attendance already marked'
-                return redirect('submitatt', pk=pk, pk2=pk2)
-            curr=datetime.now()
-            if(curr.timestamp()<datetime(int(att_obj.start_time[0:4]), int(att_obj.start_time[5:7]), int(att_obj.start_time[8:10]), int(att_obj.start_time[11:13]), int(att_obj.start_time[14:16])).timestamp()):
-                messages.error(request, 'Attendance marking not started yet')
-                request.session['message']='Attendance marking not started yet'
-                return redirect('submitatt', pk=pk, pk2=pk2)
-            if(curr.timestamp()>datetime(int(att_obj.end_time[0:4]), int(att_obj.end_time[5:7]), int(att_obj.end_time[8:10]), int(att_obj.end_time[11:13]), int(att_obj.end_time[14:16])).timestamp()):
-                messages.error(request, 'Attendance marking finished please contact teacher')
-                request.session['message']='Attendance marking finished please contact teacher'
-                return redirect('submitatt', pk=pk, pk2=pk2)
-            img_obj = AttStud.objects.filter(att_id=att_obj.att_id,img_number=request.POST.get('img_id'))
-            if(len(img_obj)>0):
-                messages.error(request, 'Attendance already marked for image')
-                request.session['message']='Attendance already marked for image'
-                return redirect('submitatt', pk=pk, pk2=pk2)
-            att.img_number = request.POST.get('img_id')
-            att.att_id=att_obj
-            att.stud_id=Students.objects.get(stud_id=pk)
-            att.att_time=curr
-            att.save()       
-        if(att_obj != None):
-            mainAttObj = Attendance_images.objects.get(att_id=att_obj.att_id)
-            imagePath = mainAttObj.att_image.url.split('/')
-            folderName = "."+"/".join(imagePath[:-1]) + "/" + imagePath[-1].split('.')[0]
-            att_objects = AttStud.objects.filter(att_id=att_obj.att_id)
-            marked_img_numbers = att_objects.values_list('img_number', flat=True)
-            names = att_objects
-            marked_img_numbers = list(marked_img_numbers)
-            marked_img_numbers= {marked_img_numbers[j]:names[j] for j in range(len(marked_img_numbers))}
-            allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
-            allImages = {allImages[j]:j for j in range(len(allImages))}
-            for i, j in allImages.items():
-                if j in marked_img_numbers.keys():
-                    final_list_list.append([i, marked_img_numbers[j].stud_id.name])
-                else:
-                    final_list_list.append([i, ""])
-            imagePath[-1] = "a" + imagePath[-1]
-            imagePath = '/'.join(imagePath)
-            return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': imagePath, 'folderName': folderName, 'final_list_list': final_list_list,'class_code':att_obj.code, 'mess': mess})
+def submitatt(request, pk, pk2, pk3):
+    final_list_list=[]
+    att_obj = Attendance.objects.get(code=pk3)
+    mainAttObj = Attendance_images.objects.get(att_id=att_obj.att_id)
+    imagePath = mainAttObj.att_image.url.split('/')
+    folderName = "."+"/".join(imagePath[:-1]) + "/" + imagePath[-1].split('.')[0]
+    att_objects = AttStud.objects.filter(att_id=att_obj.att_id)
+    marked_img_numbers = att_objects.values_list('img_number', flat=True)
+    names = att_objects
+    marked_img_numbers = list(marked_img_numbers)
+    marked_img_numbers= {marked_img_numbers[j]:names[j] for j in range(len(marked_img_numbers))}
+    allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
+    allImages = {allImages[j]:j for j in range(len(allImages))}
+    for i, j in allImages.items():
+        if j in marked_img_numbers.keys():
+            final_list_list.append([i, marked_img_numbers[j].stud_id.name])
         else:
-            messages.error(request, 'Incorrect code')
-            return redirect('submitatt', pk=pk, pk2=pk2, imagePath=imagePath)
-        
-    print("laptop2", mess)
-    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'imagePath': None, 'mess': mess})
+            final_list_list.append([i, ""])
+    imagePath[-1] = "a" + imagePath[-1]
+    imagePath = '/'.join(imagePath)
+    if(request.method=="POST"):
+        att = AttStud()
+        obj=AttStud.objects.filter(att_id=att_obj.att_id,stud_id=pk)
+        if(len(obj)>0):
+            messages.error(request, 'Attendance already marked')
+            return redirect('markatt', pk=pk, pk2=pk2, pk3=pk3)
+        curr=datetime.now()
+        if(curr.timestamp()<datetime(int(att_obj.start_time[0:4]), int(att_obj.start_time[5:7]), int(att_obj.start_time[8:10]), int(att_obj.start_time[11:13]), int(att_obj.start_time[14:16])).timestamp()):
+            messages.error(request, 'Attendance marking not started yet')
+            return redirect('markatt', pk=pk, pk2=pk2, pk3=pk3)
+        if(curr.timestamp()>datetime(int(att_obj.end_time[0:4]), int(att_obj.end_time[5:7]), int(att_obj.end_time[8:10]), int(att_obj.end_time[11:13]), int(att_obj.end_time[14:16])).timestamp()):
+            messages.error(request, 'Attendance marking finished please contact teacher')
+            return redirect('markatt', pk=pk, pk2=pk2, pk3=pk3)
+        img_obj = AttStud.objects.filter(att_id=att_obj.att_id,img_number=request.POST.get('img_id'))
+        if(len(img_obj)>0):
+            messages.error(request, 'Attendance already marked for image')
+            return redirect('markatt', pk=pk, pk2=pk2, pk3=pk3)
+        att.img_number = request.POST.get('img_id')
+        att.att_id=att_obj
+        att.stud_id=Students.objects.get(stud_id=pk)
+        att.att_time=curr
+        att.save()
+        return redirect('markatt', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'imagePath': imagePath, 'folderName': folderName, 'final_list_list': final_list_list })
+
+
+def enterattcode(request, pk, pk2):
+    if request.method=="POST":
+        att_obj = Attendance.objects.filter(code=request.POST.get('code'))
+        if(len(att_obj)==0):
+            messages.error(request, "Please enter correct code")
+            return redirect('submitatt', pk=pk, pk2=pk2)
+        else:
+            return redirect('markatt', pk=pk, pk2=pk2, pk3=request.POST.get('code'))
+    return render(request, 'Student/entercode.html', {'pk': pk, 'pk2': pk2})

@@ -13,7 +13,8 @@ urlpatterns = [
     path('classroom/<pk2>/quiz/', views.quiz, name='quiz_stud'),
     path('classroom/<pk2>/quiz/<pk3>', views.ansquiz, name='ansquiz'),
     path('classroom/<pk2>/quiz/review/<pk3>', views.revquiz, name='review_quiz'),
-    path('classroom/<pk2>/submitatt/', views.submitatt, name='submitatt'),
+    path('classroom/<pk2>/submitatt/', views.enterattcode, name='submitatt'),
+    path('classroom/<pk2>/submitatt/<pk3>/', views.submitatt, name='markatt'),
 ]
 
 if settings.DEBUG:
