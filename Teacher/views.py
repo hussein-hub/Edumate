@@ -34,6 +34,7 @@ from huggingface_hub import from_pretrained_keras
 from keras.models import load_model
 from django.http import JsonResponse
 from django.utils.dateparse import parse_datetime
+from json import dumps
 
 
 capture = 0
@@ -366,12 +367,44 @@ def gen_frames():
 def view_att(request, pk, pk2, pk3):
     all_att_id=AttStud.objects.filter(att_id=pk3)
     all_att=[]
+    all_studs=ClassStudents.objects.filter(class_code=pk2)
+    att_ids=[]
     for i in all_att_id:
         val={}
         val['name']=i.stud_id.name
         val['time']=i.att_time
+        val['att_id']=i.att_id.att_id
+        val['stud_id']=i.stud_id.stud_id
+        att_ids.append(i.stud_id.stud_id)
         all_att.append(val)
-    return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att})
+    stud_ids=[]
+    for i in all_studs:
+        stud_ids.append(i.stud_id)
+    all_stud_names_ids=[]
+    for i in stud_ids:
+        if i not in att_ids:
+            try:
+                stud=Students.objects.get(stud_id=i)
+                single_stud={'stud_id': i, 'name': stud.name}
+                all_stud_names_ids.append(single_stud)
+            except:
+                continue
+    if request.method == "POST":
+        if 'student_id' in request.POST:
+            if request.POST['student_id']=="none":
+                messages.error(request, "Please select a valid option")
+                return redirect('viewatt', pk=pk, pk2=pk2, pk3=pk3)
+            att=AttStud()
+            att.att_id=Attendance.objects.get(att_id=pk3)
+            att.stud_id=Students.objects.get(stud_id=request.POST['student_id'])
+            att.att_time=str(datetime.now())
+            att.img_number=-1
+            att.save()
+            return redirect('viewatt', pk=pk, pk2=pk2, pk3=pk3)
+        AttStud.objects.get(att_id=request.POST['att_id'], stud_id=request.POST['stud_id']).delete()
+        messages.error(request, "Deleted successfully")
+        return redirect('viewatt', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att, 'all_stud': all_stud_names_ids})
 
 def quiz_info(request, pk, pk2, pk3):
     quiz = Quiz.objects.get(id = pk3)

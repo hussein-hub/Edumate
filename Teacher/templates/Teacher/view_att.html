@@ -59,6 +59,7 @@
     background-color: white !important;
     color: #008374 !important;
   }
+
 </style>
 {% endblock style %}
 
@@ -83,11 +84,25 @@
 				{% comment %} <a href="{% url 'product_add' %}" id="add_product_btn"><button type="button" class="btn btn-primary">Add New</button></a> {% endcomment %}
 			</div>
 		</div>
+		<form method="POST">
+			{% csrf_token %}
+			<div class="container">
+				<div class="searchInput">
+					<select name="student_id">
+						<option value="none">Select student</option>
+						{% for i in all_stud %}
+						<option value={{ i.stud_id }}>{{ i.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-success">Mark Present</button>
+		</form>
 
 		<table class="table table-bordered" id="attendance-table">
 			<thead>
 				<tr>
-          <th>Sr. No.</th>
+          			<th>Sr. No.</th>
 					<th>Name</th>
 					<th>Time</th>
 					<th>Delete</th>
@@ -99,7 +114,7 @@
 	 				<td>{{forloop.counter}}</td>
 	 				<td>{{i.name}}</td>
 	 				<td>{{ i.time }}</td>
-	 				<td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.att_id.att_id}}" data-product-name="{{i.name}}">Delete</button></td>
+	 				<td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.att_id.att_id}}" data-product-name="{{i.name}}" onclick="caller('{{i.stud_id}}', '{{i.att_id}}')">Delete</button></td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -114,12 +129,13 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form method="POST" action="{% url 'teacher_home' pk=pk %}">
+			<form method="POST">
 			{% csrf_token %}
 			<div class="modal-body">
 				Are you sure you want to delete <b><span class="product-name"></span></b>?
 					<div class="form-group">
-						<input hidden="true" type="text" class="form-control" name="product_id">
+						<input hidden="true" type="text" class="form-control" name="att_id">
+						<input hidden="true" type="text" class="form-control" name="stud_id">
 					</div>
 			</div>
 			<div class="modal-footer">
@@ -163,5 +179,11 @@ $(document).ready( function () {
 		"paging": true
 		});
 });
+function caller(id1, id2)
+{
+	$("[name=att_id]").val(id2);
+	$("[name=stud_id]").val(id1);
+}
+
 </script>
 {% endblock script %}
