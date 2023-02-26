@@ -1,5 +1,10 @@
 {% extends './base_student.html' %}
 {% load static %}
+
+{% block title %}
+<title>Review Quiz</title>
+{% endblock title %}
+
 {% block content %}
 <br><br>
 <a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a>

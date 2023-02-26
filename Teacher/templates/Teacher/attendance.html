@@ -1,6 +1,10 @@
 {% extends './base_teacher.html' %}
 {% load static %}
 
+{% block title %}
+<title>Attendance</title>
+{% endblock title %}
+
 
 
 
@@ -81,25 +85,33 @@ input:checked + .slider:before {
 
     {% endif %}
   <div class="container" >
-      <form method="post"class="form-group row" enctype="multipart/form-data">
+      <form method="post"class="form-group row" enctype="multipart/form-data" >
         {% csrf_token %}
-        <div class="col-3">
-            Start time: <input type="datetime-local" id="atttimes" name="atttimes">
+        <div class="col-6 form-group mb-3" >
+          <label for="atttimes" style="margin-right: 10px; width: 8rem">Start time:</label>
+             <input type="datetime-local" class="form-control" id="atttimes" name="atttimes">
         </div>
-        <div class="col-3">
-            End time: <input type="datetime-local" id="atttimee" name="atttimee">
+        
+        <div class="col-6 form-group mb-3" >
+          <label for="atttimee" style="margin-right: 10px; width: 8rem">End time: </label>
+            <input type="datetime-local" class="form-control"  id="atttimee" name="atttimee">
         </div>
-        <div class="form-goup">
-          <input type="file" id="attimg" name="attimg" accept="image/*" multiple>
+        <div class="col-6 mb-3">
+          <label for="attimg" class="form-label">Upload Image</label>
+          <input class="form-control" type="file" id="formFileMultiple" id="attimg" name="attimg" accept="image/*" multiple>
         </div>
+
+        
+
+        
         {% comment %} <div>
           <img src="{% url 'video_feed' pk=pk %}" height="80%">
         </div> {% endcomment %}
-        <div class="col-3">
-            <button class="btn btn-outline-success" type="submit">Create</button>
-        </div>
+        <div class="form-group mb-3">
+        <button class="btn btn-success col-3" type="submit">Create</button>
+      </div>
       </form>
-
+      <hr>
       <br>
 
       <div class="row">

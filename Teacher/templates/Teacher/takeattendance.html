@@ -1,8 +1,13 @@
 {% extends './base_teacher.html' %}
 {% load static %}
+
+{% block title %}
+<title>Take Attendance</title>
+{% endblock title %}
+
 {% block content %}
-<form method="POST" action="" style="margin-left: 30%; margin-top: 50px;width: 40%; text-align: center;"
-    enctype="multipart/form-data">
+<form method="POST" action="" style="margin-left: 30%; margin-top: 50px;width: 40%; text-align: center;" 
+    enctype="multipart/form-data" >
     {{ form.hidden_tag() }}
     <fieldset class="form-group">
         <legend class='border-bottom mb-4' style="text-align: center;">Smart Attendance (Face Detection)</legend>

@@ -1,6 +1,10 @@
 {% extends './base_student.html' %}
 {% load static %}
 
+{% block title %}
+<title>Attendance</title>
+{% endblock title %}
+
 
 {% block content %}
 <style>
@@ -29,7 +33,7 @@
     <div class="container">
 
 
-        <form method="post">
+        <form method="post" >
             {% csrf_token %}
             <div class="form-group row">
                 <div class="form-group row">

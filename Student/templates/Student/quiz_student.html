@@ -1,6 +1,10 @@
 {% extends './base_student.html' %}
 {% load static %}
 
+{% block title %}
+<title>Quiz</title>
+{% endblock title %}
+
 {% block navbar %}
   <header id="header" class="header d-flex align-items-center">
 
@@ -18,7 +22,7 @@
           
           <li class="dropdown">
             <a href="#">
-              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
             </a>
             <ul>
               <li>

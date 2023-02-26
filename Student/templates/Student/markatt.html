@@ -1,6 +1,9 @@
 {% extends './base_student.html' %}
 {% load static %}
 
+{% block title %}
+<title>Mark Attendance</title>
+{% endblock title %}
 
 {% block content %}
 <style>
@@ -13,6 +16,38 @@
       background-color: white !important;
       color: #008374 !important;
     }
+      
+    #left-side{
+    height:500px;
+    /*background-color:#FFB74D;*/
+    border-radius:0;
+    padding: 0;
+    margin-bottom:0;
+    /*border: 1px solid red;*/
+    }
+    
+    #right-side{
+    height:500px;
+    padding: 0;
+    /* background-image: url(https://images.unsplash.com/photo-1587058571836-8562bb05e548?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1035&q=80); */
+    background-repeat:no-repeat;
+    border-radius:0;
+    /*border: 1px dotted black;*/
+    }
+    .col-sm-6 {
+        width: 48%;
+    }
+      
+      h4 {
+        margin: 2rem 0rem 1rem;
+      }
+      
+      .table-image {
+        td, th {
+          vertical-align: middle;
+        }
+      }
+
   
   </style>
 
@@ -29,24 +64,76 @@
     
     <div class="container">
         
-        <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+        {% comment %} <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
             <img height="500" width="500" src={{imagePath}}>
             <canvas id="draw"></canvas>
-        </div>
+        </div> {% endcomment %}
         {% comment %} <ul> {% endcomment %}
-            <div class="container">
+            <div class="">
                 <div class="row">
 
-                    {% for i in final_list_list %}
-                    {% comment %} <li> {% endcomment %}
-                        {% comment %} <img height="150" width="150" src={{i.0}} alt="" style="border-radius: 6px;"> {% endcomment %}
+                    <div class="">
+                        <div class="row">  
+                            <div id="left-side" class="col-md-6 jumbotron text-center">
+                                {% comment %} <h1 class="mt-5 pt-4">Heading </h1>
+                                <p>Lorem ipsum dolor sit amet,    consectetur adipisicing elit...</p>
+                                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+                                    <button >Learn More >></button> {% endcomment %}
+                                    <img width="400"src={{imagePath}}>
+                            </div>
+                        <div id="right-side" class="col-md-6  jumbotron text-center">
+                            <div class="">
+                                <div class="row">
+                                  <div class="col-12">
+                                      <table class="table">
+                                        <thead>
+                                          <tr>
+                                            <th>Number</th>
+                                            <th style="text-align: -webkit-center;" scope="col">Image</th>
+                                            <th style="text-align: -webkit-center;" scope="col">Mark</th>
+                                            {% comment %} <th scope="col"></th>
+                                            <th scope="col">Words</th>
+                                            <th scope="col">Shares</th> {% endcomment %}
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in final_list_list %}
+                                            <tr>
+                                                <th scope="row">{{forloop.counter}}</th>
+                                                <td style="text-align: -webkit-center;" class="w-25">
+                                                    <img style="width: 100px; height: 100px" src={{i.0}} class="img-fluid img-thumbnail" alt="Sheep">
+                                                </td>
+                                                <td style="text-align: -webkit-center;">
+                                                    {% if i.1 != "" %}
+                                                        <div>
+                                                            <i style="border-radius: 10px; background-color: #008374; color: white;" class="fa-regular fa-circle-check"></i>
+                                                            <span style="width: 130px; display: block;"><small>Marked by: {{ i.1 }}</small></span>
+                                                        </div>
+                                                    {% else %}
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="text" name="img_id"  hidden value="{{forloop.counter0}}">
+                                                        <button type="submit"  class="btn btn-success"><small>Mark </small></button>
+                                                    
+                                                    </form>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                      </table>   
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
+
+                    {% comment %} {% for i in final_list_list %}
         
                         <div style="padding: 0; display: flex; flex-direction: row; flex-wrap: wrap; align-content: center; align-items: center; height: fit-content;" class="card col-lg-3 col-md-4 col-sm-12">
                             <img height="100" width="100" src={{i.0}} alt="" style="border-radius: 6px;">
                             <div class="card-body">
-                                {% comment %} <h5 class="card-title">Card title</h5> {% endcomment %}
                                 {% if i.1 != "" %}
-                                    {% comment %} <button class="btn btn-success" onclick="marker('{{forloop.counter0}}')" disabled>Button: {{i.1}}</button> {% endcomment %}
                                     <div>
                                         <i style="border-radius: 10px; background-color: #008374; color: white;" class="fa-regular fa-circle-check"></i>
                                         <span style="width: 130px; display: block;"><small>Marked by: {{ i.1 }}</small></span>
@@ -54,24 +141,14 @@
                                 {% else %}
                                 <form method="post">
                                     {% csrf_token %}
-                                    {% comment %} <input name="img_id" style="display: none" id="img_catch" /> {% endcomment %}
                                     <input type="text" name="img_id"  hidden value="{{forloop.counter0}}">
                                     <button type="submit"  class="btn btn-success"><small>Mark </small></button>
-                                    {% comment %} <i class="fa-regular fa-hand"></i> {% endcomment %}
                                 
                                 </form>
                                 {% endif %}
                             </div>
                         </div> 
-        
-        
-                        {% comment %} {% if i.1 != "" %}
-                        <button  class="btn btn-outline-success" onclick="marker('{{forloop.counter0}}')" disabled>Button: {{i.1}}</button>
-                        {% else %}
-                        <button class="btn btn-success" onclick="marker('{{forloop.counter0}}')">Button</button>
-                        {% endif %} {% endcomment %}
-                    {% comment %} </li> {% endcomment %}
-                    {% endfor %}
+                    {% endfor %} {% endcomment %}
                 </div>
             </div>
         {% comment %} </ul>    {% endcomment %}
