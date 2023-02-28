@@ -80,8 +80,19 @@ def classroom(request, pk, pk2):
             assignment.peer_grade=False
         print(request.POST.get('peer'))
         assignment.save()
-    assign=Assignments.objects.filter(class_code=pk2)
-    return render(request, 'Teacher/classroom.html', {'assign': assign, 'pk': pk, 'pk2': pk2})
+    a=Assignments.objects.filter(class_code=pk2)
+    assign = []
+    studs=[]
+    class_data = ClassTeachers.objects.filter(teach_id=pk)
+    for i in class_data:
+        studs.append(len(ClassStudents.objects.filter(class_code=i.class_code)))
+    totalStudents = studs[0]
+    studs = []
+    for i in a:
+        s = SubmittedAssignments.objects.filter(assignment_id=i.assignment_id)
+        assign.append([i, len(s)])
+        studs.append(totalStudents-len(s))
+    return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2})
 
 def assignmentsub(request, pk, pk2, pk3):
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)

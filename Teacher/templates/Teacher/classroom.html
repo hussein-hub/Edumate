@@ -205,7 +205,7 @@ input:checked + .slider:before {
       <br>
 
       <div class="row">
-      {% for i in assign %}
+      {% for i, j in assign %}
           
 
         {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
@@ -221,14 +221,16 @@ input:checked + .slider:before {
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
           <div class="card-header">
             <div style="font-weight: 600; font-size: 18px">
-              {{ i.assignment_name }}
+              {{ i.0.assignment_name }}
             </div>
           </div>
           <div class="card-body">
             <blockquote class="blockquote mb-0">
-              <p><small>Max marks: {{ i.max_marks }}</small></p>
-              <p><small>Description : {{ i.assignment_description }}</small></p>
-              <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>
+              <p><small>Max marks: {{ i.0.max_marks }}</small></p>
+              <p><small>Description : {{ i.0.assignment_description }}</small></p>
+              <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
+              <p><small style = "font-size: 13px">Not Submitted : {{ j }}</small></p>
+              <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>
             </blockquote>
           </div>
         </div>
