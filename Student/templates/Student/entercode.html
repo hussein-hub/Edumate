@@ -5,6 +5,44 @@
 <title>Attendance</title>
 {% endblock title %}
 
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a href="{% url 'classroom1' pk=pk pk2=pk2 %}" class="btn">Back to home page</a>
+          </li>
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
 
 {% block content %}
 <style>
@@ -45,13 +83,12 @@
                     </div>
 
                     <div class="col-sm-4">
-                        <button class="btn btn-outline-success mx-1 my-1" type="submit">Mark Attendance</button>
+                        <button class="btn btn-success mx-1 my-1" type="submit">Mark Attendance</button>
                     </div>
 
                 </div>
             </div>
         </form>
-        <a href="{% url 'classroom1' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to home page</a>
     </div>
 </div>
 
