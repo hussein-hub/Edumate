@@ -327,10 +327,15 @@ def create_quiz(request, pk, pk2):
 def attendance(request, pk, pk2):
     global model
     all_att = Attendance.objects.filter(teacher_id=pk, class_id=pk2).order_by('-att_id')
+    nums_studs_present=[]
     attdates=[]
+    total_num = len(ClassStudents.objects.filter(class_code=pk2))
     for i in all_att:
         date_single = parse_datetime(i.start_time)
         attdates.append(date_single)
+        single_num = len(AttStud.objects.filter(att_id=i.att_id))
+        percent = (single_num / total_num) * 100
+        nums_studs_present.append([single_num, percent])
     if request.method=="POST":
         new_att=Attendance()
         new_att.teacher_id=pk
@@ -352,7 +357,7 @@ def attendance(request, pk, pk2):
 
         messages.success(request, 'Attendance created and code is = '+new_att.code)
         return redirect('attendance', pk=pk, pk2=pk2)
-    return render(request, 'Teacher/attendance.html', {'pk': pk, 'pk2': pk2, 'all_att': zip(all_att, attdates)})
+    return render(request, 'Teacher/attendance.html', {'pk': pk, 'pk2': pk2, 'all_att': zip(all_att, attdates, nums_studs_present)})
 
 def video_feed(request, pk):
     return StreamingHttpResponse(gen_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
@@ -400,14 +405,18 @@ def view_att(request, pk, pk2, pk3):
                 all_stud_names_ids.append(single_stud)
             except:
                 continue
+    print(all_stud_names_ids)
     if request.method == "POST":
         if 'student_id' in request.POST:
             if request.POST['student_id']=="none":
                 messages.error(request, "Please select a valid option")
                 return redirect('viewatt', pk=pk, pk2=pk2, pk3=pk3)
+            tem=request.POST['student_id'].split("(")
+            tem=tem[-1]
+            tem=tem.split(")")
             att=AttStud()
             att.att_id=Attendance.objects.get(att_id=pk3)
-            att.stud_id=Students.objects.get(stud_id=request.POST['student_id'])
+            att.stud_id=Students.objects.get(stud_id=int(tem[0]))
             att.att_time=str(datetime.now())
             att.img_number=-1
             att.save()

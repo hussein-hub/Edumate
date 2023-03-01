@@ -61,28 +61,6 @@
   </header>
   {% endblock navbar %}
 
-<<<<<<< HEAD
-  {% block style %}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.3/css/bootstrap-select.css" />
-
-<style>
-  .btn-success, .btn-success:active, .btn-success:visited {
-    background-color: #008374 !important;
-  }
-  
-  .btn-success:hover {
-    border-color: #008374 !important;
-    background-color: white !important;
-    color: #008374 !important;
-  }
-
-</style>
-{% endblock style %}
-=======
->>>>>>> 057ca21cbb4d2a59762bec4885ebd3d7a1e5eae3
 
 {% block content %}
 
@@ -109,11 +87,7 @@
 			{% csrf_token %}
 			<div>
 				<div class="searchInput">
-<<<<<<< HEAD
-					<select class="selectpicker" name="student_id" data-show-subtext="true" data-live-search="true">
-=======
 					{% comment %} <select name="student_id">
->>>>>>> 057ca21cbb4d2a59762bec4885ebd3d7a1e5eae3
 						<option value="none">Select student</option>
 						{% for i in all_stud %}
 						<option value={{ i.stud_id }}>{{ i.name }}</option>
@@ -122,7 +96,7 @@
 					<input class="form-control" list="datalistOptions" id="student_id" name="student_id" placeholder="Type to search...">
 					<datalist id="datalistOptions">
 						{% for i in all_stud %}
-						<option value="{{ i.name }}">Student ID: {{ i.stud_id }}</option>
+						<option value="{{ i.name }}({{i.stud_id}})">Student ID: {{ i.stud_id }}</option>
 						{% endfor %}
 					</datalist>
 				</div>
@@ -190,12 +164,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.3/js/bootstrap-select.js"></script>
-  
 
 <script>
 

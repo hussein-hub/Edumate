@@ -162,13 +162,15 @@ input:checked + .slider:before {
       <br>
 
       <div class="row " >
-        {% for i,j in all_att %}
+        {% for i,j,k in all_att %}
           <div class="card mx-2 my-2" style="width: 32%; padding: 0px;">
             <h5 class="card-header">{{ j|date:"F d, Y" }}</h5>
             <div class="card-body">
               <h6 class="card-subtitle mb-2 text-muted">Start Time: {{ i.start_time|slice:"11:" }} </h6>
               <h6 class="card-subtitle mb-2 text-muted">End time: {{ i.end_time|slice:"11:" }} </h6>
               <p class="card-text">Code: {{ i.code }}</p>
+              <h6 class="card-subtitle mb-2 text-muted">Present: {{ k.0 }}</h6>
+              <h6 class="card-subtitle mb-2 text-muted">Percentage: {{ k.1 }} % </h6>
               <a href="{% url 'viewatt' pk=pk pk2=pk2 pk3=i.att_id %}" class="btn btn-success">Go to Attendance</a>
             </div>
           </div>
