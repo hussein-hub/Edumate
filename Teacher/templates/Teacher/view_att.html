@@ -5,7 +5,21 @@
 <title>View Attendance</title>
 {% endblock title %}
 
+{% block styles %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
 
+<style>
+.btn-success, .btn-success:active, .btn-success:visited {
+  background-color: #008374 !important;
+}
+
+.btn-success:hover {
+  border-color: #008374 !important;
+  background-color: white !important;
+  color: #008374 !important;
+}
+</style>
+{% endblock styles %}
 
 {% block navbar %}
   <header id="header" class="header d-flex align-items-center">
@@ -47,6 +61,7 @@
   </header>
   {% endblock navbar %}
 
+<<<<<<< HEAD
   {% block style %}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
 
@@ -66,6 +81,8 @@
 
 </style>
 {% endblock style %}
+=======
+>>>>>>> 057ca21cbb4d2a59762bec4885ebd3d7a1e5eae3
 
 {% block content %}
 
@@ -90,20 +107,31 @@
 		</div>
 		<form method="POST">
 			{% csrf_token %}
-			<div class="container">
+			<div>
 				<div class="searchInput">
+<<<<<<< HEAD
 					<select class="selectpicker" name="student_id" data-show-subtext="true" data-live-search="true">
+=======
+					{% comment %} <select name="student_id">
+>>>>>>> 057ca21cbb4d2a59762bec4885ebd3d7a1e5eae3
 						<option value="none">Select student</option>
 						{% for i in all_stud %}
 						<option value={{ i.stud_id }}>{{ i.name }}</option>
 						{% endfor %}
-					</select>
+					</select> {% endcomment %}
+					<input class="form-control" list="datalistOptions" id="student_id" name="student_id" placeholder="Type to search...">
+					<datalist id="datalistOptions">
+						{% for i in all_stud %}
+						<option value="{{ i.name }}">Student ID: {{ i.stud_id }}</option>
+						{% endfor %}
+					</datalist>
 				</div>
 			</div>
+			<br>
 			<button type="submit" class="btn btn-success">Mark Present</button>
 		</form>
 
-		<table class="table table-bordered" id="attendance-table">
+		<table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-bordered" id="attendance-table">
 			<thead>
 				<tr>
           			<th>Sr. No.</th>
@@ -171,6 +199,7 @@
 
 <script>
 
+
 $(document).ready( function () {
 	$('#attendance-table').DataTable({
 		"order": [],
@@ -193,7 +222,7 @@ function caller(id1, id2)
 {
 	$("[name=att_id]").val(id2);
 	$("[name=stud_id]").val(id1);
-}
+}	
 
 </script>
 {% endblock script %}

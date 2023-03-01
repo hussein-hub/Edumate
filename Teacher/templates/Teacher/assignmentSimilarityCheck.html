@@ -10,6 +10,7 @@
 {% for assignment in assignments %}
     <div style="display: flex; flex-direction: row; flex-wrap: nowrap;">
         <a href="{{ assignment.0.assign_file.url }}" target=_blank>Assignment Id : {{assignment.0.assign_id}}</a>
+        <p>{{assignment.0.percentage_similarity}}</p>
         <div style="margin-left: 10px"> Student Name : {{assignment.1.0.name}}</div>
     </div>
 {% endfor %}
