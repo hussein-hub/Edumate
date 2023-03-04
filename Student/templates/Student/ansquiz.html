@@ -1,6 +1,45 @@
 {% extends './base_student.html' %}
 {% load static %}
 
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a>
+          </li>
+          
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
 {% block title %}
 <title>Answer Quiz</title>
 {% endblock title %}
@@ -29,12 +68,12 @@ li {
   font-size: 1.5em;
   list-style-type: none;
   padding: 1em;
-  text-transform: uppercase;
+  {% comment %} text-transform: uppercase; {% endcomment %}
 }
 
 li span {
   display: block;
-  font-size: 4.5rem;
+  {% comment %} font-size: 4.5rem; {% endcomment %}
 }
 
 .emoji {
@@ -63,6 +102,15 @@ li span {
 .timer {
   font-size: 28px;
 }
+.btn-success, .btn-success:active, .btn-success:visited {
+  background-color: #008374 !important;
+}
+
+.btn-success:hover {
+  border-color: #008374 !important;
+  background-color: white !important;
+  color: #008374 !important;
+}
 </style>
 {% endblock styles %}
 
@@ -76,54 +124,71 @@ li span {
 <h2 id="end"></h2>
 <br><br>
 {% comment %} <a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a> {% endcomment %}
-<button class="btn btn-success" onclick="openFullscreen();">Open test in Fullscreen Mode</button>
+<div style="display: flex; flex-direction: row; justify-content: center; align-items: center; align-content: center; height: 75vh;" class="container">
+  <div class="card" style="width: 30rem;">
+    <div class="card-body">
+      <h5 class="card-title">Instructions</h5>
+      <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+      <ul>
+        <li style="display: list-item; font-size: inherit; list-style-type: circle; padding: 0.5em; text-transform: none;" class="card-text">Some quick example text to build on the card </li>
+        <li style="display: list-item; font-size: inherit; list-style-type: circle; padding: 0.5em; text-transform: none;" class="card-text">Some quick example text to build on the card </li>
+        <li style="display: list-item; font-size: inherit; list-style-type: circle; padding: 0.5em; text-transform: none;" class="card-text">Some quick example text to build on the card </li>
+        <li style="display: list-item; font-size: inherit; list-style-type: circle; padding: 0.5em; text-transform: none;" class="card-text">Some quick example text to build on the card </li>
+      </ul>
+      {% comment %} <a href="#" class="card-link">Card link</a> {% endcomment %}
+      <button style="display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center;" class="btn btn-success" onclick="openFullscreen();">Continue to test <i style="margin-left: 8px" class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
 
 <div class="container" id="mytest" hidden>
-  <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; font-size: 12px; margin-top: 2.5vh;">
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; font-size: 12px; margin-top: 2.5vh; margin-bottom: 5rem;">
     <li style="display: none;"><span id="days"></span>days</li>
     <li><span class="timer" id="hours"></span>Hours</li>
     <li><span class="timer" id="mins"></span>Minutes</li>
     <li><span class="timer" id="secs"></span>Seconds</li>
   </div>
 
-    <form class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
-      {% csrf_token %}
-      <h1 style="text-align: center;">{{course.course_name}}</h1>
-      <input type="text" hidden id="cheat" name="cheat" value="not_cheated">
-      {% for q in quiz%}
-      <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; margin-bottom: 1.5vh; margin-top: 0.5vh;">
-        <div style="display:inline-block; font-size: 22px; " class="text">{{ forloop.counter }}. {{q.0.0.question}}</div>
-        <div style="text-align: right; display:inline-block;">[Marks {{q.0.0.question.marks}}]</div>
-      </div>
-
-      {% for img in q.2  %}
-        <div class="form-check mx-4">
-          <img height=250 src={{img.image.url}} />
+    <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center;">
+      <form style="width: 60%;" class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
+        {% csrf_token %}
+        <h1 style="text-align: center;">{{course.course_name}}</h1>
+        <input type="text" hidden id="cheat" name="cheat" value="not_cheated">
+        {% for q in quiz%}
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; margin-bottom: 1.5vh; margin-top: 0.5vh;">
+          <div style="display:inline-block; font-size: 22px; " class="text">{{ forloop.counter }}. {{q.0.0.question}}</div>
+          <div style="text-align: right; display:inline-block;">[Marks {{q.0.0.question.marks}}]</div>
         </div>
-      {% endfor %}
-      
-      {% with outercount=forloop.counter %} 
-        {% for ops in q.0  %}
-        
+  
+        {% for img in q.2  %}
           <div class="form-check mx-4">
-            {% if q.1 == 1 %}
-            <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
-            {% else %}
-            <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
-            {% endif %}
-            
-            <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
-              {{ops}}
-            </label>
+            <img height=250 src={{img.image.url}} />
           </div>
         {% endfor %}
-      {% endwith %} 
-            
-		  <hr>
+        
+        {% with outercount=forloop.counter %} 
+          {% for ops in q.0  %}
+          
+            <div class="form-check mx-4">
+              {% if q.1 == 1 %}
+              <input class="form-check-input" type="radio" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
+              {% else %}
+              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" value="{{ops}}" >
+              {% endif %}
+              
+              <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
+                {{ops}}
+              </label>
+            </div>
           {% endfor %}
-          <br>
-          <input id="submit_button" class="btn btn-success" type="submit" value="Submit">  
-      </form>
+        {% endwith %} 
+              
+        <hr>
+            {% endfor %}
+            <br>
+            <input id="submit_button" class="btn btn-success" type="submit" value="Submit">  
+        </form>
+    </div>
     </div>
 
 
@@ -193,7 +258,7 @@ li span {
 
             var document_hidden = document[hidden];
 
-            document.addEventListener(visibilityChange, function() {
+            {% comment %} document.addEventListener(visibilityChange, function() {
                 if(document_hidden != document[hidden]) {
                 if(document[hidden]) {
                   count+=1;
@@ -206,7 +271,7 @@ li span {
                 }
                 document_hidden = document[hidden];
                 }
-            });
+            }); {% endcomment %}
             });
 
             var elem = document.getElementById("mytest");
@@ -230,13 +295,13 @@ li span {
               console.info("window.performance works fine on this browser");
             }
             console.info(performance.navigation.type);
-            if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+            {% comment %} if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
               console.info( "This page is reloaded" );
               // press the input button with id 'submit_button'
               document.getElementById("submit_button").click();
             } else {
               console.info( "This page is not reloaded");
-            }
+            } {% endcomment %}
 
     </script>
 
