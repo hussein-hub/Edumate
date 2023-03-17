@@ -5,9 +5,13 @@
 <title>Submit Assignment</title>
 {% endblock title %}
 
+{% block styles %}
+<link href="{% static 'Student/assets/css/assignment.css' %}" rel="stylesheet">
+{% endblock styles %}
+
 
 {% block navbar %}
-<header id="header" class="header d-flex align-items-center">
+  <header id="header" class="header d-flex align-items-center">
 
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
       <a href="#" class="logo d-flex align-items-center">
@@ -17,38 +21,105 @@
       </a>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="{% url 'login_student' %}">Student Login</a></li>
-          <li><a href="{% url 'login_teacher' %}">Teacher Login</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li>
+            <a class="btn" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back</a>
+          </li>
+          
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav><!-- .navbar -->
-  
+
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-  
+
+
     </div>
   </header>
-{% endblock navbar %}
+  {% endblock navbar %}
 
 {% block content %}
-    <div>
+<style>
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
+  
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
+
+</style>
+    {% comment %} <div>
       <p style="padding-top: 30px">Assignment name: {{ assign.0.assignment_name }}</p> 
       <p>Assignment description : {{ assign.0.assignment_description }}</p>
       <p>Marks : {{ assign.0.max_marks }}</p>
     </div>
     <div>
-        <form method="post" enctype="multipart/form-data" >
-            {% csrf_token %}
-            <input type="text" placeholder="Enter assignment description" name="description">
-            <input type="file" placeholder="Upload pdf file" name="submission">
-            <button class="btn btn-outline-success" type="submit">Submit</button>
-        </form>
+      <form method="post" enctype="multipart/form-data" >
+          {% csrf_token %}
+          <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+          <input class="form-control" id="file" type="file" placeholder="Upload pdf file" name="submission">
+          <button class="btn btn-outline-success" type="submit">Submit</button>
+      </form>
+      <button type="none" onclick="pressed()" class="formbold-btn w-full">Send File</button>
+    </div> {% endcomment %}
+
+    <div class="file-upload-wrapper">
+      <input type="file" id="input-file-now" class="file-upload" />
     </div>
+    
+    
+    <div class="formbold-main-wrapper">
+      <!-- Author: FormBold Team -->
+      <!-- Learn More: https://formbold.com -->
+      <div class="formbold-form-wrapper">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="formbold-mb-5">
+            <label for="email" class="formbold-form-label">
+              Send files to this email:
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter your email"
+              class="formbold-form-input"
+            />
+          </div>
+    
+          <div class="mb-6 pt-4">
+            <label class="formbold-form-label formbold-form-label-2">
+              Upload File
+            </label>
+    
+            <div class="formbold-mb-5 formbold-file-input">
+              <label for="file">
+                <input class="form-control" id="file" type="file" placeholder="Upload pdf file" name="submission">
+              </label>
+            </div>
+    
+          <div>
+            <button type="none" onclick="pressed()" class="formbold-btn w-full">Send File</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
     <div>
       {% if pflag %}
       {% if desc1 != "X" and desc2 != "X" %}
@@ -64,5 +135,16 @@
       {% endif %}
     {% endif %}
   </div>
-  <a class="btn btn-outline-success" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a>
+  {% comment %} <a class="btn btn-outline-success" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a> {% endcomment %}
 {% endblock content %}
+
+
+{% block script %}
+<script>
+  $('.file-upload').file_upload();
+  function pressed() {
+    var fileInput = document.getElementById("file");
+    console.log(fileInput);
+  }
+</script>
+{% endblock script %}
