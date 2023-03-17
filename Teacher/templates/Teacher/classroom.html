@@ -172,23 +172,31 @@ input:checked + .slider:before {
             <div class="modal-body">
                 <form method="post"class="form-group row">
                   {% csrf_token %}
-                  <div class="col-sm-3">
+                  <div class="col-sm-4">
                   <input class="form-control" type="text" placeholder="Enter assignment name" name="name">
                 </div>
-                  <div class="col-sm-5">
+                  <div class="col-sm-4">
                   <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
                 </div>
-                  <div class="col-sm-2">
+                <div class="col-sm-4">
                   <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks">
                 </div>
-                <div class="col-sm-2" style="display: flex; align-items: center">
+                <div class="col-sm-4" style="display: flex; align-items: center; margin-top: 10px">
                   Peer grading
                   <label class="switch">
                     <input type="checkbox" name="peer">
                     <span class="slider round"></span>
                   </label>
                 </div>
-                  <div class="col-sm-2">
+                <div class="col-sm-2" style="margin-top: 10px">
+                  Due date
+                </div>
+                <div class="col-sm-2" style="margin-top: 10px">
+                  <div>
+                  <input id="datetime" class="form-control" type="datetime-local" placeholder="Due date" name="duedate">
+                  </div>
+                </div>
+                  <div class="col-sm-4" style="margin-top: 10px">
                   <button class="btn btn-outline-success" type="submit">create</button>
                 </div>
                 </form>

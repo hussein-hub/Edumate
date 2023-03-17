@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 from Student.models import *
 from Edumate_app.models import *
+from django.utils import timezone
 
 # Create your models here.
 
@@ -23,6 +24,7 @@ class Assignments(models.Model):
     class_code = models.CharField(max_length=10)
     max_marks = models.FloatField(default=25)
     peer_grade = models.BooleanField(default=False)
+    duedate =  models.DateTimeField(default=timezone.now)
     class Meta:
         db_table = "Assignments"
     def __str__(self):

@@ -8,7 +8,15 @@
 
 {% block navbar %}
 <header id="header" class="header d-flex align-items-center">
+  {% if messages %}
+  {% for message in messages %}
+   {% if message.tags %}  
+   <script>alert('{{ message }}')</script>
+  {% endif %}
 
+  {% endfor %}
+
+{% endif %}
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
       <a href="#" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
@@ -40,13 +48,20 @@
       <p style="padding-top: 30px">Assignment name: {{ assign.0.assignment_name }}</p> 
       <p>Assignment description : {{ assign.0.assignment_description }}</p>
       <p>Marks : {{ assign.0.max_marks }}</p>
+      <p>Due date : {{ assign.0.duedate }}</p>
     </div>
     <div>
         <form method="post" enctype="multipart/form-data" >
             {% csrf_token %}
+            {% if submi %}
+            <input type="text" placeholder="Enter assignment description" name="description" value="{{ submi.desc }}">
+            <input type="file" placeholder="Upload pdf file" name="submission">
+            <button class="btn btn-outline-success" type="submit">Submit</button>
+            {% else %}
             <input type="text" placeholder="Enter assignment description" name="description">
             <input type="file" placeholder="Upload pdf file" name="submission">
             <button class="btn btn-outline-success" type="submit">Submit</button>
+            {% endif %}
         </form>
     </div>
     <div>

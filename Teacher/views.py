@@ -74,6 +74,7 @@ def classroom(request, pk, pk2):
         assignment.assignment_description=request.POST.get('description')
         assignment.class_code=pk2
         assignment.max_marks=request.POST.get('marks')
+        assignment.duedate=request.POST.get('duedate')
         if request.POST.get('peer')=="on":
             assignment.peer_grade=True
         else:
