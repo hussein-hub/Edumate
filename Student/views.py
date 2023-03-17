@@ -52,6 +52,11 @@ def assignmentsub(request, pk, pk2, pk3):
     peer_1=[]
     peer_2=[]
     temp=False
+    submi=SubmittedAssignments.objects.filter(stud_id=pk, assignment_id=pk3)
+    submidone={}
+    if submi:
+        submidone['desc']=submi[0].assign_desc
+        submidone['file']=submi[0].assign_file
     if assign[0].peer_grade:
         assigned=PeerGrade.objects.filter(stud_id=pk, assign_id=pk3)
         if(assigned):
@@ -68,6 +73,19 @@ def assignmentsub(request, pk, pk2, pk3):
         peer_marks.save()
         temp=True
     if(request.method=="POST" and temp==False):
+        if(submi):
+            submi[0].assign_desc=request.POST.get('description')
+            _, file = request.FILES.popitem()
+            file = file[0]
+            file._name=str(pk)+"_"+str(pk2)+"_"+str(pk3)+".pdf"
+            submi[0].assign_file = file
+            if(timezone.now()>assign[0].duedate):
+                messages.error(request, "Assignment submitted late")
+            else:
+                messages.error(request, "Assignment submitted!!")
+            submi[0].sub_date=timezone.now()
+            submi[0].save()
+            return redirect('assignment', pk=pk, pk2=pk2, pk3=pk3)
         assignment=SubmittedAssignments()
         assignment.assign_desc=request.POST.get('description')
         assignment.assignment_id=pk3
@@ -76,13 +94,19 @@ def assignmentsub(request, pk, pk2, pk3):
         file._name=str(pk)+"_"+str(pk2)+"_"+str(pk3)+".pdf"
         assignment.assign_file = file
         assignment.stud_id=pk
+        if(timezone.now()>assign[0].duedate):
+            messages.error(request, "Assignment submitted late")
+        else:
+            messages.error(request, "Assignment submitted!!")
+        assignment.sub_date=timezone.now()
         assignment.save()
+        return redirect('assignment', pk=pk, pk2=pk2, pk3=pk3)
     if(len(peer_1) and len(peer_2)):
-        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0], 'desc2': peer_2[0], 'pflag': pflag})
+        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0], 'desc2': peer_2[0], 'pflag': pflag, 'submi': submidone})
     else:
-        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': "X", 'desc2': "X", 'pflag': pflag})
+        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': "X", 'desc2': "X", 'pflag': pflag, 'submi': submidone})
     # return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0].assign_desc, 'desc2': peer_2[0].assign_desc})
-    return render(request, 'Student/assignment.html', {'pk': pk, 'pk2': pk2, })
+    # return render(request, 'Student/assignment.html', {'pk': pk, 'pk2': pk2, })
 
 def announcement_stud(request, pk, pk2):
     announcements = Announcements.objects.filter(class_code = pk2)

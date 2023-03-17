@@ -118,6 +118,7 @@
             <blockquote class="blockquote mb-0">
               <p><small>Description : {{ i.assignment_description }}</small></p>
               <p><small>Max marks: {{ i.max_marks }}</small></p>
+              <p><small>Due date: {{ i.duedate }}</small></p>
               <a class="btn btn-success" href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link"><small>Go to Assignments</small></a>
             </blockquote>
           </div>

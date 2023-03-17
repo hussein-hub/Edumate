@@ -18,6 +18,7 @@ class SubmittedAssignments(models.Model):
     assignment_id = models.IntegerField()
     stud_id = models.IntegerField(default=0)
     marks = models.FloatField(default=None, null=True)
+    sub_date = models.DateTimeField(default=timezone.now)
     class Meta:
         db_table = "SubAssigns"
     def get_student_name(self):
