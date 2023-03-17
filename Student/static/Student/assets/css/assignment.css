@@ -3,9 +3,9 @@
     outline-offset: -10px;
     -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
     transition: outline-offset .15s ease-in-out, background-color .15s linear;
-    padding: 120px 0px 85px 35%;
+    padding: 30px 225px 30px 35%;
     text-align: center !important;
-    margin: 0;
+    margin-bottom: 15px;
     width: 100% !important;
 }
 .files input:focus{     outline: 2px dashed #92b0b3;  outline-offset: -10px;
@@ -35,7 +35,7 @@
     width: 100%;
     right: 0;
     height: 57px;
-    content: " or drag it here. ";
+    /* content: " or drag it here. "; */
     display: block;
     margin: 0 auto;
     color: #2ea591;
