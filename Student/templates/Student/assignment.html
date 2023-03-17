@@ -61,6 +61,9 @@
     background-color: white !important;
     color: #008374 !important;
   }
+  b {
+    font-size: 18px;
+  }
 
 </style>
 
@@ -98,17 +101,24 @@
     <div class="row" style="display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: center; height: 80vh;">
-      <div class="col-md-6">
+    justify-content: center; 
+    height: 80vh;
+    align-items: center;">
+      <div class="col-md-6" style="background: rgba( 255, 255, 255, 0.25 );
+      box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+      backdrop-filter: blur( 4px );
+      -webkit-backdrop-filter: blur( 4px );
+      border-radius: 10px;
+      border: 1px solid rgba( 255, 255, 255, 0.18 );">
         <div>
-          <p style="padding-top: 30px">Assignment name: {{ assign.0.assignment_name }}</p> 
-          <p>Assignment description : {{ assign.0.assignment_description }}</p>
-          <p>Marks : {{ assign.0.max_marks }}</p>
-          <p>Due date : {{ assign.0.duedate }}</p>
+          <p style="padding-top: 30px"><b>Assignment name</b> : {{ assign.0.assignment_name }}</p> 
+          <p><b>Assignment description</b> : {{ assign.0.assignment_description }}</p>
+          <p><b>Marks</b> : {{ assign.0.max_marks }}</p>
+          <p><b>Due date</b> : {{ assign.0.duedate }}</p>
         </div>
           <form method="post" action="#" enctype="multipart/form-data" >
             {% csrf_token %}
-            <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+            <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description">
             <div class="form-group files">
               <input type="file" class="form-control" multiple="">
             </div>

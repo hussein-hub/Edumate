@@ -14,13 +14,13 @@
     appearance: none;
     margin: 0; 
 }
+
 </style>
 {% endblock %}
 
 
 {% block navbar %}
 <style>
-
  
   .btn-success, .btn-success:active, .btn-success:visited {
     background-color: #008374 !important;
@@ -81,6 +81,7 @@
 {% endblock navbar %}
 
 {% block content %}
+
     {% comment %} <div>
         {% for i in submit %}
         <p>Student ID: {{ i.stud_id }}</p>
@@ -89,13 +90,20 @@
         {% endfor %}
       <a href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to classroom</a>
     </div> {% endcomment %}
+
      
     <div class="container">
         <div class="row">
             
             <div class="col-sm-6">
               <br><br>
-              <form method="POST" style="border: 1px solid black; border-radius: 1rem; padding: 1rem 1rem" >
+              <form method="POST" style="background: rgba( 255, 255, 255, 0.25 );
+              box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+              backdrop-filter: blur( 4px );
+              -webkit-backdrop-filter: blur( 4px );
+              border-radius: 10px;
+              border: 1px solid rgba( 255, 255, 255, 0.18 );
+              padding: 1rem;" >
                 {% csrf_token %}
                 <div class="form-group mb-3">
                   <label for="exampleInputEmail1">Student Name: {{ student_name }}</label>
@@ -120,11 +128,30 @@
                 <button type="submit" class="btn btn-success">Submit</button>
               </form>
             </div>
-            <div class="col-sm-6">
+            {% comment %} <div class="col-sm-6">
               <iframe src={{ submit.assign_file.url }}#toolbar=0 style="height:40rem;  width: 100%; display:block;" frameborder="0"></iframe>
-              
-          </div>
+          </div> {% endcomment %}
         </div>
         
     </div>
+    <div id="adobe-dc-view"></div>
+ <script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
+ <script type="text/javascript">
+    document.addEventListener("adobe_dc_view_sdk.ready", function()
+    {
+        var adobeDCView = new AdobeDC.View({clientId: "a4a89fb3f3714753b882dad67e66d6a2", divId: "adobe-dc-view"});
+        adobeDCView.previewFile(
+       {
+          content:   {location: {url: "{{ submit.assign_file.url }}"}},
+          metaData: {fileName: "{{submit.assign_desc}}"}
+       });
+    });
+    console.log("{{ submit.assign_file.url }}");
+ </script>
 {% endblock content %}
+
+{% block script %}
+<script>
+
+</script>
+{% endblock script %}
