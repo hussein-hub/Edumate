@@ -13,7 +13,6 @@
 {% block navbar %}
 <header id="header" class="header d-flex align-items-center">
 
-{% endif %}
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
       <a href="#" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
@@ -64,6 +63,7 @@
   }
 
 </style>
+
     {% comment %} <div>
       <p style="padding-top: 30px">Assignment name: {{ assign.0.assignment_name }}</p> 
       <p>Assignment description : {{ assign.0.assignment_description }}</p>
@@ -73,8 +73,8 @@
     <div>
         <form method="post" enctype="multipart/form-data" >
             {% csrf_token %}
-            <input type="text" placeholder="Enter assignment description" name="description">
-            <input type="file" placeholder="Upload pdf file" name="submission">
+            <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+            <input class="form-control" type="file" placeholder="Upload pdf file" name="submission">
             <button class="btn btn-outline-success" type="submit">Submit</button>
         </form>
     </div>
@@ -92,17 +92,52 @@
       </form>
       {% endif %}
     {% endif %}
+  </div> {% endcomment %}
+
+  <div class="container">
+    <div class="row" style="display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center; height: 80vh;">
+      <div class="col-md-6">
+        <div>
+          <p style="padding-top: 30px">Assignment name: {{ assign.0.assignment_name }}</p> 
+          <p>Assignment description : {{ assign.0.assignment_description }}</p>
+          <p>Marks : {{ assign.0.max_marks }}</p>
+          <p>Due date : {{ assign.0.duedate }}</p>
+        </div>
+          <form method="post" action="#" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+            <div class="form-group files">
+              <input type="file" class="form-control" multiple="">
+            </div>
+            
+          </form>
+      </div>
+    </div>
   </div>
+  <div>
+    {% if pflag %}
+    {% if desc1 != "X" and desc2 != "X" %}
+    <form method="post">
+        {% csrf_token %}
+        <p>File: <a target="_blank" href="{{ desc1.assign_file.url }}">View Doc</a></p>
+        <input type="number" placeholder="Enter marks" name="peer1">
+        <p>File: <a target="_blank" href="{{ desc2.assign_file.url }}">View Doc</a></p>
+        <input type="number" placeholder="Enter marks" name="peer2">
+        <input type="text" name="caller" value="call" style="display: none">
+        <button class="btn btn-outline-success" type="submit">Submit</button>
+    </form>
+    {% endif %}
+  {% endif %}
+</div>
   {% comment %} <a class="btn btn-outline-success" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a> {% endcomment %}
 {% endblock content %}
 
 
 {% block script %}
 <script>
-  $('.file-upload').file_upload();
-  function pressed() {
-    var fileInput = document.getElementById("file");
-    console.log(fileInput);
-  }
+ 
 </script>
 {% endblock script %}
