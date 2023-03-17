@@ -92,7 +92,8 @@ def classroom(request, pk, pk2):
         s = SubmittedAssignments.objects.filter(assignment_id=i.assignment_id)
         assign.append([i, len(s)])
         studs.append(totalStudents-len(s))
-    return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2})
+    total_studs_value=len(ClassStudents.objects.filter(class_code=pk2))
+    return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2, 'total': total_studs_value})
 
 def assignmentsub(request, pk, pk2, pk3):
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
