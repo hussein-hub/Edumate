@@ -24,9 +24,9 @@ class SubmittedAssignments(models.Model):
     def get_student_name(self):
         return Students.objects.get(stud_id=self.stud_id).name
     def __str__(self):
-         a = Students.objects.get(stud_id=self.stud_id)
-         return str(a.name)
-    
+         myid = self.stud_id
+         a = Students.objects.get(stud_id = myid).name
+         return str(a)
 
 class PeerStudents(models.Model):
     peerstud_id = models.AutoField(primary_key=True)

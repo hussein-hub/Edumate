@@ -10,7 +10,7 @@ class Students(models.Model):
     class Meta:
         db_table = "Students"
     def __str__(self):
-         return self.name
+         return str(self.stud_id)
 
 class Teachers(models.Model):   
     teach_id = models.AutoField(primary_key=True)

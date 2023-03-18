@@ -93,7 +93,7 @@
 						<option value={{ i.stud_id }}>{{ i.name }}</option>
 						{% endfor %}
 					</select> {% endcomment %}
-					<input class="form-control" list="datalistOptions" id="student_id" name="student_id" placeholder="Type to search...">
+					<input class="form-control" list="datalistOptions" id="student_id" name="student_id" placeholder="Type to search..." required>
 					<datalist id="datalistOptions">
 						{% for i in all_stud %}
 						<option value="{{ i.name }}({{i.stud_id}})">Student ID: {{ i.stud_id }}</option>
@@ -179,7 +179,7 @@ $(document).ready( function () {
     	{ extend: 'pdf', className: 'btn btn-success glyphicon' },
 		],
 		"columnDefs": [ {
-			"targets": 2,
+			"targets": 3,
 			"sortable": false,
 			"searchable": true
 		} ],
