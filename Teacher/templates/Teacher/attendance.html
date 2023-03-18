@@ -182,3 +182,17 @@ input:checked + .slider:before {
   
     </div>
 {% endblock content %}
+
+
+{% block script %}
+
+<script>
+  var today = new Date();
+  today.setHours(today.getHours() + 5);
+  today.setMinutes(today.getMinutes() + 30);
+  document.getElementById('atttimes').value = today.toISOString().slice(0, 16);
+  today.setMinutes(today.getMinutes() + 15);
+  document.getElementById('atttimee').value = today.toISOString().slice(0, 16);
+</script>
+
+{% endblock script %}

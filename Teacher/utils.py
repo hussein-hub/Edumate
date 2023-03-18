@@ -184,7 +184,7 @@ def draw_boxes(image_file_name,v_boxes):
         os.makedirs(f'./images/{img_file_name}/', exist_ok=True)
         cv2.imwrite(os.path.join(f'./images/{img_file_name}', str(i) + ".jpg"),copy_img[y1:y2,x1:x2])
         img = cv2.rectangle(img, start_point, end_point, color, thickness)
-        img = cv2.putText(img, str(i), (start_point[0], start_point[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,255), 2)
+        img = cv2.putText(img, str(i+1), (start_point[0], start_point[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,255), 2)
         # print(img[x1:x2, y1:y2])
     cv2.imwrite(os.path.join(os.path.join('./images',"a"+image_file_name)),img)
 

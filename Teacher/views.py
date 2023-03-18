@@ -447,18 +447,18 @@ def assignmentSimilarityCheck(request, pk, pk2, pk3):
     for i in all_assignments:
         files.append(i.assign_file.url)
         students.append(i.stud_id)
-    # files_text = getTextFromPDF(files)
-    # embeddings = similarity_sentence_transformer_model.encode(files_text)
-    # similarities = predict_similarity(embeddings,students)
-    # # print(similarities)
-    # for j in similarities:
-    #     # print(j)
-    #     plag = Plagarism()
-    #     plag.assignment_id = Assignments.objects.get(assignment_id = pk3)
-    #     plag.percentage_similarity = j['similarity_score']
-    #     plag.stud_assignment1 = SubmittedAssignments.objects.get(stud_id=j['stud_1'], assignment_id=pk3)
-    #     plag.stud_assignment2 = SubmittedAssignments.objects.get(stud_id=j['stud_2'], assignment_id=pk3)
-    #     plag.save()
+    files_text = getTextFromPDF(files)
+    embeddings = similarity_sentence_transformer_model.encode(files_text)
+    similarities = predict_similarity(embeddings,students)
+    # print(similarities)
+    for j in similarities:
+        # print(j)
+        plag = Plagarism()
+        plag.assignment_id = Assignments.objects.get(assignment_id = pk3)
+        plag.percentage_similarity = j['similarity_score']
+        plag.stud_assignment1 = SubmittedAssignments.objects.get(stud_id=j['stud_1'], assignment_id=pk3)
+        plag.stud_assignment2 = SubmittedAssignments.objects.get(stud_id=j['stud_2'], assignment_id=pk3)
+        plag.save()
     # print(data)
     # ,percentage_similarity__range=(0.5, 1)
     plag = Plagarism.objects.filter(assignment_id = pk3).order_by('-percentage_similarity')

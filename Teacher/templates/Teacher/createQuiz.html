@@ -96,11 +96,11 @@
                                 <div class="time_left_txt">Time: </div>
                                 <input style="width: 50px;" value=10 class="form-control" type="number" name="quiz_time">
                             </div>  
-                            <div class="timer">
-                                <div class="time_left_txt">Date: </div>
-                                <input style="width: 50px;" value=10 class="form-control" type="datetime-local" name="quiz_date">
-                            </div>  
-                        </header>
+                          </header>
+                          <div class="timer" style="margin-top: 15px; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-evenly; align-items: center">
+                              <div class="time_left_txt">Date: </div>
+                              <input style="width: 18vw;" value=10 class="form-control" type="datetime-local" name="quiz_date">
+                          </div>  
                         <section class="questionInput">
                             <div class="description">
                                 <textarea class="description" style="width: -webkit-fill-available; outlint: none; border: 1px solid #ced4da; border-radius: .375rem; padding: 10px; margin-bottom: 2rem;" placeholder="Description" name="desc"></textarea>
@@ -137,7 +137,7 @@
                         </section>
     
                         <footer>
-                            <a class="btn" style="background-color: #008374; color: white;" href="{% url 'classroom' pk=pk pk2=pk2 %}"><i class="fa-solid fa-backward"></i></a>
+                            {% comment %} <a class="btn" style="background-color: #008374; color: white;" href="{% url 'classroom' pk=pk pk2=pk2 %}"><i class="fa-solid fa-backward"></i></a> {% endcomment %}
                             <div style="display: flex; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: space-around; align-items: center;">
                                 <button style="background-color: #008374; color: white;" onclick="updateAll()" type="submit" class="btn ">submit</button>
                             </div>

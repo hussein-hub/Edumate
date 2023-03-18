@@ -5,6 +5,56 @@
 {% endblock title %}
 
 
+{% block styles %}
+<style>
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
+  
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
+</style>
+{% endblock styles %}
+
+
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
 
 {% block content %}
     <div class="container ">
@@ -40,16 +90,16 @@
         </div> {% endcomment %}
         <div class="row row-content my-4">
           {% for i in data %}
-          <div class="col-6">
+          <div class="col-4">
             <div class="card">
-              <div class="card-header">
+              <div class="card-header" style="font-size: 1.5rem;">
                 {{ i.1 }}
               </div>
               <div class="card-body">
                 <blockquote class="blockquote mb-0">
                   <p>Instructor: {{ i.2 }}</p>
                   <p>Class code: {{ i.0 }}</p>
-                  <a class="blockquote-footer" href="{% url 'classroom1' pk=pk pk2=i.0 %}">Go to classroom</a>
+                  <a class="btn btn-success" href="{% url 'classroom1' pk=pk pk2=i.0 %}">Go to classroom</a>
                 </blockquote>
               </div>
             </div>

@@ -195,8 +195,7 @@ li span {
 
 {% endblock content %}
 
-{% block script %} 
-<script>
+{% block script %} <script>
     // The data/time we want to countdown to
     var countDownDate, currenttime,flag;
     flag = 0;
@@ -225,7 +224,7 @@ li span {
         document.getElementById("mins").innerHTML = ""
         document.getElementById("secs").innerHTML = ""
         document.getElementById("end").innerHTML = "TIME UP!!";
-        {% comment %} await new Promise(r => setTimeout(r, 1000)); {% endcomment %}
+        await new Promise(r => setTimeout(r, 1000)); 
         document.getElementById("submit_button").click();
     }
 
@@ -258,7 +257,7 @@ li span {
 
             var document_hidden = document[hidden];
 
-            {% comment %} document.addEventListener(visibilityChange, function() {
+            document.addEventListener(visibilityChange, function() {
                 if(document_hidden != document[hidden]) {
                 if(document[hidden]) {
                   count+=1;
@@ -271,7 +270,7 @@ li span {
                 }
                 document_hidden = document[hidden];
                 }
-            }); {% endcomment %}
+            });
             });
 
             var elem = document.getElementById("mytest");
@@ -295,14 +294,15 @@ li span {
               console.info("window.performance works fine on this browser");
             }
             console.info(performance.navigation.type);
-            {% comment %} if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+            if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
               console.info( "This page is reloaded" );
               // press the input button with id 'submit_button'
               document.getElementById("submit_button").click();
             } else {
               console.info( "This page is not reloaded");
-            } {% endcomment %}
+            }
 
     </script>
+
 
 {% endblock %}

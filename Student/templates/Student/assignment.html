@@ -67,6 +67,16 @@
 
 </style>
 
+{% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  
+         <script>alert('{{ message }}')</script>
+        {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+
     {% comment %} <div>
       <p style="padding-top: 30px">Assignment name: {{ assign.0.assignment_name }}</p> 
       <p>Assignment description : {{ assign.0.assignment_description }}</p>
@@ -133,7 +143,11 @@
       </div>
     </div>
   </div>
-  <div id="adobe-dc-view"></div>
+  {% if submi %}
+    <div style="margin-left: 10%; margin-right: 10%;" id="adobe-dc-view"></div>
+  {% else %}
+    <div id="adobe-dc-view" style="display: none;"></div>
+  {% endif %}
   <div>
     {% if pflag %}
     {% if desc1 != "X" and desc2 != "X" %}
@@ -155,7 +169,19 @@
 
 {% block script %}
 
+<script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
 <script>
+
+  document.addEventListener("adobe_dc_view_sdk.ready", function()
+    {
+        var adobeDCView = new AdobeDC.View({clientId: "a4a89fb3f3714753b882dad67e66d6a2", divId: "adobe-dc-view"});
+        adobeDCView.previewFile(
+       {
+          content:   {location: {url: "{{submi.file.url}}"}},
+          metaData: {fileName: "{{submi.desc}}"}
+       });
+    });
+    console.log("{{ submit.assign_file.url }}");
 
   // create a variable that fetched value from input field with id "file" every second
   var singleFile; 
@@ -185,36 +211,6 @@
       document.getElementById("fileList").appendChild(div);
     }
   }
-
-/* file.addEventListener("change", function(event) {
-      var files = fileToRead.files;
-     if (files.length > 0) {
-        var reader = new FileReader();
-        reader.onloadend = function(e) {
-            var filePromise = Promise.resolve(e.target.result);
-            // Pass the filePromise and name of the file to the previewFile API
-            var adobeDCView = new AdobeDC.View({clientId: "a4a89fb3f3714753b882dad67e66d6a2", divId: "adobe-dc-view"});
-            adobeDCView.previewFile({
-                 content: {promise: filePromise}
-                 metaData: { fileName: files[0].name }
-            })
-        };
-        reader.readAsArrayBuffer(files[0]);
-      }
-    }, false);*/
-
-  /* setInterval(function() {
-    var file = document.getElementById("file");
-    if (file.files.length > 0) {  
-      if (flag == true) {
-        for (var i = 0; i < file.files.length; i++) {
-          fileNames.push(file.files[i].name);
-        }
-        console.log(fileNames);
-        flag = false;
-      }
-    }
-  }, 1000); */
 
 </script>
 <script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
