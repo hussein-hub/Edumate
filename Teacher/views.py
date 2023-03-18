@@ -447,22 +447,24 @@ def assignmentSimilarityCheck(request, pk, pk2, pk3):
     for i in all_assignments:
         files.append(i.assign_file.url)
         students.append(i.stud_id)
-    print(files)
-    files_text = getTextFromPDF(files)
-    embeddings = similarity_sentence_transformer_model.encode(files_text)
-    similarities = predict_similarity(embeddings,students)
-    # print(similarities)
-    for j in similarities:
-        # print(j)
-        plag = Plagarism()
-        plag.assignment_id = Assignments.objects.get(assignment_id = pk3)
-        plag.percentage_similarity = j['similarity_score']
-        plag.stud_assignment1 = SubmittedAssignments.objects.get(stud_id=j['stud_1'], assignment_id=pk3)
-        plag.stud_assignment2 = SubmittedAssignments.objects.get(stud_id=j['stud_2'], assignment_id=pk3)
-        plag.save()
-
+    # files_text = getTextFromPDF(files)
+    # embeddings = similarity_sentence_transformer_model.encode(files_text)
+    # similarities = predict_similarity(embeddings,students)
+    # # print(similarities)
+    # for j in similarities:
+    #     # print(j)
+    #     plag = Plagarism()
+    #     plag.assignment_id = Assignments.objects.get(assignment_id = pk3)
+    #     plag.percentage_similarity = j['similarity_score']
+    #     plag.stud_assignment1 = SubmittedAssignments.objects.get(stud_id=j['stud_1'], assignment_id=pk3)
+    #     plag.stud_assignment2 = SubmittedAssignments.objects.get(stud_id=j['stud_2'], assignment_id=pk3)
+    #     plag.save()
     # print(data)
-    return render(request, 'Teacher/assignmentSimilarityCheck.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignments': data})
+    # ,percentage_similarity__range=(0.5, 1)
+    plag = Plagarism.objects.filter(assignment_id = pk3).order_by('-percentage_similarity')
+    # print("ABCD_-_Plag")
+    # print(plag)
+    return render(request, 'Teacher/assignmentSimilarityCheck.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignments': data, 'plagData': plag})
 
 def preprocess_text(text):
     # Remove HTML tags
@@ -518,7 +520,7 @@ def predict_similarity(embeddings,students):
                 continue
             score = float(cosine_similarity(np.expand_dims(embeddings[i],axis=0),np.expand_dims(embeddings[j],axis=0))[0][0])
             similarities.append({'stud_1':students[i],'stud_2':students[j],'similarity_score':score})
-            similarities.append({'stud_1':students[j],'stud_2':students[i],'similarity_score':score})
+            # similarities.append({'stud_1':students[j],'stud_2':students[i],'similarity_score':score})
     return similarities
     
 def logout(request, pk):
