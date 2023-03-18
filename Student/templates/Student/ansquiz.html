@@ -195,114 +195,116 @@ li span {
 
 {% endblock content %}
 
-{% block script %} <script>
-    // The data/time we want to countdown to
-    var countDownDate, currenttime,flag;
-    flag = 0;
-    
-    function myfunc(e) {
+{% block script %} 
 
-    var now = new Date().getTime();
-    var timeleft = countDownDate - now;  
-    // Calculating the days, hours, minutes and seconds left
-    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
-        
-    // Result is output to the specific element
-    document.getElementById("days").innerHTML = days + "d "
-    document.getElementById("hours").innerHTML = hours + "h " 
-    document.getElementById("mins").innerHTML = minutes + "m " 
-    document.getElementById("secs").innerHTML = seconds + "s " 
-        
-    // Display the message when countdown is over
-    if (timeleft < 0) {
-        clearInterval(myfunc);
-        document.getElementById("days").innerHTML = ""
-        document.getElementById("hours").innerHTML = "" 
-        document.getElementById("mins").innerHTML = ""
-        document.getElementById("secs").innerHTML = ""
-        document.getElementById("end").innerHTML = "TIME UP!!";
-        await new Promise(r => setTimeout(r, 1000)); 
-        document.getElementById("submit_button").click();
-    }
+<script>
+  // The data/time we want to countdown to
+  var countDownDate, currenttime,flag;
+  flag = 0;
+  
+  function myfunc(e) {
 
-    document.addEventListener('fullscreenchange', exitHandler);
-    document.addEventListener('webkitfullscreenchange', exitHandler);
-    document.addEventListener('mozfullscreenchange', exitHandler);
-    document.addEventListener('MSFullscreenChange', exitHandler);
+  var now = new Date().getTime();
+  var timeleft = countDownDate - now;  
+  // Calculating the days, hours, minutes and seconds left
+  var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+      
+  // Result is output to the specific element
+  document.getElementById("days").innerHTML = days + "d "
+  document.getElementById("hours").innerHTML = hours + "h " 
+  document.getElementById("mins").innerHTML = minutes + "m " 
+  document.getElementById("secs").innerHTML = seconds + "s " 
+      
+  // Display the message when countdown is over
+  if (timeleft < 0) {
+      clearInterval(myfunc);
+      document.getElementById("days").innerHTML = ""
+      document.getElementById("hours").innerHTML = "" 
+      document.getElementById("mins").innerHTML = ""
+      document.getElementById("secs").innerHTML = ""
+      document.getElementById("end").innerHTML = "TIME UP!!";
+      {% comment %} await new Promise(r => setTimeout(r, 1000)); {% endcomment %}
+      document.getElementById("submit_button").click();
+  }
 
-    function exitHandler() {
-        if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-          //alert("You have exited the fullscreen mode, please do not do it again");
-          flag=1
-          $("#mytest").attr('hidden', true);
-          return
-        }
+  document.addEventListener('fullscreenchange', exitHandler);
+  document.addEventListener('webkitfullscreenchange', exitHandler);
+  document.addEventListener('mozfullscreenchange', exitHandler);
+  document.addEventListener('MSFullscreenChange', exitHandler);
+
+  function exitHandler() {
+      if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+        //alert("You have exited the fullscreen mode, please do not do it again");
+        flag=1
+        $("#mytest").attr('hidden', true);
+        return
+      }
 }
 
-    };
+  };
 
 
-    count = 0;
-        $(document).ready(function() {
-            var hidden, visibilityState, visibilityChange;
+  count = 0;
+      $(document).ready(function() {
+          var hidden, visibilityState, visibilityChange;
 
-            if (typeof document.hidden !== "undefined") {
-                hidden = "hidden", visibilityChange = "visibilitychange", visibilityState = "visibilityState";
-            } else if (typeof document.msHidden !== "undefined") {
-                hidden = "msHidden", visibilityChange = "msvisibilitychange", visibilityState = "msVisibilityState";
-            }
+          if (typeof document.hidden !== "undefined") {
+              hidden = "hidden", visibilityChange = "visibilitychange", visibilityState = "visibilityState";
+          } else if (typeof document.msHidden !== "undefined") {
+              hidden = "msHidden", visibilityChange = "msvisibilitychange", visibilityState = "msVisibilityState";
+          }
 
-            var document_hidden = document[hidden];
+          var document_hidden = document[hidden];
 
-            document.addEventListener(visibilityChange, function() {
-                if(document_hidden != document[hidden]) {
-                if(document[hidden]) {
-                  count+=1;
-                  console.log("Cheating Detected")
-                  alert("Cheating Detected first time, if you do it again test will be automatically submitted");
-                 if(count == 2){
-                     document.getElementById("cheat").value = "cheated";
-                     document.getElementById("submit_button").click();
-                 }
-                }
-                document_hidden = document[hidden];
-                }
-            });
-            });
-
-            var elem = document.getElementById("mytest");
-            function openFullscreen(e) {
-              if (flag==0){
-                currenttime = new Date().getTime();
-                countDownDate = new Date(currenttime + {{q_time}} * 60 * 1000);
-                setInterval(myfunc, 1000);
+          document.addEventListener(visibilityChange, function() {
+              if(document_hidden != document[hidden]) {
+              if(document[hidden]) {
+                count+=1;
+                console.log("Cheating Detected")
+                alert("Cheating Detected first time, if you do it again test will be automatically submitted");
+               if(count == 2){
+                   document.getElementById("cheat").value = "cheated";
+                   document.getElementById("submit_button").click();
+               }
               }
-              //setInterval(myfunc, 1000);
-              $("#mytest").attr('hidden', false);
-              if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-              } else if (elem.webkitRequestFullscreen) { /* Safari */
-                elem.webkitRequestFullscreen();
-              } else if (elem.msRequestFullscreen) { /* IE11 */
-                elem.msRequestFullscreen();
+              document_hidden = document[hidden];
               }
-            }      
-            if (window.performance) {
-              console.info("window.performance works fine on this browser");
-            }
-            console.info(performance.navigation.type);
-            if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
-              console.info( "This page is reloaded" );
-              // press the input button with id 'submit_button'
-              document.getElementById("submit_button").click();
-            } else {
-              console.info( "This page is not reloaded");
-            }
+          });
+          });
 
-    </script>
+          var elem = document.getElementById("mytest");
+          function openFullscreen(e) {
+            if (flag==0){
+              currenttime = new Date().getTime();
+              countDownDate = new Date(currenttime + {{q_time}} * 60 * 1000);
+              setInterval(myfunc, 1000);
+            }
+            //setInterval(myfunc, 1000);
+            $("#mytest").attr('hidden', false);
+            if (elem.requestFullscreen) {
+              elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+              elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+              elem.msRequestFullscreen();
+            }
+          }      
+          if (window.performance) {
+            console.info("window.performance works fine on this browser");
+          }
+          console.info(performance.navigation.type);
+          if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+            console.info( "This page is reloaded" );
+            // press the input button with id 'submit_button'
+            document.getElementById("submit_button").click();
+          } else {
+            console.info( "This page is not reloaded");
+          }
+
+  </script>
 
 
 {% endblock %}
