@@ -54,40 +54,14 @@
     <!-- Quiz Box -->
     <div class="container-fluid">
         <div class="row row-content">
-            <div style="margin-top: 3vh; margin-left: 3vh;" class="col-xl-4 col-lg-4 col-md-2 col-sm-12">
-                {% for i in allQuiz %}
-                    {% comment %} <div class="card" style="width: 12rem; display: inline-block">
-                        <div class="card-body">
-                        <h5 class="card-title">{{i.quiz_name}}</h5>
-                        <p class="card-text">{{i.description}}</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div> {% endcomment %}
-
-                    <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
-                        <div class="card-header">
-                          <div style="font-weight: 600; font-size: 18px">
-                            {{i.quiz_name}}
-                          </div>
-                        </div>
-                        <div class="card-body">
-                          <blockquote class="blockquote mb-0">
-                            <p><small>Description : {{i.description}}</small></p>
-                            <p><small>Max marks: {{ i.total_marks }}</small></p>
-                            <p><small>Quiz Creation Date: {{ i.quiz_date }}</small></p>
-                            <p><small>Time Limit: {{ i.time_limit }} mins</small></p>
-                          </blockquote>
-                        </div>
-                      </div>
-                {% endfor %}
-            </div>
-            <div style="margin-top: 3vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;" class="col-xl-7 col-lg-7 col-md-9 col-sm-12">
+          
+            <div style="margin-top: 3vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-5">
                 <div class="quiz_box">
                     <form method='post' enctype="multipart/form-data">
                         {% csrf_token %}
                         <header>
                             <div class="title">
-                                <input class="QuizName" name="quiz_name" style="border: none; outline: none;" value="Quiz" />
+                                <input class="QuizName form-control" name="quiz_name" style="border: 1px solid #ced4da; border-radius: .375rem;" placeholder="Enter Quiz Name" required/>
                             </div>
                             <input style="border: none; display: none;" id="QuestionCount" name="question_count" value=1>
                             <input style="border: none; display: none;" id="radioCount" name="radio_count" value=2>
@@ -98,7 +72,7 @@
                             </div>  
                           </header>
                           <div class="timer" style="margin-top: 15px; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-evenly; align-items: center">
-                              <div class="time_left_txt">Date: </div>
+                              <div class="time_left_txt">Due Date & Time: </div>
                               <input style="width: 18vw;" value=10 class="form-control" type="datetime-local" name="quiz_date">
                           </div>  
                         <section class="questionInput">
@@ -146,22 +120,91 @@
             
                 </div>
             </div>
+
+
+
+          
+
+          <div style="margin-top: 3vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+           
+            <div class="quiz_box">
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    View Quizes
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+                    {% for i in allQuiz %}
+                  {% comment %} <div class="card" style="width: 12rem; display: inline-block">
+                      <div class="card-body">
+                      <h5 class="card-title">{{i.quiz_name}}</h5>
+                      <p class="card-text">{{i.description}}</p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                      </div>
+                  </div> {% endcomment %}
+               
+                  <div class="card my-2 col-md-4 mx-2" style="width: 18rem; padding:0px;">
+                      <div class="card-header">
+                        <div style="font-weight: 600; font-size: 16px">
+                          {{i.quiz_name}}
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                          <p><small>Description : {{i.description}}</small></p>
+                          <p><small>Max marks: {{ i.total_marks }}</small></p>
+                          <p><small>Quiz Creation Date: {{ i.quiz_date }}</small></p>
+                          <p><small>Time Limit: {{ i.time_limit }} mins</small></p>
+                        </blockquote>
+                        <br>
+
+                        <a class="btn btn-success" href="{% url 'quiz_info' pk=pk pk2=pk2 pk3=i.id %}">View deatils</a>
+                      </div>
+                    </div>
+                    
+              {% endfor %}
+            </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            
+          </div>
+
+            {% comment %} <div style="margin-top: 3vh; margin-left: 3vh;" class="col-xl-4 col-lg-4 col-md-2 col-sm-12">
+              {% for i in allQuiz %}
+                  
+
+                  <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+                      <div class="card-header">
+                        <div style="font-weight: 600; font-size: 18px">
+                          {{i.quiz_name}}
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                          <p><small>Description : {{i.description}}</small></p>
+                          <p><small>Max marks: {{ i.total_marks }}</small></p>
+                          <p><small>Quiz Creation Date: {{ i.quiz_date }}</small></p>
+                          <p><small>Time Limit: {{ i.time_limit }} mins</small></p>
+                        </blockquote>
+                      </div>
+                    </div>
+              {% endfor %}
+          </div> {% endcomment %}
+
+          
+
+
+            
         </div>
     
-        {% comment %} <!-- Result Box -->
-        <div class="result_box">
-            <div class="icon">
-                <i class="fas fa-crown"></i>
-            </div>
-            <div class="complete_text">You've completed the Quiz!</div>
-            <div class="score_text">
-              
-            </div>
-            <div class="buttons">
-                <button class="restart">Replay Quiz</button>
-                <button class="quit">Quit Quiz</button>
-            </div>
-        </div> {% endcomment %}
+        
     </div>
 {% endblock content %}
 
