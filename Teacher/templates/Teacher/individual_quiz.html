@@ -15,7 +15,7 @@
         </h5>
         <div>
             {% for response in quiz_responses %}
-                {{response}}
+                {{response.student}}
             {% endfor %}
         </div>
     </div>
@@ -25,7 +25,7 @@
                 Students who have not yet given quiz
             </h5>
             <div>
-                {% for response in quiz_responses %}
+                {% for response in not_answered_students %}
                     {{response}}
                 {% endfor %}
             </div>

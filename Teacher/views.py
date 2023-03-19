@@ -431,7 +431,25 @@ def view_att(request, pk, pk2, pk3):
 def quiz_info(request, pk, pk2, pk3):
     quiz = Quiz.objects.get(id = pk3)
     quiz_responses = Quiz_marks.objects.filter(quiz = quiz)
-    return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': quiz_responses})
+    quiz_resp=[]
+    for i in quiz_responses:
+        quiz_resp.append(i.student_id)
+
+    class_students = ClassStudents.objects.filter(class_code = pk2)
+    answered_students = []
+    not_answered_students = []
+    print(quiz_responses[0])
+    for i in class_students:
+        student = Students.objects.get(stud_id = i.stud_id)
+        if student.stud_id in quiz_resp:
+            quiz_marks = Quiz_marks.objects.get(quiz = quiz, student_id = student)
+            answered_students.append(quiz_marks)
+
+            # quiz_responses.append(student)
+        else:
+            not_answered_students.append(student.name)
+    print(answered_students)
+    return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': answered_students, 'not_answered_students': not_answered_students})
 
 def assignmentSimilarityCheck(request, pk, pk2, pk3):
     global similarity_sentence_transformer_model

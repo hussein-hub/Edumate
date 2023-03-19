@@ -263,9 +263,11 @@ li span {
               if(document_hidden != document[hidden]) {
               if(document[hidden]) {
                 count+=1;
-                console.log("Cheating Detected")
+                //console.log("Cheating Detected")
+              if(count == 2){
                 alert("Cheating Detected first time, if you do it again test will be automatically submitted");
-               if(count == 2){
+              }
+               if(count == 3){
                    document.getElementById("cheat").value = "cheated";
                    document.getElementById("submit_button").click();
                }
