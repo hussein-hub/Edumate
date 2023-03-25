@@ -6,8 +6,6 @@ from Teacher import views as teach_views
 from django.contrib import messages
 import re
 # Create your views here.
-
-
 def home(request):
     return render(request, 'Edumate_app/index.html')
 
@@ -31,6 +29,8 @@ def final_reg(request):
             teacher.email=request.POST.get('email')
             teacher.password=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 8)))
             teacher.save()
+        messages.error(request, 'Registration successful')
+        return redirect('final_register')
     return render(request, 'Edumate_app/final_reg.html')
 
 def login_student(request):

@@ -41,6 +41,9 @@
               <li>
                 <a class="btn " href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a>
               </li>
+              <li>
+                <a class="btn " href="{% url 'projecttracking' pk=pk pk2=pk2 %}">Project Tracking</a>
+              </li>
             </ul>
           </li>
           <li class="dropdown">
@@ -173,13 +176,13 @@ input:checked + .slider:before {
                 <form method="post"class="form-group row">
                   {% csrf_token %}
                   <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter assignment name" name="name">
+                  <input class="form-control" type="text" placeholder="Enter assignment name" name="name" required>
                 </div>
                   <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter assignment description" name="description">
+                  <input class="form-control" type="text" placeholder="Enter assignment description" name="description" required>
                 </div>
                 <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks">
+                  <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks" required>
                 </div>
                 <div class="col-sm-4" style="display: flex; align-items: center; margin-top: 10px">
                   Peer grading
@@ -225,19 +228,45 @@ input:checked + .slider:before {
           </div>
         </div> {% endcomment %}
 
+        <div class="modal fade" id="exampleModalCenter{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Assignment ?</h5>
+                <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <a class="btn btn-danger" onclick="deleteass({{ i.0.assignment_id }})" >
+                {% comment %} <a class="btn btn-danger" href="announcement/{{i.id}}" > {% endcomment %}
+                  Delete
+                </a>
+              </div>
+              {% comment %} <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div> {% endcomment %}
+            </div>
+          </div>
+        </div>
+
 
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
           <div class="card-header">
             <div style="font-weight: 600; font-size: 18px">
               {{ i.0.assignment_name }}
             </div>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
+              <i class="fa fa-trash"></i>
+            </button>
           </div>
           <div class="card-body">
             <blockquote class="blockquote mb-0">
               <p><small>Max marks: {{ i.0.max_marks }}</small></p>
               <p><small>Description : {{ i.0.assignment_description }}</small></p>
               <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
-              <p><small style = "font-size: 13px">Not Submitted : {{ total }}</small></p>
+              <p><small style = "font-size: 13px">Not submitted by : {{ j }} </small></p>
               <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>
             </blockquote>
           </div>
@@ -264,6 +293,23 @@ input:checked + .slider:before {
       $(this).toggleClass('nav-link-show');
     });
   });
+
+function deleteass(id)
+{
+  $.ajax(
+      {
+          type:"POST",
+          url: "{% url 'assignmentdelete' pk=pk pk2=pk2 %}",
+          data:{
+            assignment_id: id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function( data ) 
+          {
+              location.reload();
+          }
+      })
+}
   
 </script>
 {% endblock %}

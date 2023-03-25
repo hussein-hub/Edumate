@@ -5,32 +5,93 @@
 <title>Quiz</title>
 {% endblock title %}
 
+{% block styles %}
+<style>
+    .btn-success, .btn-success:active, .btn-success:visited {
+        background-color: #008374 !important;
+      }
+      
+      .btn-success:hover {
+        border-color: #008374 !important;
+        background-color: white !important;
+        color: #008374 !important;
+      }
+</style>
+{% endblock styles %}
 
 {% block content %}
 
-<div class="container">
-    <div>
-        <h5>
-            Students who have given quiz
-        </h5>
-        <div>
-            {% for response in quiz_responses %}
-                {{response.student}}
-            {% endfor %}
-        </div>
-    </div>
-    <div>
-        <div>
-            <h5>
-                Students who have not yet given quiz
-            </h5>
-            <div>
-                {% for response in not_answered_students %}
-                    {{response}}
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
+<table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-bordered" id="plagarism-table">
+    <thead>
+        <tr>
+            <th>Sr. No.</th>
+            <th>Student Name</th>
+            <th>Marks Breakup</th>
+            <th>Total Marks</th>
+            
+        </tr>
+    </thead>
+    <tbody class="two-col-form">
+        {% for i in quiz_responses %}
+        <tr>
+             <td>{{forloop.counter}}</td>
+             <td>{{ i.student.name }}</td>
+             <td>{{ i.marks_breakup }}</td>
+             <td>{{ i.total_marks }}</td>
+             
+        </tr>
+        {% endfor %}
+        
+        {% for i in not_answered_students %}
+        <tr>
+             <td>{{forloop.counter|add:stud_length}}</td>
+             <td>{{ i.name }}</td>
+             <td>Not Answered</td>
+             <td>0</td>
+             
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock content %}
+
+
+
+{% block script %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+
+<script>
+
+
+$(document).ready( function () {
+	$('#plagarism-table').DataTable({
+		"order": [],
+		dom: 'Bfrtip',
+		buttons: [
+		{ extend: 'copy', className: 'btn btn-success glyphicon' },
+   		{ extend: 'csv', className: 'btn btn-success glyphicon' },
+    	{ extend: 'excel', className: 'btn btn-success glyphicon' },
+    	{ extend: 'pdf', className: 'btn btn-success glyphicon' },
+		],
+		
+		"paging": true
+		});
+});
+function caller(id1, id2)
+{
+	$("[name=att_id]").val(id2);
+	$("[name=stud_id]").val(id1);
+}	
+
+</script>
+{% endblock script %}

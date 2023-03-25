@@ -6,181 +6,215 @@
 {% endblock title %}
 
 {% block navbar %}
-  <header id="header" class="header d-flex align-items-center">
+<header id="header" class="header d-flex align-items-center">
 
-    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-      <a href="#" class="logo d-flex align-items-center">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
-        <h1>EDUMATE<span>.</span></h1>
-      </a>
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li>
-            <a class="btn" href="{% url 'classroom' pk=pk pk2=pk2 %}">Back</a>
-          </li>
-          
-          <li class="dropdown">
-            <a href="#">
-              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
-            </a>
-            <ul>
-              <li>
-                {% if pk %}
-                <a href="{% url 'logout' pk=pk %}">logout</a>
-                {% else %}
-                <a href="{% url 'logout' pk=pk1 %}">logout</a>
-                {% endif %}
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </nav><!-- .navbar -->
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="#" class="logo d-flex align-items-center">
+      <!-- Uncomment the line below if you also wish to use an image logo -->
+      <!-- <img src="assets/img/logo.png" alt=""> -->
+      <h1>EDUMATE<span>.</span></h1>
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li>
+          <a class="btn" href="{% url 'classroom' pk=pk pk2=pk2 %}">Back</a>
+        </li>
 
-      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+        <li class="dropdown">
+          <a href="#">
+            <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+          </a>
+          <ul>
+            <li>
+              {% if pk %}
+              <a href="{% url 'logout' pk=pk %}">logout</a>
+              {% else %}
+              <a href="{% url 'logout' pk=pk1 %}">logout</a>
+              {% endif %}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav><!-- .navbar -->
+
+    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
 
 
-    </div>
-  </header>
-  {% endblock navbar %}
+  </div>
+</header>
+{% endblock navbar %}
 
 
 {% block content %}
 <style>
   /* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
 
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
 
-input:checked + .slider {
-  background-color: #2196F3;
-}
+  input:checked+.slider {
+    background-color: #2196F3;
+  }
 
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
+  input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
 
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
+  input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
 
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
 
-.slider.round:before {
-  border-radius: 50%;
-}
-.btn-success, .btn-success:active, .btn-success:visited {
-  background-color: #008374 !important;
-}
+  .slider.round:before {
+    border-radius: 50%;
+  }
 
-.btn-success:hover {
-  border-color: #008374 !important;
-  background-color: white !important;
-  color: #008374 !important;
-}
+  .btn-success,
+  .btn-success:active,
+  .btn-success:visited {
+    background-color: #008374 !important;
+  }
+
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
 </style>
 <br><br>
 <div class="container ">
-    {% if messages %}
-        {% for message in messages %}
-         {% if message.tags %}  
-         <script>alert('{{ message }}')</script>
-        {% endif %}
+  {% if messages %}
+  {% for message in messages %}
+  {% if message.tags %}
+  <script>alert('{{ message }}')</script>
+  {% endif %}
 
-        {% endfor %}
+  {% endfor %}
 
-    {% endif %}
-  <div class="container" >
-      <form method="post"class="form-group row" enctype="multipart/form-data" >
-        {% csrf_token %}
-        <div class="col-6 form-group mb-3" >
-          <label for="atttimes" style="margin-right: 10px; width: 8rem">Start time:</label>
-             <input type="datetime-local" class="form-control" id="atttimes" name="atttimes">
-        </div>
-        
-        <div class="col-6 form-group mb-3" >
-          <label for="atttimee" style="margin-right: 10px; width: 8rem">End time: </label>
-            <input type="datetime-local" class="form-control"  id="atttimee" name="atttimee">
-        </div>
-        <div class="col-6 mb-3">
-          <label for="attimg" class="form-label">Upload Image</label>
-          <input class="form-control" type="file" id="formFileMultiple" id="attimg" name="attimg" accept="image/*" multiple>
-        </div>
+  {% endif %}
+  <div class="container">
+    <form method="post" class="form-group row" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="col-6 form-group mb-3">
+        <label for="atttimes" style="margin-right: 10px; width: 8rem">Start time:</label>
+        <input type="datetime-local" class="form-control" id="atttimes" name="atttimes">
+      </div>
 
-        
+      <div class="col-6 form-group mb-3">
+        <label for="atttimee" style="margin-right: 10px; width: 8rem">End time: </label>
+        <input type="datetime-local" class="form-control" id="atttimee" name="atttimee">
+      </div>
+      <div class="col-6 mb-3">
+        <label for="attimg" class="form-label">Upload Image</label>
+        <input class="form-control" type="file" id="formFileMultiple" id="attimg" name="attimg" accept="image/*"
+          multiple>
+      </div>
 
-        
-        {% comment %} <div>
-          <img src="{% url 'video_feed' pk=pk %}" height="80%">
-        </div> {% endcomment %}
-        <div class="form-group mb-3">
+
+
+
+      {% comment %} <div>
+        <img src="{% url 'video_feed' pk=pk %}" height="80%">
+      </div> {% endcomment %}
+      <div class="form-group mb-3">
         <button class="btn btn-success col-3" type="submit">Create</button>
       </div>
-      </form>
-      <hr>
-      <br>
+    </form>
+    <hr>
+    <br>
 
-      <div class="row " >
-        {% for i,j,k in all_att %}
-          <div class="card mx-2 my-2" style="width: 32%; padding: 0px;">
-            <h5 class="card-header">{{ j|date:"F d, Y" }}</h5>
-            <div class="card-body">
-              <h6 class="card-subtitle mb-2 text-muted">Start Time: {{ i.start_time|slice:"11:" }} </h6>
-              <h6 class="card-subtitle mb-2 text-muted">End time: {{ i.end_time|slice:"11:" }} </h6>
-              <p class="card-text">Code: {{ i.code }}</p>
-              <h6 class="card-subtitle mb-2 text-muted">Present: {{ k.0 }}</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Percentage: {{ k.1 }} % </h6>
-              <a href="{% url 'viewatt' pk=pk pk2=pk2 pk3=i.att_id %}" class="btn btn-success">Go to Attendance</a>
+    <div class="row ">
+      {% for i,j,k in all_att %}
+      <div class="modal fade" id="exampleModalCenter{{forloop.counter}}" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Attendance ?</h5>
+              <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            <div class="modal-body">
+              <a class="btn btn-danger" onclick="deleteatt({{ i.att_id }})">
+                {% comment %} <a class="btn btn-danger" href="announcement/{{i.id}}"> {% endcomment %}
+                  Delete
+                </a>
+            </div>
+            {% comment %} <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> {% endcomment %}
           </div>
-        {% endfor %}
+        </div>
       </div>
 
+      <div class="card mx-2 my-2" style="width: 32%; padding: 0px;">
+        <div class="card-header">
+          <h5>{{ j|date:"F d, Y" }}</h5>
+          <button type="button" class="btn btn-secondary" data-toggle="modal"
+            data-target="#exampleModalCenter{{forloop.counter}}">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Start Time: {{ i.start_time|slice:"11:" }} </h6>
+          <h6 class="card-subtitle mb-2 text-muted">End time: {{ i.end_time|slice:"11:" }} </h6>
+          <p class="card-text">Code: {{ i.code }}</p>
+          <h6 class="card-subtitle mb-2 text-muted">Present: {{ k.0 }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">Percentage: {{ k.1 }} % </h6>
+          <a href="{% url 'viewatt' pk=pk pk2=pk2 pk3=i.att_id %}" class="btn btn-success">Go to Attendance</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
     <br>
-    </div>
-  
-    </div>
+  </div>
+
+</div>
 {% endblock content %}
 
 
@@ -193,6 +227,21 @@ input:checked + .slider:before {
   document.getElementById('atttimes').value = today.toISOString().slice(0, 16);
   today.setMinutes(today.getMinutes() + 15);
   document.getElementById('atttimee').value = today.toISOString().slice(0, 16);
+
+  function deleteatt(id) {
+    $.ajax(
+      {
+        type: "POST",
+        url: "{% url 'deleteatt' pk=pk pk2=pk2 %}",
+        data: {
+          att_id: id,
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (data) {
+          location.reload();
+        }
+      })
+  }
 </script>
 
 {% endblock script %}

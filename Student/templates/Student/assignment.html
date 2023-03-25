@@ -110,11 +110,11 @@
   <div class="container">
     <div class="row" style="display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center; 
+    flex-wrap: wrap;
+    justify-content: space-evenly; 
     height: 80vh;
     align-items: center;">
-    <div class="col-md-6" style="background: rgba( 255, 255, 255, 0.25 );
+    <div class="col-md-4" style="background: rgba( 255, 255, 255, 0.25 );
       box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
       backdrop-filter: blur( 4px );
       -webkit-backdrop-filter: blur( 4px );
@@ -124,14 +124,27 @@
           <p style="padding-top: 30px"><b>Assignment name</b> : {{ assign.0.assignment_name }}</p> 
           <p><b>Assignment description</b> : {{ assign.0.assignment_description }}</p>
           <p><b>Marks</b> : {{ assign.0.max_marks }}</p>
+          {% if marks != "" %}
+          <p><b>Marks given by teacher</b> : {{ marks }}</p>
+          {% else %}
+          <p><b>Marks given by teacher</b> : Not given</p>
+          {% endif %}
           <p><b>Due date</b> : {{ assign.0.duedate }}</p>
         </div>
           <form method="post" action="#" enctype="multipart/form-data" >
             {% csrf_token %}
-            <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description">
+            {% if submi.desc %}
+            <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description" required value="{{ submi.desc }}">
+            {% else %}
+            <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description" required>
+            {% endif %}
             <div class="form-group files">
               {% comment %} <div> {% endcomment %}
+                {% if submi.file %}
                 <input onchange="updateFiles()" id="file" type="file" class="form-control" name="submission">
+                {% else %}
+                <input onchange="updateFiles()" id="file" type="file" class="form-control" name="submission" required>
+                {% endif %}
                 {% comment %} <span>Upload pdf file</span> {% endcomment %}
               {% comment %} </div> {% endcomment %}
             </div>
@@ -141,28 +154,51 @@
             <button class="btn btn-success" type="submit">Submit</button>
           </form>
       </div>
+      {% if pflag %}
+      <div class="col-md-4" style="background: rgba( 255, 255, 255, 0.25 );
+      box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+      backdrop-filter: blur( 4px );
+      -webkit-backdrop-filter: blur( 4px );
+      border-radius: 10px;
+      border: 1px solid rgba( 255, 255, 255, 0.18 );">
+        <div>
+          <p style="padding-top: 30px"><b>Peer Grading</p>
+            {% if desc1 != "X" and desc2 != "X" %}
+            <form method="post">
+                {% csrf_token %}
+                <p>File: <a target="_blank" href="{{ desc1.assign_file.url }}">View Doc</a></p>
+                {% if marks_1 != "" %}
+                <input type="number" placeholder="Enter marks" name="peer1" step="0.01" value="{{marks_1}}" disabled>
+                {% else %}
+                <input type="number" placeholder="Enter marks" name="peer1" step="0.01" required>
+                {% endif %}
+                <p>File: <a target="_blank" href="{{ desc2.assign_file.url }}">View Doc</a></p>
+                {% if marks_2 != "" %}
+                <input type="number" placeholder="Enter marks" name="peer2" step="0.01" value="{{marks_2}}" disabled>
+                {% else %}
+                <input type="number" placeholder="Enter marks" name="peer2" step="0.01" required>
+                {% endif %}
+                <input type="text" name="caller" value="call" style="display: none">
+                {% if marks_1 != "" and marks_2 != "" %}
+                <button class="btn btn-outline-success" type="submit" disabled >Submit</button>
+                {% else %}
+                <button class="btn btn-outline-success" type="submit">Submit</button>
+                {% endif %}
+            </form>
+            {% endif %}
+      </div>
+    </div>
+    {% endif %}
     </div>
   </div>
+
+
+
   {% if submi %}
     <div style="margin-left: 10%; margin-right: 10%;" id="adobe-dc-view"></div>
   {% else %}
     <div id="adobe-dc-view" style="display: none;"></div>
   {% endif %}
-  <div>
-    {% if pflag %}
-    {% if desc1 != "X" and desc2 != "X" %}
-    <form method="post">
-        {% csrf_token %}
-        <p>File: <a target="_blank" href="{{ desc1.assign_file.url }}">View Doc</a></p>
-        <input type="number" placeholder="Enter marks" name="peer1">
-        <p>File: <a target="_blank" href="{{ desc2.assign_file.url }}">View Doc</a></p>
-        <input type="number" placeholder="Enter marks" name="peer2">
-        <input type="text" name="caller" value="call" style="display: none">
-        <button class="btn btn-outline-success" type="submit">Submit</button>
-    </form>
-    {% endif %}
-  {% endif %}
-</div>
   {% comment %} <a class="btn btn-outline-success" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a> {% endcomment %}
 {% endblock content %}
 
@@ -174,7 +210,7 @@
 
   document.addEventListener("adobe_dc_view_sdk.ready", function()
     {
-        var adobeDCView = new AdobeDC.View({clientId: "a4a89fb3f3714753b882dad67e66d6a2", divId: "adobe-dc-view"});
+        var adobeDCView = new AdobeDC.View({clientId: "3b858419caa348589cf28e0a25d0dd52", divId: "adobe-dc-view"});
         adobeDCView.previewFile(
        {
           content:   {location: {url: "{{submi.file.url}}"}},

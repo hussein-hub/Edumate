@@ -1,0 +1,289 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block title %}
+<title>Project Tracking</title>
+{% endblock title %}
+
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn " href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to Classroom</a>
+          </li>
+          <li>
+            <a type="button" class="btn " data-toggle="modal" data-target="#ModalCenter">
+              Create Project
+            </a>
+          </li>
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
+
+
+
+
+
+{% block content %}
+<style>
+  /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+.btn-success, .btn-success:active, .btn-success:visited {
+  background-color: #008374 !important;
+}
+
+.btn-success:hover {
+  border-color: #008374 !important;
+  background-color: white !important;
+  color: #008374 !important;
+}
+
+
+</style>
+<br><br>
+<div class="container ">
+  <div class="container" >
+
+
+      <div>
+        {% comment %} <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalCenter">
+          Create Assignment
+        </button> {% endcomment %}
+      </div>
+
+      <!--  model body -->
+      <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 70vw;">
+          <div class="modal-content" style="height: 60vh;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Create a project</h5>
+              <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form method="post"class="form-group row">
+                  {% csrf_token %}
+                  <div class="col-sm-4">
+                  <input class="form-control" type="text" placeholder="Enter project name" name="name" required>
+                </div>
+                  <div class="col-sm-4">
+                  <input class="form-control" type="text" placeholder="Enter project description" name="desc" required>
+                </div>
+                <div class="col-sm-2">
+                  Due date
+                </div>
+                <div class="col-sm-2">
+                  <div>
+                  <input id="datetime" class="form-control" type="datetime-local" placeholder="Due date" name="duedate">
+                  </div>
+                </div>
+                <div class="col-sm-12" style="margin-top: 10px">
+                  <textarea class="form-control" type="text" placeholder="Project Checkpoints" name="proj_checks" rows=8 cols=50 /></textarea>
+                </div>
+                <div class="col-sm-12" style="margin-top: 10px">
+                  <input class="form-control" type="number" placeholder="Number of students per group" name="num_studs" />
+                </div>
+                  <div class="col-sm-4" style="margin-top: 10px">
+                  <button class="btn btn-outline-success" type="submit">create</button>
+                </div>
+                </form>
+            </div>
+            {% comment %} <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> {% endcomment %}
+          </div>
+        </div>
+      </div>
+
+
+      <br>
+
+      <div class="row">
+      {% for i in all_projs %}
+          
+
+        {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
+          <div class="card-body">
+            <h5 class="card-title">Name:  {{ i.assignment_name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted"> Max marks: {{ i.max_marks }} </h6>
+            <p class="card-text">Description : {{ i.assignment_description }}</p>
+            <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link">Go to submitted assignments</a>
+          </div>
+        </div> {% endcomment %}
+
+        <div class="modal fade" id="exampleModalCenter{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Assignment ?</h5>
+                <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <a class="btn btn-danger" onclick="deletepro({{ i.pro_id }})" >
+                {% comment %} <a class="btn btn-danger" href="announcement/{{i.id}}" > {% endcomment %}
+                  Delete
+                </a>
+              </div>
+              {% comment %} <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div> {% endcomment %}
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+          <div class="card-header">
+            <div style="font-weight: 600; font-size: 18px">
+              {{ i.proj_name }}
+            </div>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0">
+              <p><small>Number of students per group : {{ i.num_studs }}</small></p>
+              <p><small>Description : {{ i.proj_desc }}</small></p>
+              <p><small style = "font-size: 13px">Due date : {{ i.proj_due }}</small></p>
+              <a class="btn btn-success" href="{% url 'projecttracking' pk=pk pk2=pk2 %}" class="card-link"><small>Go to project</small></a>
+            </blockquote>
+          </div>
+        </div>
+
+
+      {% endfor %}
+    </div>
+    <br>
+      {% comment %} <a class="btn btn-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
+      <a class="btn btn-success" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
+      <a class="btn btn-success" href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
+      <a class="btn btn-success" href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
+      <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a> {% endcomment %}
+    </div>
+    </div>
+{% endblock content %}
+{% block script %}
+<script>
+
+  $(document).ready(function() {
+    $('.nav-link-collapse').on('click', function() {
+      $('.nav-link-collapse').not(this).removeClass('nav-link-show');
+      $(this).toggleClass('nav-link-show');
+    });
+  });
+
+function deletepro(id)
+{
+  console.log(id)
+  $.ajax(
+      {
+          type:"POST",
+          url: "{% url 'projectdelete' pk=pk pk2=pk2 %}",
+          data:{
+            pro_id: id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function( data ) 
+          {
+              location.reload();
+          }
+      })
+}
+  
+</script>
+{% endblock %}

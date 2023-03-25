@@ -57,6 +57,13 @@
 
 
 {% block content %}
+{% if messages %}
+    {% for message in messages %}
+      {% if message.tags %}  
+      <script>alert('{{ message }}')</script>
+      {% endif %}
+    {% endfor %}
+{% endif %}
     <div class="container ">
         <div class="container" >
           <br><br><br>
@@ -65,7 +72,7 @@
               
                 <label for="staticclasscode" class="col-sm-2 col-form-label" class="sr-only">Join Classroom:</label>
               <div class="col-sm-8">
-                <input class="form-control" id="staticclasscode" type="text" placeholder="Enter class code" name="code">
+                <input class="form-control" id="staticclasscode" type="text" placeholder="Enter class code" name="code" required>
               </div>
               <div class="col-sm-2">
                 <button type="submit mb-2" class="btn btn-outline-success">Join</button>
@@ -90,7 +97,7 @@
         </div> {% endcomment %}
         <div class="row row-content my-4">
           {% for i in data %}
-          <div class="col-4">
+          <div class="col-md-4">
             <div class="card">
               <div class="card-header" style="font-size: 1.5rem;">
                 {{ i.1 }}

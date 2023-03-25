@@ -37,6 +37,7 @@
             <th>Sr. No.</th>
             <th>Student Name</th>
             <th>Second Student Name</th>
+            <th>See Documents</th>
             <th>Similarity Score</th>
             {% comment %} <th>Delete</th> {% endcomment %}
         </tr>
@@ -45,9 +46,10 @@
         {% for i in plagData %}
         <tr>
              <td>{{forloop.counter}}</td>
-             <td>{{i.stud_assignment1}}</td>
-             <td>{{ i.stud_assignment2 }}</td>
-             <td>{{ i.percentage_similarity }}</td>
+             <td>{{ i.0.stud_assignment1.stud_id.name }}</td>
+             <td>{{ i.0.stud_assignment2.stud_id.name }}</td>
+             <td><a href="{{i.1.url}}" target="_blank">See Document</a></td>
+             <td>{{ i.0.percentage_similarity }}</td>
              {% comment %} <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.att_id.att_id}}" data-product-name="{{i.name}}" onclick="caller('{{i.stud_id}}', '{{i.att_id}}')">Delete</button></td> {% endcomment %}
         </tr>
         {% endfor %}
@@ -56,6 +58,8 @@
 
 
 <a class="btn btn-outline-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=pk3 %}">Back</a>
+
+
 {% endblock content %}
 
 {% block script %}

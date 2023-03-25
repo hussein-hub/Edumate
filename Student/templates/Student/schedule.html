@@ -48,14 +48,13 @@
 
 
 {% block styles %}
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% comment %} <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> {% endcomment %}
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
 
 <style>
 
     .calendar {
         width: 50%;
-        margin: auto;
         font-size: 13px;
       }
       
@@ -121,9 +120,10 @@
         color: #008374 !important;
       }
 
-      .table {
-        width: 75%;
-        max-width: 75%;
+      @media screen and (max-width: 550px) {
+        .table{
+          margin-left: 150px;
+        }
       }
 
     
@@ -140,12 +140,12 @@
 <br><br>
 <div class="container">
 <div class="clearfix">
-	<a style="color: white;" class="btn btn-success left" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
-	<a style="color: white;" class="btn btn-success right" href="{% url 'schedule' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
+	<a style="color: white;" class="btn btn-success left" href="{% url 'schedule_student' pk2=pk2 pk=pk1 %}?{{ prev_month }}"> Previous Month </a>
+	<a style="color: white;" class="btn btn-success right" href="{% url 'schedule_student' pk2=pk2 pk=pk1 %}?{{ next_month }}"> Next Month </a>
     
 </div>
 
-<div style="margin-top: 10vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+<div style="margin-top: 10vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; overflow-x:auto;">
   {{ calendar }}   
 
 </div>  

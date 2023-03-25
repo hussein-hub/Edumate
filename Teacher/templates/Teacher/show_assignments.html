@@ -84,6 +84,15 @@
 {% endblock navbar %}
 
 {% block content %}
+{% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  
+         <script>alert('{{ message }}')</script>
+        {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
 <div class="row">
   <h1 style="margin-top: 20px">Assignment</h1>
   {% for i in submit %}
@@ -108,8 +117,8 @@
       <blockquote class="blockquote mb-0">
         <p><small>Description: {{ i.assign_desc }}</small></p>
         <p><small>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></small></p>
-        <p><small>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" > {{ i.get_student_name }}</a></small></p>
-        <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" class="card-link btn btn-success">Go to Assignment</a>
+        <p><small>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id.stud_id %}" > {{ i.get_student_name }}</a></small></p>
+        <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id.stud_id %}" class="card-link btn btn-success">Go to Assignment</a>
       </blockquote>
     </div>
   </div>
@@ -128,7 +137,7 @@
         {% if peerf %}
         <table id="customers">
           <tr>
-            <th>Student ID</th>
+            <th>Student Name</th>
             <th>Assigned peer 1</th>
             <th>Marks given</th>
             <th>Assigned peer 2</th>
@@ -136,10 +145,10 @@
           </tr>
           {% for i in peer %}
           <tr>
-            <td>{{ i.stud_id }}</td>
-            <td>{{ i.as_peer_1 }}</td>
+            <td>{{ i.stud_id.name }} (ID: {{ i.stud_id.stud_id }})</td>
+            <td>{{ i.as_peer_1.name }} (ID: {{ i.as_peer_1.stud_id }})</td>
             <td>{{ i.as_1_marks }}</td>
-            <td>{{ i.as_peer_2 }}</td>
+            <td>{{ i.as_peer_2.name }} (ID: {{ i.as_peer_2.stud_id }})</td>
             <td>{{ i.as_2_marks }}</td>
           </tr>
           {% endfor %}
@@ -154,10 +163,10 @@
           </tr>
           {% for i in shr %}
           <tr>
-            <td>{{ i.0 }}</td>
-            <td>{{ i.1 }}</td>
+            <td>{{ i.0.name }} (ID: {{ i.0.stud_id }})</td>
+            <td>{{ i.1.name }} (ID: {{ i.1.stud_id }})</td>
             <td>{{ i.2 }}</td>
-            <td>{{ i.3 }}</td>
+            <td>{{ i.3.name }} (ID: {{ i.3.stud_id }})</td>
             <td>{{ i.4 }}</td>
           </tr>
           {% endfor %}

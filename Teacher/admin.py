@@ -6,10 +6,13 @@ admin.site.register(Assignments)
 admin.site.register(PeerGrade)
 admin.site.register(Quiz)
 
+@admin.register(DocumentUniqueID)
+class DocumentUniqueIDAdmin(admin.ModelAdmin):
+    list_display = ("doc_id", "plagarism_id", "doc_unique_id")
 
 @admin.register(Plagarism)
 class PlagarismAdmin(admin.ModelAdmin):
-	list_display = ("assignment_id", "stud_assignment1", "stud_assignment2", "percentage_similarity")
+	list_display = ("id", "assignment_id", "stud_assignment1", "stud_assignment2", "percentage_similarity")
 
 
 
@@ -44,3 +47,6 @@ admin.site.register(Options)
 admin.site.register(Attendance,AttendanceAdmin)
 admin.site.register(Attendance_images)
 admin.site.register(AttStud)
+admin.site.register(Project)
+admin.site.register(Groups)
+admin.site.register(Members)

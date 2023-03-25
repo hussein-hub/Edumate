@@ -170,7 +170,8 @@ def get_boxes(boxes, labels, thresh):
     
     return v_boxes, v_labels, v_scores
 
-def draw_boxes(image_file_name,v_boxes):
+def draw_boxes(image_folder_name,image_file_name,v_boxes,count):
+    os.makedirs(f'./images/{image_folder_name}/', exist_ok=True)
     img = cv2.imread(os.path.join(os.path.join('./images',image_file_name)))
     copy_img = cv2.imread(os.path.join(os.path.join('./images',image_file_name)))
     img_file_name = image_file_name.split('.')[0]
@@ -181,15 +182,16 @@ def draw_boxes(image_file_name,v_boxes):
         end_point = (x2, y2)  
         color = (0, 0, 255) 
         thickness = 2
-        os.makedirs(f'./images/{img_file_name}/', exist_ok=True)
-        cv2.imwrite(os.path.join(f'./images/{img_file_name}', str(i) + ".jpg"),copy_img[y1:y2,x1:x2])
+        
+        cv2.imwrite(os.path.join(f'./images/{image_folder_name}', str(count+i) + ".jpg"),copy_img[y1:y2,x1:x2])
         img = cv2.rectangle(img, start_point, end_point, color, thickness)
-        img = cv2.putText(img, str(i+1), (start_point[0], start_point[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,255), 2)
+        img = cv2.putText(img, str(count+i+1), (start_point[0], start_point[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,255), 2)
         # print(img[x1:x2, y1:y2])
     cv2.imwrite(os.path.join(os.path.join('./images',"a"+image_file_name)),img)
+    return count+len(v_boxes)
 
 
-def gen_bounding_boxes(image_file_name,model):
+def gen_bounding_boxes(image_folder_name,image_file_name,model,count):
 
     anchors = [[116,90, 156,198, 373,326], [30,61, 62,45, 59,119], [10,13, 16,30, 33,23]]  
     class_threshold = 0.6
@@ -208,10 +210,10 @@ def gen_bounding_boxes(image_file_name,model):
     do_nms(boxes, 0.5)
     v_boxes, v_labels, v_scores = get_boxes(boxes, labels, class_threshold)
 
-    draw_boxes(image_file_name,v_boxes)
+    count = draw_boxes(image_folder_name,image_file_name,v_boxes,count)
     
     resultant_text = []
     for box_no in range(len(v_boxes)):
         resultant_text.append(f"Bounding box no. {box_no+1}  ----  {v_labels[box_no]}({v_scores[box_no]})")
     
-    return resultant_text
+    return count

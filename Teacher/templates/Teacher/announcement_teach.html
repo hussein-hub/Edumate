@@ -67,14 +67,14 @@
         <h1 class="centerHeader">Announcement</h1>
         <form class="alignment" method="post">
             {% csrf_token %}
-            <textarea style="width: 40vw; margin-right: 20px" class="form-control" type="text" placeholder="Announce" name="announce_data" rows="" required></textarea>
+            <textarea style="width: 60vw; margin-right: 20px" class="form-control" type="text" placeholder="Announce" name="announce_data" rows="" required></textarea>
             <button class="btn btn-success" style="margin-top: 10px" type="submit">create</button>
         </form>
         <br><br><hr><br>
 
         <div class="row row-content">
             {% for i in announcement_data %}
-            <div style="margin-top: 1%" class="col-4">
+            <div style="margin-top: 1%" class="col-md-4 my-2">
                 <div class="card">
                     <div class="card-header">
                         <div>
@@ -82,12 +82,12 @@
                         </div>
                         <div>
                           <!-- Button trigger modal -->
-                          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter">
+                          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
                             <i class="fa fa-trash"></i>
                           </button>
 
                           <!-- Modal -->
-                          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                          <div class="modal fade" id="exampleModalCenter{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                               <div class="modal-content">
                                 <div class="modal-header">
@@ -97,7 +97,7 @@
                                   </button>
                                 </div>
                                 <div class="modal-body">
-                                  <a class="btn btn-danger" href="{% url 'announcementdelete' pk=pk pk2=pk2 id=i.id  %}" >
+                                  <a class="btn btn-danger" onclick="delann({{ i.ann_id }})">
                                   {% comment %} <a class="btn btn-danger" href="announcement/{{i.id}}" > {% endcomment %}
                                     Delete
                                   </a>
@@ -150,5 +150,23 @@
   {
     $('#datain').text(data);
   }
+
+function delann(id)
+{
+  $.ajax(
+      {
+          type:"POST",
+          url: "{% url 'announcementdelete' pk=pk pk2=pk2 %}",
+          data:{
+            ann_id: id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function( data ) 
+          {
+              location.reload();
+          }
+      })
+}
+
 </script>
 {% endblock script %}

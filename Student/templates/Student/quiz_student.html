@@ -100,8 +100,10 @@
                     {% if i.1 %}
                         <a href="{% url 'review_quiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-success">Review</a>
                     {% else %}
-                        {% if i.0.quiz_date <= today %}
+                        {% if i.0.quiz_date >= today %}
                         <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-success">Answer Quiz</a>
+                        {% else %}
+                        <a href="{% url 'ansquiz' pk=pk pk2=pk2 pk3=i.0.id %}" class="btn btn-success" style="pointer-events: none">Due date passed</a>
                         {% endif %}
                     {% endif %}
                   </blockquote>

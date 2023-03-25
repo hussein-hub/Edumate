@@ -49,7 +49,7 @@
   {% endblock navbar %}
 
 {% block styles %}
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% comment %} <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> {% endcomment %}
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
 
 <style>
@@ -121,9 +121,10 @@
         color: #008374 !important;
       }
 
-      .table {
-        width: 75%;
-        max-width: 75%;
+      @media screen and (max-width: 550px) {
+        .table{
+          margin-left: 150px;
+        }
       }
       
 </style>
@@ -146,7 +147,7 @@
     
 </div>
 
-<div style="margin-top: 10vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+<div style="margin-top: 10vh; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; overflow-x:auto;">
   {{ calendar }}   
 
 </div>  

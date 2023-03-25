@@ -1,6 +1,7 @@
 import calendar
 from datetime import date
 from datetime import datetime, timedelta
+import time
 import cv2
 from django.shortcuts import get_object_or_404, render
 import string, random
@@ -8,7 +9,7 @@ from django.http import FileResponse, Http404, HttpResponseRedirect, StreamingHt
 from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
-from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Attendance, Quiz_marks
+from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Quiz_marks
 from Teacher.forms import EventForm
 from .models import *
 import random
@@ -18,7 +19,7 @@ from django.shortcuts import redirect, render
 from django.views import generic
 from django.utils.safestring import mark_safe
 from .utils import Calendar, gen_bounding_boxes
-
+import requests
 from django.contrib import messages
 
 from PyPDF2 import PdfReader
@@ -36,6 +37,31 @@ from django.http import JsonResponse
 from django.utils.dateparse import parse_datetime
 from json import dumps
 
+import os
+from pathlib import Path
+# from decouple import config
+
+from dotenv import load_dotenv
+load_dotenv()
+
+import json
+import hashlib
+import hmac
+from collections import OrderedDict
+
+
+def get_viewer_url_signature(account_id, auth_token, identifier, valid_until_timestamp):
+    policy = (str(account_id), str(identifier), int(valid_until_timestamp))
+    
+    # Alternatively, policy as an ordered object.
+    policy = OrderedDict((
+        ('account_id', str(account_id)),
+        ('identifier', str(identifier)),
+        ('valid_until', int(valid_until_timestamp)),
+    ))
+    json_policy = json.dumps(policy, separators=(',', ':'))
+    return hmac.new(key=auth_token.encode('utf-8'), msg=json_policy.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()
+
 
 capture = 0
 frame = None
@@ -50,15 +76,13 @@ def teach_home(request, pk):
     studs=[]
     for i in class_data:
         studs.append(len(ClassStudents.objects.filter(class_code=i.class_code)))
-    
     if(request.method=="POST"):
         class_room=ClassTeachers()
-        class_room.teach_id=pk
+        class_room.teach_id=Teachers.objects.get(teach_id=pk)
         class_room.class_name=request.POST.get('name')
         class_room.class_code=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 6)))
-        class_room.save() 
-        return render(request, 'Teacher/teacher_home.html', {'class_data': zip(class_data, studs), 'teacher': teacher_c, 'pk': pk})
-    
+        class_room.save()
+        return redirect('teacher_home', pk=pk)
     return render(request, 'Teacher/teacher_home.html', {'class_data': zip(class_data, studs), 'teacher': teacher_c, 'pk': pk})
 
 def deleteclass(request, pk):
@@ -67,21 +91,20 @@ def deleteclass(request, pk):
         return JsonResponse({'info': 'succ'})
 
 def classroom(request, pk, pk2):
-    context={'pk': pk, 'pk2': pk}
     if(request.method=="POST"):
         assignment=Assignments()
         assignment.assignment_name=request.POST.get('name')
         assignment.assignment_description=request.POST.get('description')
-        assignment.class_code=pk2
+        assignment.class_code=ClassTeachers.objects.get(class_code=pk2)
         assignment.max_marks=request.POST.get('marks')
         assignment.duedate=request.POST.get('duedate')
         if request.POST.get('peer')=="on":
             assignment.peer_grade=True
         else:
             assignment.peer_grade=False
-        print(request.POST.get('peer'))
         assignment.save()
-    a=Assignments.objects.filter(class_code=pk2)
+        return redirect('classroom', pk=pk, pk2=pk2)
+    a=Assignments.objects.filter(class_code=pk2).order_by('-duedate')
     assign = []
     studs=[]
     class_data = ClassTeachers.objects.filter(teach_id=pk)
@@ -98,16 +121,13 @@ def classroom(request, pk, pk2):
 
 def assignmentsub(request, pk, pk2, pk3):
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
-    stud_names=[]
-    # for i in submitted:
-    #     stud_names.append(Students.object.get(stud_id=i.stud_id).name)
     peerassign=PeerStudents.objects.filter(assign_id=pk3)
     assign_grade=Assignments.objects.filter(assignment_id =pk3)
     assign_flag=assign_grade[0].peer_grade
     sorterval=[]
     for i in submitted:
-        received1=PeerStudents.objects.filter(assign_id=pk3, as_peer_1=i.stud_id)
-        received2=PeerStudents.objects.filter(assign_id=pk3, as_peer_2=i.stud_id)
+        received1=PeerStudents.objects.filter(assign_id=pk3, as_peer_1=i.stud_id.stud_id)
+        received2=PeerStudents.objects.filter(assign_id=pk3, as_peer_2=i.stud_id.stud_id)
         temp=[i.stud_id]
         for j in received1:
             temp.append(j.stud_id)
@@ -117,16 +137,21 @@ def assignmentsub(request, pk, pk2, pk3):
             temp.append(j.as_2_marks)
         sorterval.append(temp)
     if(request.method=="POST"):
+        pe=PeerGrade.objects.filter(assign_id=pk3)
+        if len(pe)>0:
+            messages.error(request, "Peer grading already created for this assignment")
+            return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
         sub_stud=SubmittedAssignments.objects.filter(assignment_id=pk3)
         studs=ClassStudents.objects.filter(class_code=pk2)
         if(len(sub_stud)!=len(studs)):
-            print("Some students are still left to submit their assignments")
+            messages.error(request, "Some students are still left to submit their assignments")
+            return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
         else:
             a=[]
             stud_sub=[]
             for i in sub_stud:
                 a.append(i.assign_id)
-                stud_sub.append(i.stud_id)
+                stud_sub.append(i.stud_id.stud_id)
             b=copy.deepcopy(a)
             random.shuffle(a)
             a=a+a
@@ -143,18 +168,33 @@ def assignmentsub(request, pk, pk2, pk3):
                 a[j]="X"
             for i in range(0,len(stud_sub)):
                 peer=PeerGrade()
-                peer.stud_id=stud_sub[i]
-                peer.assign_id=pk3
-                peer.peer_1=ans[i][0]
-                peer.peer_2=ans[i][1]
+                peer.stud_id=Students.objects.get(stud_id=stud_sub[i])
+                peer.assign_id=Assignments.objects.get(assignment_id=pk3)
+                peer.peer_1=SubmittedAssignments.objects.get(assign_id=ans[i][0])
+                peer.peer_2=SubmittedAssignments.objects.get(assign_id=ans[i][1])
                 peer.save()
+            return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
     return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval, 'peerf': assign_flag})
+
+def assignmentdelete(request, pk, pk2):
+    Assignments.objects.get(assignment_id=request.POST.get('assignment_id')).delete()
+    return redirect('classroom', pk=pk, pk2=pk2)
 
 def assignmentgrade(request, pk, pk2, pk3,pk4):
     submitted=SubmittedAssignments.objects.get(assignment_id=pk3,stud_id = pk4)
     assignment=Assignments.objects.get(assignment_id=pk3)
     stud = Students.objects.get(stud_id = pk4)
     file_url = "http://127.0.0.1:8000"+submitted.assign_file.url
+    final_peer=[]
+    peerstu=PeerStudents.objects.filter(assign_id=pk3, as_peer_1=pk4)
+    peerstu1=PeerStudents.objects.filter(assign_id=pk3, as_peer_2=pk4)
+    for j in peerstu:
+        final_peer.append(j.stud_id.name)
+        final_peer.append(j.as_1_marks)
+    for j in peerstu1:
+        final_peer.append(j.stud_id.name)
+        final_peer.append(j.as_2_marks)
+    print(final_peer)
     if request.method=="POST":
         if(float(request.POST.get('marks')) < float(assignment.max_marks)):
             submitted.marks=request.POST.get('marks')
@@ -164,21 +204,21 @@ def assignmentgrade(request, pk, pk2, pk3,pk4):
         else:
             messages.error(request, "Marks cant be greater than maximum marks")
             return redirect('grade', pk=pk, pk2=pk2, pk3=pk3, pk4=pk4)
-    return render(request, 'Teacher/grade_assignments.html', {'student_name':stud.name,'file':file_url,'submit': submitted, 'pk': pk, 'pk2': pk2, 'pk3': pk3,'assign': assignment})
+    return render(request, 'Teacher/grade_assignments.html', {'student_name':stud.name,'file':file_url,'submit': submitted, 'pk': pk, 'pk2': pk2, 'pk3': pk3,'assign': assignment, 'peers': final_peer})
 
 def announcement(request, pk, pk2):
     if (request.method == 'POST'):
         announcement = Announcements()
         announcement.announce_data = request.POST.get('announce_data')
-        announcement.teach_id = pk
-        announcement.class_code = pk2
-        # print(announcement.announce_data, announcement.teach_id, announcement.class_code)
+        announcement.teach_id = Teachers.objects.get(teach_id=pk)
+        announcement.class_code = ClassTeachers.objects.get(class_code=pk2)
         announcement.save()
+        return redirect('announcementteach', pk=pk, pk2=pk2)
     announcement_data = Announcements.objects.filter(class_code = pk2).order_by('-date')
     return render(request, 'Teacher/announcement_teach.html', {'pk': pk, 'pk2': pk2, 'announcement_data': announcement_data})
 
-def ann_delete(request, pk, pk2, id):
-    delAnnouncement = Announcements.objects.get(id=id)
+def ann_delete(request, pk, pk2):
+    delAnnouncement = Announcements.objects.get(ann_id=request.POST.get('ann_id'))
     delAnnouncement.delete()
     return redirect('announcementteach', pk=pk, pk2=pk2)
 
@@ -230,10 +270,11 @@ def event(request,pk, pk2, id=None):
     if request.POST and form.is_valid():
 
         eform = form.save(commit = False)
-        eform.teach_id = pk
-        eform.class_code = pk2
+        eform.teach_id = Teachers.objects.get(teach_id=pk)
+        eform.class_code = ClassTeachers.objects.get(class_code=pk2)
         eform.save()
-        return HttpResponseRedirect(reverse('schedule', args=(instance.teach_id,instance.class_code)))
+        return redirect('schedule', pk=pk, pk2=pk2)
+        # return HttpResponseRedirect(reverse('schedule', args=(instance.teach_id,instance.class_code)))
     return render(request, 'Teacher/event.html', {'form': form,'pk1':pk,'pk2':pk2, 'pk': pk})
 
 def create_quiz(request, pk, pk2):
@@ -295,7 +336,7 @@ def create_quiz(request, pk, pk2):
         # print(questions)
         # print(options)
         # print(correctOP)
-        quiz_object = Quiz(quiz_name = quizName, description = description, time_limit = quizTime,quiz_date = quizdate, teach_id = pk, class_code = pk2)
+        quiz_object = Quiz(quiz_name = quizName, description = description, time_limit = quizTime,quiz_date = quizdate, teach_id = Teachers.objects.get(teach_id=pk), class_code = ClassTeachers.objects.get(class_code=pk2))
         quiz_object.save()
         markForEachQuestion = 1
 
@@ -320,6 +361,7 @@ def create_quiz(request, pk, pk2):
                     option_object = Options(question = question_object, option_name = j, correct = False)
                     option_object.save()
                 k += 1
+        return redirect('create_quiz', pk=pk, pk2=pk2)
         
     allQuiz = Quiz.objects.filter(teach_id = pk, class_code = pk2)
 
@@ -340,26 +382,32 @@ def attendance(request, pk, pk2):
         nums_studs_present.append([single_num, percent])
     if request.method=="POST":
         new_att=Attendance()
-        new_att.teacher_id=pk
-        new_att.class_id=pk2
+        new_att.teacher_id=Teachers.objects.get(teach_id=pk)
+        new_att.class_id=ClassTeachers.objects.get(class_code=pk2)
         new_att.start_time=request.POST.get('atttimes')
         new_att.end_time=request.POST.get('atttimee')
         new_att.code=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 6)))
         new_att.save()
         att_list = request.FILES.getlist('attimg')
+        count = 0
+        image_folder_name = str(att_list[0]).split('.')[0]
         for i in att_list:
             attimg = Attendance_images()
             attimg.att_id = new_att
             attimg.att_image = i
             attimg.save()
-            
             temp_i = str(i)
-            gen_bounding_boxes(temp_i,model)
+            count = gen_bounding_boxes(image_folder_name,temp_i,model,count)
         
 
         messages.success(request, 'Attendance created and code is = '+new_att.code)
         return redirect('attendance', pk=pk, pk2=pk2)
     return render(request, 'Teacher/attendance.html', {'pk': pk, 'pk2': pk2, 'all_att': zip(all_att, attdates, nums_studs_present)})
+
+def deleteatt(request, pk, pk2):
+    if request.method=="POST":
+        Attendance.objects.get(att_id=request.POST.get('att_id')).delete()
+        return redirect('attendance', pk=pk, pk2=pk2)
 
 def video_feed(request, pk):
     return StreamingHttpResponse(gen_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
@@ -397,7 +445,7 @@ def view_att(request, pk, pk2, pk3):
         all_att.append(val)
     stud_ids=[]
     for i in all_studs:
-        stud_ids.append(i.stud_id)
+        stud_ids.append(i.stud_id.stud_id)
     all_stud_names_ids=[]
     for i in stud_ids:
         if i not in att_ids:
@@ -416,6 +464,10 @@ def view_att(request, pk, pk2, pk3):
             tem=request.POST['student_id'].split("(")
             tem=tem[-1]
             tem=tem.split(")")
+            temp=AttStud.objects.filter(att_id=pk3, stud_id=int(tem[0]))
+            if len(temp)>0:
+                messages.error(request, "Attendance already marked")
+                return redirect('viewatt', pk=pk, pk2=pk2, pk3=pk3)
             att=AttStud()
             att.att_id=Attendance.objects.get(att_id=pk3)
             att.stud_id=Students.objects.get(stud_id=int(tem[0]))
@@ -437,26 +489,32 @@ def quiz_info(request, pk, pk2, pk3):
 
     class_students = ClassStudents.objects.filter(class_code = pk2)
     answered_students = []
+    stud_length = len(quiz_responses)
     not_answered_students = []
-    print(quiz_responses[0])
     for i in class_students:
-        student = Students.objects.get(stud_id = i.stud_id)
-        if student.stud_id in quiz_resp:
-            quiz_marks = Quiz_marks.objects.get(quiz = quiz, student_id = student)
+        student = Students.objects.get(stud_id = i.stud_id.stud_id)
+        if i.stud_id.stud_id in quiz_resp:
+            quiz_marks = Quiz_marks.objects.get(quiz = quiz, student_id = i.stud_id.stud_id)
             answered_students.append(quiz_marks)
 
             # quiz_responses.append(student)
         else:
-            not_answered_students.append(student.name)
-    print(answered_students)
-    return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': answered_students, 'not_answered_students': not_answered_students})
+            not_answered_students.append(student)
+    # print(answered_students)
+    return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': answered_students,'stud_length':stud_length, 'not_answered_students': not_answered_students})
 
 def assignmentSimilarityCheck(request, pk, pk2, pk3):
     global similarity_sentence_transformer_model
-    assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)
     data = []
+    plag = []
+    checkedAssignments = Plagarism.objects.filter(assignment_id = pk3)
+    checkedAssignmentsLength = len(checkedAssignments)
+    assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)
+    assignmentsLength = len(assignments)
+    assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)
+    # data = []
     for i in assignments:
-        student = Students.objects.filter(stud_id=i.stud_id)
+        student = Students.objects.filter(stud_id=i.stud_id.stud_id)
         data.append([i, student])
 
     all_assignments = SubmittedAssignments.objects.filter(assignment_id = pk3)
@@ -464,25 +522,65 @@ def assignmentSimilarityCheck(request, pk, pk2, pk3):
     students = []
     for i in all_assignments:
         files.append(i.assign_file.url)
-        students.append(i.stud_id)
-    files_text = getTextFromPDF(files)
-    embeddings = similarity_sentence_transformer_model.encode(files_text)
-    similarities = predict_similarity(embeddings,students)
-    # print(similarities)
-    for j in similarities:
-        # print(j)
-        plag = Plagarism()
-        plag.assignment_id = Assignments.objects.get(assignment_id = pk3)
-        plag.percentage_similarity = j['similarity_score']
-        plag.stud_assignment1 = SubmittedAssignments.objects.get(stud_id=j['stud_1'], assignment_id=pk3)
-        plag.stud_assignment2 = SubmittedAssignments.objects.get(stud_id=j['stud_2'], assignment_id=pk3)
-        plag.save()
-    # print(data)
-    # ,percentage_similarity__range=(0.5, 1)
+        students.append(i.stud_id.stud_id)
+    if checkedAssignmentsLength == int((assignmentsLength * (assignmentsLength - 1)) / 2):
+        print()
+    else:
+        files_text = getTextFromPDF(files)
+        embeddings = similarity_sentence_transformer_model.encode(files_text)
+        similarities = predict_similarity(embeddings,students)
+        # print(similarities)
+        for j in similarities:
+            # print(j)
+            plag = Plagarism()
+            plag.assignment_id = Assignments.objects.get(assignment_id = pk3)
+            plag.percentage_similarity = j['similarity_score']
+            plag.stud_assignment1 = SubmittedAssignments.objects.get(stud_id=j['stud_1'], assignment_id=pk3)
+            plag.stud_assignment2 = SubmittedAssignments.objects.get(stud_id=j['stud_2'], assignment_id=pk3)
+            plag.save()
+        for row in Plagarism.objects.all().reverse():
+            if Plagarism.objects.filter(id=row.id).count() > 1:
+                row.delete()
+        plag = Plagarism.objects.filter(assignment_id = pk3).order_by('-percentage_similarity')
+        for i in plag:
+            docUID = getUniqueDocumentID([i.stud_assignment1.assign_file.url, i.stud_assignment2.assign_file.url])
+            valid_until = int(time.time() + 30 * 86400 )
+            valid_until_time = valid_until
+            uniqueID = DocumentUniqueID()
+            uniqueID.plagarism_id = Plagarism.objects.get(id = i.id)
+            uniqueID.doc_unique_id = docUID
+            uniqueID.valid_until = valid_until_time
+            uniqueID.url = "https://api.draftable.com/v1/comparisons/viewer/" + os.getenv("ACCOUNT_ID") + "/" + str(uniqueID.doc_unique_id) + "?valid_until=" + str(valid_until_time) + "&signature=" + str(get_viewer_url_signature(os.getenv("ACCOUNT_ID"), os.getenv("AUTH_TOKEN"), docUID, valid_until))
+            uniqueID.save()
     plag = Plagarism.objects.filter(assignment_id = pk3).order_by('-percentage_similarity')
-    # print("ABCD_-_Plag")
-    # print(plag)
-    return render(request, 'Teacher/assignmentSimilarityCheck.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignments': data, 'plagData': plag})
+    uniqueDocumentIDs = DocumentUniqueID.objects.filter(plagarism_id__assignment_id = pk3)
+    plagarismData = []
+    for i in range(len(uniqueDocumentIDs)):
+        plagarismData.append([plag[i], uniqueDocumentIDs[i]])
+    return render(request, 'Teacher/assignmentSimilarityCheck.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignments': data, 'plagData': plagarismData})
+
+def getUniqueDocumentID(filePaths):
+    url = "https://api.draftable.com/v1/comparisons"
+    payload={'identifier': '',
+    'left.display_name': '',
+    'left.file_type': 'pdf',
+    'right.display_name': '',
+    'right.file_type': 'pdf',
+    'public': 'false'}
+    files=[
+    ('left.file',(filePaths[0].split("/")[-1],open(filePaths[0][1:],'rb'),'application/pdf')),
+    ('right.file',(filePaths[1].split("/")[-1],open(filePaths[1][1:],'rb'),'application/pdf'))
+    ]
+    headers = {
+    'accept': 'application/json',
+    'Authorization': f'Token {os.getenv("AUTH_TOKEN")}',
+    # 'Cookie': os.getenv("COOKIE")
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+    return response.json()['identifier']
+
 
 def preprocess_text(text):
     # Remove HTML tags
@@ -540,7 +638,42 @@ def predict_similarity(embeddings,students):
             similarities.append({'stud_1':students[i],'stud_2':students[j],'similarity_score':score})
             # similarities.append({'stud_1':students[j],'stud_2':students[i],'similarity_score':score})
     return similarities
-    
+
+def projecttracking(request, pk, pk2):
+    all_projs = Project.objects.filter(class_code=pk2)
+    allstuds=ClassStudents.objects.filter(class_code=pk2)
+    if request.method == "POST":
+        proj = Project()
+        proj.class_code=ClassTeachers.objects.get(class_code=pk2)
+        proj.proj_name = request.POST.get('name')
+        proj.proj_desc = request.POST.get('desc')
+        proj.due = request.POST.get('duedate')
+        proj.proj_check = request.POST.get('proj_checks')
+        proj.num_studs = request.POST.get('num_studs')
+        proj.save()
+        groups = []
+        for i in range(len(allstuds)//int(proj.num_studs)):
+            group=Groups()
+            group.pro_id=proj
+            group.save()
+            groups.append(group)
+        count=0
+        for i in allstuds:
+            member=Members()
+            member.group_id=groups[count]
+            member.stud_id=i.stud_id
+            member.save()
+            count=count+1
+            if(count==10//3):
+                count=0
+        return redirect('projecttracking', pk=pk, pk2=pk2)
+    return render(request, 'Teacher/projecttracking.html', {'pk': pk, 'pk2': pk2, 'all_projs': all_projs})
+
+def deletepro(request, pk, pk2):
+    if request.method == "POST":
+        Project.objects.get(pro_id=request.POST.get('pro_id')).delete()
+        return redirect('projecttracking', pk=pk, pk2=pk2)
+
 def logout(request, pk):
     request.session.flush()
     return redirect('home')

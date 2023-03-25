@@ -1,7 +1,9 @@
 {% load static %}
 <html lang="en">
+{% load pwa %}
 
 <head>
+  {% progressive_web_app_meta %}
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   {% block title %}
