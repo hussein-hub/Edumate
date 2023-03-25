@@ -58,7 +58,6 @@
   }
 
   #left-side {
-    height: 500px;
     /*background-color:#FFB74D;*/
     border-radius: 0;
     padding: 0;
@@ -121,7 +120,9 @@
                 <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
                 <button>Learn More >></button> {% endcomment %}
                 {% for image in all_marked_images %}
-                <img style="margin-bottom: 30px;" width="400" src={{image}}>
+                <div class="container">
+                <img style="margin-bottom: 30px;" width="80%" src={{image}}>
+                </div>
                 {% endfor %}
               </div>
               <div id="right-side" class="col-md-6  jumbotron text-center">
