@@ -231,9 +231,11 @@ def ansquiz(request,pk,pk2,pk3):
         correct_ans.append([c_ops,multi])
     total_questions = len(ops)
     stud_responses =[]
+    remark = "None"
     if request.method=='POST':
         cheat_check = request.POST.get('cheat')
         if str(cheat_check) == 'cheated':
+            remark = "Cheating detected"
             teacher_email = Teachers.objects.get(teach_id = quiz.teach_id.teach_id).email
             student_name = Students.objects.get(stud_id=pk).name
             subject = 'Cheating detecting in quiz'
@@ -266,7 +268,8 @@ def ansquiz(request,pk,pk2,pk3):
 
         stud = Students.objects.get(stud_id = pk)
         cla = ClassTeachers.objects.get(class_code = pk2)
-        quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=cla,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks))
+         
+        quiz_mks = Quiz_marks(quiz=quiz,student=stud,class_id=cla,student_responses=json.dumps(stud_responses),correct_responses=json.dumps(correct_ans),total_marks=mks,marks_breakup=json.dumps(ind_mks),remarks=remark)
         quiz_mks.save()
         return redirect('quiz_stud',pk=pk,pk2=pk2)
         

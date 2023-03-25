@@ -43,5 +43,6 @@ class Quiz_marks(models.Model):
     correct_responses = models.TextField(null=True)
     total_marks = models.PositiveSmallIntegerField(default=0)
     marks_breakup = models.TextField(null=True)
+    remarks = models.TextField(default="None", null=True)
     def __str__(self):
          return self.quiz.quiz_name +" - "+ self.student.name +" - "+ str(self.total_marks)

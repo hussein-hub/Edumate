@@ -409,26 +409,26 @@ def deleteatt(request, pk, pk2):
         Attendance.objects.get(att_id=request.POST.get('att_id')).delete()
         return redirect('attendance', pk=pk, pk2=pk2)
 
-def video_feed(request, pk):
-    return StreamingHttpResponse(gen_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
+# def video_feed(request, pk):
+#     return StreamingHttpResponse(gen_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
 
-def gen_frames():
-    camera = cv2.VideoCapture(0)
+# def gen_frames():
+#     camera = cv2.VideoCapture(0)
 
-    global capture,frame
-    while True:
-        success, frame = camera.read()
-        if success:
-            try:
-                ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))
-                frame = buffer.tobytes()
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+#     global capture,frame
+#     while True:
+#         success, frame = camera.read()
+#         if success:
+#             try:
+#                 ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))
+#                 frame = buffer.tobytes()
+#                 yield (b'--frame\r\n'
+#                        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
                 
-            except Exception as e:
-                pass
-        else:
-            pass       
+#             except Exception as e:
+#                 pass
+#         else:
+#             pass       
 
 def view_att(request, pk, pk2, pk3):
     all_att_id=AttStud.objects.filter(att_id=pk3)
