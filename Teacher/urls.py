@@ -24,6 +24,7 @@ urlpatterns = [
     path('classroom/<pk2>/create_quiz/quiz_info/<pk3>', views.quiz_info, name="quiz_info"),
     path('classroom/<pk2>/projecttracking/', views.projecttracking, name='projecttracking'),
     path('classroom/<pk2>/deleteproject/', views.deletepro, name='projectdelete'),
+    path('classroom/<pk2>/fetchcheck/', views.fetchcheck, name='fetchcheck'),
     # path('video_feed', views.video_feed, name='video_feed'),
     path('logout/', views.logout, name="logout")
 ]

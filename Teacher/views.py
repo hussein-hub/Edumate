@@ -647,8 +647,8 @@ def projecttracking(request, pk, pk2):
         proj.class_code=ClassTeachers.objects.get(class_code=pk2)
         proj.proj_name = request.POST.get('name')
         proj.proj_desc = request.POST.get('desc')
-        proj.due = request.POST.get('duedate')
-        proj.proj_check = request.POST.get('proj_checks')
+        proj.proj_due = request.POST.get('duedate')
+        proj.prog_check = request.POST.get('proj_checks')
         proj.num_studs = request.POST.get('num_studs')
         proj.save()
         groups = []
@@ -673,6 +673,10 @@ def deletepro(request, pk, pk2):
     if request.method == "POST":
         Project.objects.get(pro_id=request.POST.get('pro_id')).delete()
         return redirect('projecttracking', pk=pk, pk2=pk2)
+
+def fetchcheck(request, pk, pk2):
+    pro=Project.objects.get(pro_id=request.GET.get('pro_id'))
+    return JsonResponse({'name': pro.proj_name, 'checks': pro.prog_check})
 
 def logout(request, pk):
     request.session.flush()

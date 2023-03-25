@@ -241,6 +241,7 @@ input:checked + .slider:before {
               <p><small>Description : {{ i.proj_desc }}</small></p>
               <p><small style = "font-size: 13px">Due date : {{ i.proj_due }}</small></p>
               <a class="btn btn-success" href="{% url 'projecttracking' pk=pk pk2=pk2 %}" class="card-link"><small>Go to project</small></a>
+              <a class="btn btn-success" class="card-link" data-toggle="modal" data-target="#CheckModal" onclick="fetchcheck({{ i.pro_id }})"><small>View checkpoints</small></a>
             </blockquote>
           </div>
         </div>
@@ -256,6 +257,30 @@ input:checked + .slider:before {
       <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a> {% endcomment %}
     </div>
     </div>
+
+    <div class="modal fade" id="CheckModal" tabindex="-1" role="dialog" aria-labelledby="checkModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 50vw;">
+        <div class="modal-content" style="height: 40vh;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pro_nam"></h5>
+            <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="checkp">
+            </div>    
+          </div>
+          </form>
+          </div>
+          {% comment %} <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div> {% endcomment %}
+        </div>
+      </div>
+    </div>
+
 {% endblock content %}
 {% block script %}
 <script>
@@ -281,6 +306,25 @@ function deletepro(id)
           success: function( data ) 
           {
               location.reload();
+          }
+      })
+}
+
+function fetchcheck(id)
+{
+  $.ajax(
+      {
+          type:"GET",
+          url: "{% url 'fetchcheck' pk=pk pk2=pk2 %}",
+          data:{
+            pro_id: id,
+          },
+          success: function( data ) 
+          {
+            $('#pro_nam').empty();
+            $('#checkp').empty();
+            $('#pro_nam').text(data['name']);
+            $('#checkp').text(data['checks']);
           }
       })
 }
