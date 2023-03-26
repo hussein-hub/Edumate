@@ -110,8 +110,12 @@
 
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
           <div class="card-header">
-            <div style="font-weight: 600; font-size: 18px">
-              {{ i.0.assignment_name }}
+            <div>
+              {% if i.2 and not i.1 %}
+                <h5 style="color: red;">{{ i.0.assignment_name }}</h5>
+              {% else %}
+                <h5>{{ i.0.assignment_name }}</h5>
+              {% endif %}
             </div>
           </div>
           <div class="card-body">
@@ -122,7 +126,11 @@
               <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: nowrap;">
                 <a class="btn btn-success" href="{% url 'assignment' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Submit</small></a>
                 {% if i.1 %}
-                  <span style="display: inline-flex; align-items: center;"><i style="border-radius: 10px; background-color: #008374; color: white;" class="fa-regular fa-circle-check"></i><small style="font-size: 14px; margin-left: 5px;">submitted</small></span>
+                  {% if i.2 %}
+                    <span style="display: inline-flex; align-items: center;"><i style="border-radius: 10px; background-color: #d62e22; color: white;" class="fa-regular fa-circle-check"></i><small style="font-size: 14px; margin-left: 5px;">submitted late</small></span>
+                  {% else %}
+                    <span style="display: inline-flex; align-items: center;"><i style="border-radius: 10px; background-color: #008374; color: white;" class="fa-regular fa-circle-check"></i><small style="font-size: 14px; margin-left: 5px;">submitted</small></span>
+                  {% endif %}
                 {% else %}
                   
                 {% endif %}

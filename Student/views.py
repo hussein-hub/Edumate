@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
+import datetime
 # Create your views here.
 
 def stud_home(request, pk):
@@ -35,8 +36,23 @@ def stud_home(request, pk):
             return redirect('student_home', pk=pk) 
     allClasses = ClassStudents.objects.filter(stud_id=pk)
     data = []
+    # assignmentsNotSubmitted = []
     for i in allClasses:
-        data.append([i.class_code.class_code, i.class_code.class_name, i.class_code.teach_id.name])
+        totalAssignmentsInOneClass = Assignments.objects.filter(class_code=i.class_code.class_code)
+        temp = []
+        for j in totalAssignmentsInOneClass:
+            check = SubmittedAssignments.objects.filter(stud_id=pk, assignment_id=j.assignment_id)
+            if not check:
+                # print(timezone.localtime(timezone.now()))
+                if timezone.localtime(timezone.now()) < j.duedate:
+                    temp.append([j.assignment_id, j.assignment_name, j.class_code.class_name, j.duedate, False])
+                else:
+                    temp.append([j.assignment_id, j.assignment_name, j.class_code.class_name, j.duedate, True])
+        # assignmentsNotSubmitted.append(temp)
+        temp.sort(key=lambda x: x[3])
+        data.append([i.class_code.class_code, i.class_code.class_name, i.class_code.teach_id.name, temp])
+    # print(assignmentsNotSubmitted)
+
     return render(request, 'Student/student_home.html', {"data": data, 'pk': pk})
 
 def classroom(request, pk, pk2):
@@ -44,16 +60,20 @@ def classroom(request, pk, pk2):
     submitted_assign = SubmittedAssignments.objects.filter(stud_id=pk, assignment_id__class_code=pk2)
     # print(submitted_assign)
     status = [False for i in range(len(assign))]
+    late_submit_status = [False for i in range(len(assign))]
     k = 0
     for i in assign:
         for j in submitted_assign:
             if i.assignment_id==j.assignment_id.assignment_id:
                 status[k]=True
+        # print(timezone.localtime(timezone.now()), i.duedate)
+        if timezone.localtime(timezone.now()) > i.duedate:
+            late_submit_status[k]=True
         k += 1
     # print(status)
     data = []
     for i in range(len(assign)):
-        data.append([assign[i], status[i]])
+        data.append([assign[i], status[i], late_submit_status[i]])
     
     return render(request, 'Student/classroom.html', {'assign': data, 'pk': pk, 'pk2': pk2, 'status': status})
 
@@ -317,7 +337,7 @@ def submitatt(request, pk, pk2, pk3):
     for j in mainAttObj:
         all_marked_images.append(j.att_image.url.split('/')[0] + '/' + j.att_image.url.split('/')[1] + '/' + 'a' + j.att_image.url.split('/')[2])
     imagePath = mainAttObj[0].att_image.url.split('/')
-    print(all_marked_images)
+    # print(all_marked_images)
     try:
         folderName = "."+"/".join(imagePath[:-1]) + "/" + imagePath[-1].split('.')[0]
     except:
