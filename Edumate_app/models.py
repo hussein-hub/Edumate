@@ -9,8 +9,8 @@ class Students(models.Model):
     is_change = models.IntegerField(default=0)
     class Meta:
         db_table = "Students"
-    # def __str__(self):
-    #      return str(self.name)
+    def __str__(self):
+         return str(self.name)
 
 class Teachers(models.Model):   
     teach_id = models.AutoField(primary_key=True)

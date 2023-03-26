@@ -102,6 +102,8 @@ class Attendance(models.Model):
     code = models.CharField(max_length=10)
     class Meta:
         db_table = "Attendance"
+    def __str__(self):
+         return self.code
 
 class AttStud(models.Model):
     att_id = models.ForeignKey(Attendance, on_delete=models.CASCADE, blank=True, null=True)
@@ -118,6 +120,8 @@ class Plagarism(models.Model):
     percentage_similarity = models.FloatField(default=0)
     class Meta:
         db_table = "similarity"
+    def __str__(self):
+        return str(self.assignment_id)
 
 class Attendance_images(models.Model):
     att_id = models.ForeignKey(Attendance, on_delete=models.CASCADE, blank=True, null=True)
@@ -146,12 +150,16 @@ class Project(models.Model):
     num_studs = models.IntegerField(default=2)
     class Meta:
         db_table = "Project"
+    def __str__(self):
+        return str(self.proj_name)
 
 class Groups(models.Model):
     group_id = models.AutoField(primary_key=True)
     pro_id = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
     class Meta:
         db_table = "Groups"
+    def __str__(self):
+        return str(self.group_id)
 
 class Members(models.Model):
     mem_id = models.AutoField(primary_key=True)
@@ -159,3 +167,5 @@ class Members(models.Model):
     stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True)
     class Meta:
         db_table = "Members"
+    def __str__(self):
+        return str(self.mem_id)

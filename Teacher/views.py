@@ -120,6 +120,17 @@ def classroom(request, pk, pk2):
     return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2, 'total': total_studs_value})
 
 def assignmentsub(request, pk, pk2, pk3):
+
+    submitted_assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)
+    all_students = ClassStudents.objects.filter(class_code=pk2)
+    students_not_submitted = []
+    submitted_assignments_ids = [i.stud_id for i in submitted_assignments]
+    for i in all_students:
+        print(i.stud_id.name)
+        if i.stud_id not in submitted_assignments_ids:
+            students_not_submitted.append(i)
+    print(students_not_submitted)
+
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
     peerassign=PeerStudents.objects.filter(assign_id=pk3)
     assign_grade=Assignments.objects.filter(assignment_id =pk3)
@@ -174,7 +185,7 @@ def assignmentsub(request, pk, pk2, pk3):
                 peer.peer_2=SubmittedAssignments.objects.get(assign_id=ans[i][1])
                 peer.save()
             return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
-    return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval, 'peerf': assign_flag})
+    return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval, 'peerf': assign_flag, 'students_not_submitted': students_not_submitted})
 
 def assignmentdelete(request, pk, pk2):
     Assignments.objects.get(assignment_id=request.POST.get('assignment_id')).delete()

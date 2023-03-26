@@ -83,6 +83,8 @@
 </header>
 {% endblock navbar %}
 
+
+
 {% block content %}
 {% if messages %}
         {% for message in messages %}
@@ -96,17 +98,6 @@
 <div class="row">
   <h1 style="margin-top: 20px">Assignment</h1>
   {% for i in submit %}
-
-  {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
-    <div class="card-body">
-      <h5 class="card-title">id:  {{ i.stud_id }}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">Description: {{ i.assign_desc }} </h6>
-      <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
-      <p>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" >{{ i.stud_id }}</a></p> 
-      <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.stud_id %}" class="card-link btn btn-outline-success">Go to Assignment</a>
-    </div>
-  </div> {% endcomment %}
-
   <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
     <div class="card-header">
       <div style="font-weight: 600; font-size: 18px">
@@ -122,11 +113,39 @@
       </blockquote>
     </div>
   </div>
-{% endfor %}
+  {% endfor %}
 
-
+  <div class="row" style="margin-top: 25px;">
+    <h1 style="margin-top: 20px">Not Submitted Assignment</h1>
+    {% if students_not_submitted %}
+      {% for i in students_not_submitted %}
+        <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+          <div class="card-header">
+            <div style="font-weight: 600; font-size: 18px">
+              {{i.stud_id.name}}
+            </div>
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0">
+              <p><small>Email ID: {{ i.stud_id.email }}</small></p>
+            </blockquote>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+        <div class="card-header">
+          <div style="font-weight: 600; font-size: 18px">
+            All students have submitted the assignment
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>  
 </div>
-    <div>
+    
+
+<div>
         {% if peerf %}
           <form method="post">
             {% csrf_token %}

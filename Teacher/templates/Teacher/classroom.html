@@ -148,6 +148,24 @@ input:checked + .slider:before {
   background-color: white !important;
   color: #008374 !important;
 }
+@media screen and (max-width: 500px) {
+  .modal-dialog {
+    width: 95vw;
+  }
+  .model-content {
+    height: 55vh;
+  }
+}
+
+@media screen and (min-width: 501px) {
+  .modal-dialog {
+    width: 35vw;
+  }
+  .modal-content {
+    height: 45vh;
+  }
+}
+
 
 
 </style>
@@ -164,8 +182,8 @@ input:checked + .slider:before {
 
       <!--  model body -->
       <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 70vw;">
-          <div class="modal-content" >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLongTitle">Create a New Assignment</h5>
               <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -173,33 +191,37 @@ input:checked + .slider:before {
               </button>
             </div>
             <div class="modal-body">
-                <form method="post"class="form-group row">
-                  {% csrf_token %}
-                  <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter assignment name" name="name" required>
+              <form method="post"class="form-group row" style="display: flex; flex-direction: column; flex-wrap: nowrap; align-items: center;">
+                {% csrf_token %}
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-wrap: wrap;">
+                  <div class="col-sm-12 my-2">
+                    <input class="form-control" type="text" placeholder="Enter assignment name" name="name" required>
+                  </div>
+                    <div class="col-sm-12 my-2">
+                    <input class="form-control" type="text" placeholder="Enter assignment description" name="description" required>
+                  </div>
+                  <div class="col-sm-12 my-2">
+                    <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks" required>
+                  </div>
                 </div>
-                  <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter assignment description" name="description" required>
-                </div>
-                <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks" required>
-                </div>
-                <div class="col-sm-4" style="display: flex; align-items: center; margin-top: 10px">
+                <div class="col-sm-12" style="display: flex; align-items: center; margin-top: 10px">
                   Peer grading
-                  <label class="switch">
+                  <label class="switch" style="margin-left: 10px;">
                     <input type="checkbox" name="peer">
                     <span class="slider round"></span>
                   </label>
                 </div>
-                <div class="col-sm-2" style="margin-top: 10px">
-                  Due date
-                </div>
-                <div class="col-sm-2" style="margin-top: 10px">
-                  <div>
-                  <input id="datetime" class="form-control" type="datetime-local" placeholder="Due date" name="duedate">
+                <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; flex-wrap: nowrap;">
+                  <div class="col-sm-6" style="margin-top: 10px">
+                    Due date
+                  </div>
+                  <div class="col-sm-6" style="margin-top: 10px">
+                    <div>
+                    <input id="datetime" class="form-control" type="datetime-local" placeholder="Due date" name="duedate">
+                    </div>
                   </div>
                 </div>
-                  <div class="col-sm-4" style="margin-top: 10px">
+                  <div class="col-sm-12" style="margin-top: 10px">
                   <button class="btn btn-outline-success" type="submit">create</button>
                 </div>
                 </form>

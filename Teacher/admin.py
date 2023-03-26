@@ -2,9 +2,12 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 admin.site.register(ClassTeachers)
-admin.site.register(Assignments)
-admin.site.register(PeerGrade)
-admin.site.register(Quiz)
+# admin.site.register(Assignments)
+
+@admin.register(Assignments)
+class AssignmentsAdmin(admin.ModelAdmin):
+    list_display = ("assignment_id", "assignment_name", "class_code", "max_marks", "peer_grade", "duedate")
+
 
 @admin.register(DocumentUniqueID)
 class DocumentUniqueIDAdmin(admin.ModelAdmin):
@@ -22,7 +25,7 @@ class AnnouncementsAdmin(admin.ModelAdmin):
 
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
-	list_display = ("class_code", "event_data", "event_date")
+	list_display = ("teach_id", "class_code", "event_data", "event_date")
 
 
 class OptionsInline(admin.TabularInline):
@@ -38,6 +41,7 @@ class QuestionAdmin(admin.ModelAdmin):
 class att_img_inline(admin.TabularInline):
     model = Attendance_images
 class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ("teacher_id", "class_id", "att_id", "start_time", "end_time", "code")
     inlines = [att_img_inline]
 
 admin.site.register(QuestionImage)
@@ -46,7 +50,37 @@ admin.site.register(Question,QuestionAdmin)
 admin.site.register(Options)
 admin.site.register(Attendance,AttendanceAdmin)
 admin.site.register(Attendance_images)
-admin.site.register(AttStud)
-admin.site.register(Project)
-admin.site.register(Groups)
-admin.site.register(Members)
+# admin.site.register(AttStud)
+
+@admin.register(AttStud)
+class AttStudAdmin(admin.ModelAdmin):
+     list_display = ("att_id" , "stud_id", "att_time", "img_number")
+
+# admin.site.register(Project)
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+     list_display = ("pro_id", "class_code", "proj_name", "proj_due", "num_studs")
+
+# admin.site.register(Groups)
+
+@admin.register(Groups)
+class GroupsAdmin(admin.ModelAdmin):
+     list_display = ("group_id", "pro_id")
+
+# admin.site.register(Members)
+
+@admin.register(Members)
+class MembersAdmin(admin.ModelAdmin):
+        list_display = ("mem_id", "group_id", "stud_id")
+
+# admin.site.register(PeerGrade)
+# admin.site.register(Quiz)
+
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ("quiz_name", "time_limit", "quiz_date", "teach_id", "class_code")
+
+@admin.register(PeerGrade)
+class PeerGradeAdmin(admin.ModelAdmin):
+    list_display = ("peergrade_id", "stud_id", "assign_id", "peer_1", "peer_2")

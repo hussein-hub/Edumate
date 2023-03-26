@@ -21,8 +21,8 @@ class SubmittedAssignments(models.Model):
         db_table = "SubAssigns"
     def get_student_name(self):
         return self.stud_id.name
-    # def __str__(self):
-    #     return self.stud_id.name
+    def __str__(self):
+        return self.stud_id.name
 
 class PeerStudents(models.Model):
     peerstud_id = models.AutoField(primary_key=True)
