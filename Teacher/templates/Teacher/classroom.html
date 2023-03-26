@@ -287,6 +287,7 @@ input:checked + .slider:before {
             <blockquote class="blockquote mb-0">
               <p><small>Max marks: {{ i.0.max_marks }}</small></p>
               <p><small>Description : {{ i.0.assignment_description }}</small></p>
+              <p><small>Due Date : {{ i.0.duedate }}</small></p>
               <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
               <p><small style = "font-size: 13px">Not submitted by : {{ j }} </small></p>
               <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>

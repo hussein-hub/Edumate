@@ -5,52 +5,141 @@
 <title>Review Quiz</title>
 {% endblock title %}
 
+{% block styles %}
+
+<style>
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
+  
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
+
+  @media screen and (max-width: 500px) {
+    .container {
+      width: 95vw;
+    }
+  }
+  
+  @media screen and (min-width: 501px) {
+    .container {
+      width: 38vw;
+    }
+  }
+  @media screen and (max-width: 1000px) {
+    .container {
+      width: 55vw;
+    }
+  }
+</style>
+
+{% endblock styles %}
+
+{% block navbar %}
+<header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a>
+          </li>
+          
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
 {% block content %}
 <br><br>
-<a class="btn btn-success" href="{% url 'quiz_stud' pk=pk pk2=pk2%}">Back</a>
 <div class="container">
-    <h1>Marks Alloted: {{total_marks}} </h1>
+    <h1 style="margin-bottom: 25px;">Marks Alloted: {{total_marks}} </h1>
     <form class="form" autocomplete="off" onsubmit="return saveAns()"  action="" method="POST">
       {% csrf_token %}
       <h1 style="text-align: center;">{{course.course_name}}</h1>
       {% for q in quiz %}
-      <h4 class="text">{{ forloop.counter }}. {{q.0.0.question}}</h4><h4 style="text-align: right;">[Marks {{q.3}}/{{q.0.0.question.marks}}.0]</h4>
-
-      {% with outercount=forloop.counter %} 
-          {% for op in q.0 %}
-          
-            <div class="form-check mx-4">
-              {% if q.4 > 1 %}
-              {% if op|slugify in q.1 %}
-              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled checked>
-              {% else %}
-              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled>
-              {% endif %}
-              {% else %}
-              {% if op|stringformat:"s" == q.1.0|stringformat:"s" %}
-              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled checked>
-              {% else %}
-              <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled>
-              {% endif %}
-
-              {% endif %}
-              
-              <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
-                {{op|slugify }}
-              </label>
-            </div>
-        {% endfor %}
-        {% endwith %} 
-        <div>Correct options: {{q.2.0}}</div>
-        {% comment %} <div>Your Responses: {{q.1.0}}</div> {% endcomment %}
-        <div>
-          Marks: {{q.3}} 
+      <div style="padding: 15px; border-radius: 15px;" class="shadow p-3 mb-5 bg-body">
+        <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; align-items: center;">
+          <h4 class="text">{{ forloop.counter }}. {{q.0.0.0.question}}</h4>
+          <p style="text-align: right;">{{q.3}}/{{q.0.0.0.question.marks}}</p>
         </div>
+  
+        {% with outercount=forloop.counter %} 
+            {% for op in q.0 %}
+              <div class="form-check mx-4">
+                {% if q.4 > 1 %}
+                  {% if op.1 in q.1 %}  
+                    <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled checked>
+                  {% else %}
+                    <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled>
+                  {% endif %}
+                {% else %}
+                  {% if op.1|stringformat:"s" == q.1.0|stringformat:"s" %}
+                    <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled checked>
+                  {% else %}
+                    <input class="form-check-input" type="checkbox" name="op_{{outercount}}" id="op_{{outercount}}" disabled>
+                  {% endif %}
+                {% endif %}
+                
+                {% if op.1 in q.2.0 and op.1 in q.1 %}
+                  <label style="color: green;" class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
+                    {{op.1}}
+                  </label>
+                {% elif op.1 in q.2.0 and op.1 not in q.1 %}
+                  <label style="color: green;" class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
+                    {{op.1}}
+                  </label>
+                {% elif op.1 not in q.2.0 and op.1 in q.1 %}
+                  <label style="color: red;" class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
+                    {{op.1}}
+                  </label>
+                {% else %}
+                <label class="form-check-label" for="op_{{outercount}}" id="op_{{outercount}}">
+                  {{op.1}}
+                </label>
+                {% endif %}
+              </div>
+          {% endfor %}
+          {% endwith %} 
+          {% comment %} <div>Correct options: {{q.2.0}}</div> {% endcomment %}
+          {% comment %} <div>Your Responses: {{q.1.0}}</div> {% endcomment %}
+          {% comment %} <div> Marks: {{q.3}}  </div> {% endcomment %}
+      </div>
             
   
-          {% endfor %}
+      {% endfor %}
+          
+          
           <br>
-          <input class="btn btn-success"   type="submit" value="Submit">  
+          {% comment %} <input class="btn btn-success"   type="submit" value="Submit">   {% endcomment %}
       </form>
     </div>
 

@@ -126,14 +126,22 @@ def assignmentsub(request, pk, pk2, pk3):
     students_not_submitted = []
     submitted_assignments_ids = [i.stud_id for i in submitted_assignments]
     for i in all_students:
-        print(i.stud_id.name)
+        # print(i.stud_id.name)
         if i.stud_id not in submitted_assignments_ids:
             students_not_submitted.append(i)
-    print(students_not_submitted)
+    # print(students_not_submitted)
 
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
     peerassign=PeerStudents.objects.filter(assign_id=pk3)
     assign_grade=Assignments.objects.filter(assignment_id =pk3)
+    
+    lateSubmissions = [False for i in range(len(submitted))]
+    k = 0
+    for i in submitted:
+        if timezone.localtime(i.sub_date) > timezone.localtime(assign_grade[0].duedate):
+            lateSubmissions[k] = True  
+        k += 1
+
     assign_flag=assign_grade[0].peer_grade
     sorterval=[]
     for i in submitted:
@@ -147,6 +155,14 @@ def assignmentsub(request, pk, pk2, pk3):
             temp.append(j.stud_id)
             temp.append(j.as_2_marks)
         sorterval.append(temp)
+    
+    submittedAssignmentData = []
+    for i in range(len(submitted)):
+        submittedAssignmentData.append([submitted[i], lateSubmissions[i]])
+
+    # sort submittedAssignmentData by the second element of each sublist
+    submittedAssignmentData.sort(key=lambda x: x[1])
+
     if(request.method=="POST"):
         pe=PeerGrade.objects.filter(assign_id=pk3)
         if len(pe)>0:
@@ -185,7 +201,8 @@ def assignmentsub(request, pk, pk2, pk3):
                 peer.peer_2=SubmittedAssignments.objects.get(assign_id=ans[i][1])
                 peer.save()
             return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
-    return render(request, 'Teacher/show_assignments.html', {'submit': submitted, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval, 'peerf': assign_flag, 'students_not_submitted': students_not_submitted})
+    
+    return render(request, 'Teacher/show_assignments.html', {'submit': submittedAssignmentData, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval, 'peerf': assign_flag, 'students_not_submitted': students_not_submitted})
 
 def assignmentdelete(request, pk, pk2):
     Assignments.objects.get(assignment_id=request.POST.get('assignment_id')).delete()

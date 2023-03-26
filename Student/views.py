@@ -230,19 +230,14 @@ def quiz(request, pk, pk2):
     answered=Quiz_marks.objects.filter(student=stud).values_list('student','quiz')
     quiz_list = []
     for i in quiz:
+        # print(i.quiz_date)
         a=(pk,i.id)
         answer = False
         if a in answered:
             answer = True
         quiz_list.append([i,answer])
-    today = timezone.now()
-    # print(quiz[1].quiz_date)
-    # print(today)
-    # print(quiz[1].quiz_date > today)
-    # print(quiz_list)
-    # print(quiz)
-    # print(answered)
-    
+    today = timezone.localtime(timezone.now())
+    # print(str(today) + "-----")
     return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz_list,'today':today})
 
 def ansquiz(request,pk,pk2,pk3):
@@ -317,15 +312,19 @@ def revquiz(request,pk,pk2,pk3):
     k=0
     for i in questions:
         options = Options.objects.filter(question=i)
+        typeCastedOptions = []
+        for j in range(len(options)):
+            typeCastedOptions.append([options[j], str(options[j].option_name)])
         jsonDec = json.decoder.JSONDecoder()
         stud_res = jsonDec.decode(answer.student_responses)
         stud_res = stud_res[k]
         cor_res = jsonDec.decode(answer.correct_responses)
         cor_res = cor_res[k]
+        # print(type(cor_res[0]))
         num_cor = len(cor_res[0])
         indmarks = jsonDec.decode(answer.marks_breakup)
         indmarks = indmarks[k]
-        ops.append([options,stud_res,cor_res,indmarks,num_cor])
+        ops.append([typeCastedOptions,stud_res,cor_res,(int(indmarks) if indmarks == int(indmarks) else indmarks),num_cor])
         k+=1
     return render(request, 'Student/revquiz.html', {'pk': pk, 'pk2': pk2, 'quiz': ops,'total_marks':answer.total_marks})
 
