@@ -41,7 +41,21 @@ def stud_home(request, pk):
 
 def classroom(request, pk, pk2):
     assign=Assignments.objects.filter(class_code=pk2).order_by('-duedate')
-    return render(request, 'Student/classroom.html', {'assign': assign, 'pk': pk, 'pk2': pk2})
+    submitted_assign = SubmittedAssignments.objects.filter(stud_id=pk, assignment_id__class_code=pk2)
+    # print(submitted_assign)
+    status = [False for i in range(len(assign))]
+    k = 0
+    for i in assign:
+        for j in submitted_assign:
+            if i.assignment_id==j.assignment_id.assignment_id:
+                status[k]=True
+        k += 1
+    # print(status)
+    data = []
+    for i in range(len(assign)):
+        data.append([assign[i], status[i]])
+    
+    return render(request, 'Student/classroom.html', {'assign': data, 'pk': pk, 'pk2': pk2, 'status': status})
 
 def assignmentsub(request, pk, pk2, pk3):
     assign=Assignments.objects.filter(assignment_id=pk3)
