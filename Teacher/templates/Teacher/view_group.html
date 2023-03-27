@@ -157,7 +157,7 @@ input:checked + .slider:before {
       <br>
 
       <div class="row">
-      {% for i in groups %}
+      {% for i, j in groups %}
           
 
         {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
@@ -196,22 +196,23 @@ input:checked + .slider:before {
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
           <div class="card-header">
             <div style="font-weight: 600; font-size: 18px">
-              ID: {{ i.group_id }}
+              Group ID: {{ i.group_id }}
             </div>
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
-              <i class="fa fa-trash"></i>
-            </button>
           </div>
           <div class="card-body">
             <blockquote class="blockquote mb-0">
-              <p><small>Max marks: {{ i.0.max_marks }}</small></p>
-              <p><small>Description : {{ i.0.assignment_description }}</small></p>
-              <p><small>Due Date : {{ i.0.duedate }}</small></p>
-              <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
-              <p><small style = "font-size: 13px">Not submitted by : {{ j }} </small></p>
-              {% comment %} <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a> {% endcomment %}
+              {% if j < 30 %}
+              <p style="background: red; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
+              {% elif j < 50 %}
+              <p style="background: gray; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
+              {% elif j < 75 %}
+              <p style="background: blue; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
+              {% else %}
+              <p style="background: green; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
+              {% endif %}
             </blockquote>
           </div>
+          <a class="btn btn-outline-success" style="width: 12rem; margin: auto" type="submit" href="{% url 'group_details' pk=pk pk2=pk2 pk3=pk3 pk4=i.group_id %}">Group Details</a>
         </div>
 
 

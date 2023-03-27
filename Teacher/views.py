@@ -9,7 +9,7 @@ from django.http import FileResponse, Http404, HttpResponseRedirect, StreamingHt
 from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
-from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Quiz_marks
+from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Quiz_marks, Progress
 from Teacher.forms import EventForm
 from .models import *
 import random
@@ -694,7 +694,7 @@ def projecttracking(request, pk, pk2):
             member.stud_id=i.stud_id
             member.save()
             count=count+1
-            if(count==10//3):
+            if(count==len(groups)):
                 count=0
         return redirect('projecttracking', pk=pk, pk2=pk2)
     return render(request, 'Teacher/projecttracking.html', {'pk': pk, 'pk2': pk2, 'all_projs': all_projs})
@@ -712,7 +712,31 @@ def fetchcheck(request, pk, pk2):
 def view_groups(request, pk, pk2, pk3):
     pro=Project.objects.get(pro_id=pk3)
     groups = Groups.objects.filter(pro_id=pk3)
-    return render(request, 'Teacher/view_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'groups': groups})
+    progressval = []
+    for i in groups:
+        prog=Progress.objects.filter(group_id=i.group_id)
+        if prog:
+            total=pro.prog_check.split("\r")
+            count=0
+            for j in prog[0].prog:
+                if j=="a":
+                    count=count+1
+            progressval.append((count/len(total))*100)
+        else:
+            progressval.append(0)
+    return render(request, 'Teacher/view_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'groups': zip(groups, progressval)})
+
+def group_details(request, pk, pk2, pk3, pk4):
+    project=Project.objects.get(pro_id=pk3)
+    group=Groups.objects.get(group_id=pk4)
+    members=Members.objects.filter(group_id=pk4)
+    pro=Progress.objects.filter(group_id=pk4)
+    progress=None
+    if pro:
+        progress=list(pro[0].prog)
+    else:
+        progress=list("b"*len(project.prog_check.split('\r')))
+    return render(request, 'Teacher/group_details.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'members': members, 'progress': progress, 'project': project, 'progr': zip(project.prog_check.split('\r'), progress)})
 
 def logout(request, pk):
     request.session.flush()

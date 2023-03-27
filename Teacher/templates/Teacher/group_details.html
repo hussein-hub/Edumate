@@ -1,8 +1,8 @@
-{% extends './base_student.html' %}
+{% extends './base_teacher.html' %}
 {% load static %}
 
 {% block title %}
-<title>Project Tracking</title>
+<title>Group Details</title>
 {% endblock title %}
 
 {% block navbar %}
@@ -17,11 +17,11 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li>
-            <a class="btn " href="{% url 'sporjecttrack' pk=pk pk2=pk2 %}">Back to Project Tracking</a>
+            <a class="btn " href="{% url 'view_groups' pk=pk pk2=pk2 pk3=pk3 %}">Back to Project Groups</a>
           </li>
           <li class="dropdown">
             <a href="#">
-              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
             </a>
             <ul>
               <li>
@@ -69,7 +69,8 @@
       border-radius: 10px;
       border: 1px solid rgba( 255, 255, 255, 0.18 );">
         <div>
-          <p style="padding-top: 30px"><b>Project name</b> : {{ project.proj_name }}</p> 
+          <p style="padding-top: 30px"><b>Group ID: </b> : {{ pk4 }}</p> 
+          <p><b>Project name</b> : {{ project.proj_name }}</p> 
           <p><b>Project description</b> : {{ project.proj_desc }}</p>
           <p><b>Due date</b> : {{ project.proj_due }}</p>
           <p><b>Members : </b></p>
@@ -83,19 +84,20 @@
         </div>
         <hr />
         <h5>Progress</h5>
-          <form method="post" action="#" enctype="multipart/form-data" >
-            {% csrf_token %}
-            {% for i, j in check %}
+        {% if progress %}
+
+        {% else %}
+
+        {% endif %}
+            {% for i, j in progr %}
             {% if j == 'a' %}
-            <input type="checkbox" name="checks_{{forloop.counter}}" checked />&nbsp; {{ i }}
+            <input type="checkbox" name="checks_{{forloop.counter}}" checked disabled />&nbsp; {{ i }}
             {% else %}
-            <input type="checkbox" name="checks_{{forloop.counter}}" />&nbsp; {{ i }}
+            <input type="checkbox" name="checks_{{forloop.counter}}" disabled />&nbsp; {{ i }}
             {% endif %} 
             <br>
             {% endfor %}
             <hr />
-            <button class="btn btn-success" style="margin-top: 10px" type="submit">Update Progress</button>
-          </form>
       </div>
     </div>
   </div>

@@ -2,7 +2,7 @@ from django.http import QueryDict
 from django.shortcuts import render, redirect
 from Edumate_app.models import Students, Teachers
 import json, os
-from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments, PeerStudents
+from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments, PeerStudents, Progress
 from Student.utils import Calendar
 from Teacher.models import *
 import calendar
@@ -400,13 +400,39 @@ def single_project(request, pk, pk2, pk3):
     group=Groups.objects.filter(pro_id=pk3)
     final_group=None
     members=None
+    prog_value=None
     for i in group:
         member=Members.objects.filter(group_id=i.group_id, stud_id=pk)
         if member:
             final_group=i
             members=Members.objects.filter(group_id=i.group_id)
+            temp=Progress.objects.filter(group_id=i.group_id)
+            if temp:
+                prog_value=temp[0].prog
+            else:
+                t=""
+                for j in checks:
+                    if j:
+                        t=t+"b"
+                prog_value=t
             break
     if request.method == "POST":
+        res=""
         for i in range(1, len(checks)+1):
-            print(request.POST.get(f'checks_{i}'))
-    return render(request, 'Student/single_project.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'project': project, 'group': final_group, 'members': members, 'check': checks})
+            if request.POST.get(f'checks_{i}') == "on":
+                res=res+'a'
+            else:
+                res=res+'b'
+        che=Progress.objects.filter(group_id=final_group.group_id)
+        if che:
+            che[0].prog=res
+            che[0].save()
+            messages.error(request, "Progress saved!")
+            return redirect('single_project', pk=pk, pk2=pk2, pk3=pk3)
+        resp=Progress()
+        resp.group_id=final_group
+        resp.prog=res
+        resp.save()
+        messages.error(request, "Progress saved!")
+        return redirect('single_project', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Student/single_project.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'project': project, 'group': final_group, 'members': members, 'check': zip(checks, list(prog_value))})

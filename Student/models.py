@@ -46,3 +46,9 @@ class Quiz_marks(models.Model):
     remarks = models.TextField(default="None", null=True)
     def __str__(self):
          return self.quiz.quiz_name +" - "+ self.student.name +" - "+ str(self.total_marks)
+
+class Progress(models.Model):
+    group_id = models.ForeignKey('Teacher.Groups', on_delete=models.CASCADE, default=0, blank=True, null=True)
+    prog = models.CharField(max_length=400)
+    class Meta:
+        db_table = "Progress"

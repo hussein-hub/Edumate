@@ -24,3 +24,5 @@ class Quiz_marksAdmin(admin.ModelAdmin):
 @admin.register(ClassStudents)
 class ClassStudentsAdmin(admin.ModelAdmin):
 	list_display = ("class_code", "stud_id")
+
+admin.site.register(Progress)
