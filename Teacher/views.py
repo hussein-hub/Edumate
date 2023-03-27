@@ -571,7 +571,7 @@ def assignmentSimilarityCheck(request, pk, pk2, pk3):
         for row in Plagarism.objects.all().reverse():
             if Plagarism.objects.filter(id=row.id).count() > 1:
                 row.delete()
-        plag = Plagarism.objects.filter(assignment_id = pk3).order_by('-percentage_similarity')
+        plag = Plagarism.objects.filter(assignment_id = pk3)
         for i in plag:
             docUID = getUniqueDocumentID([i.stud_assignment1.assign_file.url, i.stud_assignment2.assign_file.url])
             valid_until = int(time.time() + 30 * 86400 )
@@ -582,7 +582,7 @@ def assignmentSimilarityCheck(request, pk, pk2, pk3):
             uniqueID.valid_until = valid_until_time
             uniqueID.url = "https://api.draftable.com/v1/comparisons/viewer/" + os.getenv("ACCOUNT_ID") + "/" + str(uniqueID.doc_unique_id) + "?valid_until=" + str(valid_until_time) + "&signature=" + str(get_viewer_url_signature(os.getenv("ACCOUNT_ID"), os.getenv("AUTH_TOKEN"), docUID, valid_until))
             uniqueID.save()
-    plag = Plagarism.objects.filter(assignment_id = pk3).order_by('-percentage_similarity')
+    plag = Plagarism.objects.filter(assignment_id = pk3)
     uniqueDocumentIDs = DocumentUniqueID.objects.filter(plagarism_id__assignment_id = pk3)
     plagarismData = []
     for i in range(len(uniqueDocumentIDs)):
@@ -665,7 +665,7 @@ def predict_similarity(embeddings,students):
         for j in range(len(embeddings)):
             if i>=j:
                 continue
-            similarities.append({'stud_1':students[i],'stud_2':students[j],'similarity_score':scores[i][j]})
+            similarities.append({'stud_1':students[i],'stud_2':students[j],'similarity_score':scores[i][j]*100})
             # similarities.append({'stud_1':students[j],'stud_2':students[i],'similarity_score':score})
     return similarities
 

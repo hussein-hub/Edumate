@@ -75,7 +75,6 @@
 <table style="border-top: 1px solid #cbc3c3; margin-top: 50px; " class="table table-bordered" id="plagarism-table">
     <thead>
         <tr>
-            <th>Sr. No.</th>
             <th>Student Name</th>
             <th>Second Student Name</th>
             <th>See Documents</th>
@@ -86,11 +85,10 @@
     <tbody class="two-col-form">
         {% for i in plagData %}
         <tr>
-             <td>{{forloop.counter}}</td>
              <td>{{ i.0.stud_assignment1.stud_id.name }}</td>
              <td>{{ i.0.stud_assignment2.stud_id.name }}</td>
              <td><a href="{{i.1.url}}" target="_blank">See Document</a></td>
-             <td>{{ i.0.percentage_similarity }}</td>
+             <td>{{ i.0.percentage_similarity|stringformat:"f"|slice:"0:5" }}%</td>
              {% comment %} <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.att_id.att_id}}" data-product-name="{{i.name}}" onclick="caller('{{i.stud_id}}', '{{i.att_id}}')">Delete</button></td> {% endcomment %}
         </tr>
         {% endfor %}
@@ -120,7 +118,7 @@
 
 $(document).ready( function () {
 	$('#plagarism-table').DataTable({
-		"order": [],
+		"order": [[3, 'desc']],
 		dom: 'Bfrtip',
 		buttons: [
 		{ extend: 'copy', className: 'btn btn-success glyphicon' },

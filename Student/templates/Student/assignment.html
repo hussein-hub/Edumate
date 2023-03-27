@@ -160,9 +160,9 @@
             <div class="form-group files">
               {% comment %} <div> {% endcomment %}
                 {% if submi.file %}
-                <input onchange="updateFiles()" id="file" type="file" class="form-control" name="submission">
+                <input onchange="updateFiles()" id="file" type="file" class="form-control" accept="application/pdf" name="submission">
                 {% else %}
-                <input onchange="updateFiles()" id="file" type="file" class="form-control" name="submission" required>
+                <input onchange="updateFiles()" id="file" type="file" class="form-control" name="submission" accept="application/pdf" required>
                 {% endif %}
                 {% comment %} <span>Upload pdf file</span> {% endcomment %}
               {% comment %} </div> {% endcomment %}
