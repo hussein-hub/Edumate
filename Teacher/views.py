@@ -24,7 +24,8 @@ from django.contrib import messages
 
 from PyPDF2 import PdfReader
 import os
-from sklearn.metrics.pairwise import cosine_similarity        # function to measure similarity between two vectors
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 import re
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -67,7 +68,7 @@ capture = 0
 frame = None
 
 # Create your views here.
-similarity_sentence_transformer_model = SentenceTransformer('all-MiniLM-L6-v2')
+#similarity_sentence_transformer_model = SentenceTransformer('all-MiniLM-L6-v2')
 model = load_model(os.path.join('./Teacher/static/Teacher',"model.h5"))
 
 def teach_home(request, pk):
@@ -532,7 +533,7 @@ def quiz_info(request, pk, pk2, pk3):
     return render(request, 'Teacher/individual_quiz.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'quiz_responses': answered_students,'stud_length':stud_length, 'not_answered_students': not_answered_students})
 
 def assignmentSimilarityCheck(request, pk, pk2, pk3):
-    global similarity_sentence_transformer_model
+    #global similarity_sentence_transformer_model
     data = []
     plag = []
     checkedAssignments = Plagarism.objects.filter(assignment_id = pk3)
@@ -555,8 +556,9 @@ def assignmentSimilarityCheck(request, pk, pk2, pk3):
         print()
     else:
         files_text = getTextFromPDF(files)
-        embeddings = similarity_sentence_transformer_model.encode(files_text)
-        similarities = predict_similarity(embeddings,students)
+        vectorizer = TfidfVectorizer()
+        tfidf_matrix = vectorizer.fit_transform(files_text).toarray()
+        similarities = predict_similarity(tfidf_matrix,students)
         # print(similarities)
         for j in similarities:
             # print(j)
@@ -658,12 +660,12 @@ def getTextFromPDF(files):
 
 def predict_similarity(embeddings,students):
     similarities = []
+    scores = cosine_similarity(embeddings)
     for i in range(len(embeddings)):
         for j in range(len(embeddings)):
             if i>=j:
                 continue
-            score = float(cosine_similarity(np.expand_dims(embeddings[i],axis=0),np.expand_dims(embeddings[j],axis=0))[0][0])
-            similarities.append({'stud_1':students[i],'stud_2':students[j],'similarity_score':score})
+            similarities.append({'stud_1':students[i],'stud_2':students[j],'similarity_score':scores[i][j]})
             # similarities.append({'stud_1':students[j],'stud_2':students[i],'similarity_score':score})
     return similarities
 
