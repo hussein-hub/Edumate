@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
+import re
 # Create your views here.
 
 def stud_home(request, pk):
@@ -346,6 +347,7 @@ def submitatt(request, pk, pk2, pk3):
     marked_img_numbers = list(marked_img_numbers)
     marked_img_numbers= {marked_img_numbers[j]:names[j] for j in range(len(marked_img_numbers))}
     allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
+    allImages = sorted(allImages, key = lambda x: (int(re.sub('\D','',x)),x))
     allImages = {allImages[j]:j for j in range(len(allImages))}
     for i, j in allImages.items():
         if j in marked_img_numbers.keys():
