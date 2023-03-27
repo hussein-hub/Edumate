@@ -15,7 +15,6 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
-import datetime
 # Create your views here.
 
 def stud_home(request, pk):

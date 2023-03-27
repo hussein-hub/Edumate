@@ -17,7 +17,7 @@
     <nav id="navbar" class="navbar">
       <ul>
         <li>
-          <a href="{% url 'classroom1' pk=pk pk2=pk2 %}" class="btn">Back</a>
+          <a href="{% url 'submitatt' pk=pk pk2=pk2 %}" class="btn">Back</a>
         </li>
         <li class="dropdown">
           <a href="#">
@@ -89,24 +89,86 @@
       vertical-align: middle;
     }
   }
+
+  @keyframes slideOutTop {
+    from { display: block; }
+    to { transform: translateY(-100%); opacity: 0;}
+}
+  @keyframes slideInTop {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInBottom {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+  
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutAnimation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+#alert-message {
+  animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInTop;
+}
+
 </style>
 
 <div class="container" style="margin-top: 100px">
   {% if messages %}
-  {% for message in messages %}
-  {% if message.tags %}
-  <script>alert('{{ message }}')</script>
-  {% endif %}
-
-  {% endfor %}
-
+    {% for message in messages %}
+      {% if message.tags %}
+        <div id="alert-message" style="background-color: #cc3c23;" class="alert {{ message.tags }}" role="alert">
+          {{ message }}
+        </div>
+      {% endif %}
+    {% endfor %}
   {% endif %}
 
   <div class="container">
 
     {% comment %} <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
       <img height="500" width="500" src={{imagePath}}>
-      <canvas id="draw"></canvas>
     </div> {% endcomment %}
     {% comment %} <ul> {% endcomment %}
       <div class="">
@@ -121,7 +183,8 @@
                 <button>Learn More >></button> {% endcomment %}
                 {% for image in all_marked_images %}
                 <div class="container">
-                <img style="margin-bottom: 30px;" width="80%" src={{image}}>
+                {% comment %} <img style="margin-bottom: 30px;" width="80%" src={{image}}> {% endcomment %}
+                <canvas id="draw"></canvas>
                 </div>
                 {% endfor %}
               </div>
@@ -214,18 +277,31 @@
 {% block script %}
 <script>
 
+  var alertMessages = document.getElementById("alert-message");
+  if (alertMessages) {
+    setTimeout(function () {
+      alertMessages.style.animation = "slideOutTop 2s";
+    }, 3000);
+    setTimeout(function () {
+      alertMessages.style.display = "none";
+    }, 5000);
+  }
+
+
   function marker(id) {
     $('#img_catch').val(id);
     console.log($('#img_catch').val());
   }
-  {% comment %} var canvas = document.getElementById("draw");
+
+
+  var canvas = document.getElementById("draw");
 
   var ctx = canvas.getContext("2d");
 
-  // draw an image inside the canvas 
+  // draw an image inside the canvas
   var img = new Image();
-  img.src = "{{imagePath}}";
-  canvas.width = 650;
+  img.src = "{{all_marked_images.0}}";
+  canvas.width = 500;
   canvas.height = 500;
 
   var hRatio = canvas.width / img.naturalWidth;
@@ -239,12 +315,15 @@
   console.log(img);
   img.onload = function () {
     // ctx.drawImage(img, 0, 0);
-    ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, 0, 0, img.naturalWidth * ratio, img.naturalHeight * ratio);
+    ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, 0, 0, 500, 500);
   }
 
   var element = document.getElementById("draw");
   var rect = element.getBoundingClientRect();
   console.log(rect.top, rect.right, rect.bottom, rect.left);
+
+  var scaleX = canvas.width / rect.width;
+  var scaleY = canvas.height / rect.height;
 
   var c = 0;
 
@@ -261,13 +340,22 @@
   // new position from mouse events
   function setPosition(e) {
     if (c == 0) {
+      pos.x = (e.clientX - rect.left) * scaleX;
+      pos.y = (e.clientY - rect.top) * scaleY;
+    } else {
+      pos.a = (e.clientX - rect.left) * scaleX;
+      pos.b = (e.clientY - rect.top) * scaleY;
+    }
+  }
+  /* function setPosition(e) {
+    if (c == 0) {
       pos.x = e.clientX - 12 - rect.left + 8;
-      pos.y = e.clientY - 40 - rect.top;
+      pos.y = e.clientY - 30 - rect.top + 29 ;
     } else {
       pos.a = e.clientX - 12 - rect.left + 8;
       pos.b = e.clientY - 30 - rect.top + 29;
     }
-  }
+  } */
 
   function draw(e) {
     if (e.buttons !== 1) return; // if mouse is not clicked, do not go further
@@ -300,7 +388,7 @@
   function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var img = new Image();
-    img.src = "{{imagePath}}";
+    img.src = "{{image}}";
     img.onload = function () {
       ctx.drawImage(img, 10, 10);
     }
@@ -310,7 +398,7 @@
   function cropImage() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // ctx.drawImage(img, pos.x, pos.y, (pos.a-pos.x), (pos.b-pos.y), 0, 0, (pos.a-pos.x), (pos.b-pos.y));
-    console.log(pos, actualPos, "inside crop");
+    // console.log(pos, actualPos, "inside crop");
     ctx.drawImage(img, actualPos.x, actualPos.y, (actualPos.a - actualPos.x), (actualPos.b - actualPos.y), 0, 0, (actualPos.a - actualPos.x), (actualPos.b - actualPos.y));
 
   }
@@ -323,6 +411,6 @@
   // add event listeners to trigger on different mouse events
   document.addEventListener("mousedown", draw);
   document.addEventListener("mouseup", setPosition);
-  document.addEventListener("click", setPosition); {% endcomment %}
+  document.addEventListener("click", setPosition);
 </script>
 {% endblock script %}
