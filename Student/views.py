@@ -389,3 +389,24 @@ def enterattcode(request, pk, pk2):
         else:
             return redirect('markatt', pk=pk, pk2=pk2, pk3=request.POST.get('code'))
     return render(request, 'Student/entercode.html', {'pk': pk, 'pk2': pk2})
+
+def projecttrack(request, pk, pk2):
+    projects = Project.objects.filter(class_code=pk2)
+    return render(request, 'Student/projecttrack.html', {'pk': pk, 'pk2': pk2, 'projects': projects})
+
+def single_project(request, pk, pk2, pk3):
+    project=Project.objects.get(pro_id=pk3)
+    checks=project.prog_check.split("\r")
+    group=Groups.objects.filter(pro_id=pk3)
+    final_group=None
+    members=None
+    for i in group:
+        member=Members.objects.filter(group_id=i.group_id, stud_id=pk)
+        if member:
+            final_group=i
+            members=Members.objects.filter(group_id=i.group_id)
+            break
+    if request.method == "POST":
+        for i in range(1, len(checks)+1):
+            print(request.POST.get(f'checks_{i}'))
+    return render(request, 'Student/single_project.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'project': project, 'group': final_group, 'members': members, 'check': checks})

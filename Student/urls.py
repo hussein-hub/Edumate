@@ -16,6 +16,8 @@ urlpatterns = [
     path('classroom/<pk2>/quiz/review/<pk3>', views.revquiz, name='review_quiz'),
     path('classroom/<pk2>/submitatt/', views.enterattcode, name='submitatt'),
     path('classroom/<pk2>/submitatt/<pk3>/', views.submitatt, name='markatt'),
+    path('classroom/<pk2>/porjecttrack/', views.projecttrack, name='sporjecttrack'),
+    path('classroom/<pk2>/projecttrack/<pk3>/', views.single_project, name='single_project'),
 ]
 
 if settings.DEBUG:

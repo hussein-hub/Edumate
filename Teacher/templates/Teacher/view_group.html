@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<title>Project Tracking</title>
+<title>Project Groups</title>
 {% endblock title %}
 
 {% block navbar %}
@@ -17,12 +17,7 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li>
-            <a class="btn " href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to Classroom</a>
-          </li>
-          <li>
-            <a type="button" class="btn " data-toggle="modal" data-target="#ModalCenter">
-              Create Project
-            </a>
+            <a class="btn " href="{% url 'projecttracking' pk=pk pk2=pk2 %}">Back to Project Page</a>
           </li>
           <li class="dropdown">
             <a href="#">
@@ -126,6 +121,24 @@ input:checked + .slider:before {
   background-color: white !important;
   color: #008374 !important;
 }
+@media screen and (max-width: 500px) {
+  .modal-dialog {
+    width: 95vw;
+  }
+  .model-content {
+    height: 55vh;
+  }
+}
+
+@media screen and (min-width: 501px) {
+  .modal-dialog {
+    width: 35vw;
+  }
+  .modal-content {
+    height: 45vh;
+  }
+}
+
 
 
 </style>
@@ -140,57 +153,11 @@ input:checked + .slider:before {
         </button> {% endcomment %}
       </div>
 
-      <!--  model body -->
-      <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 70vw;">
-          <div class="modal-content" style="height: 60vh;">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Create a project</h5>
-              <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <form method="post"class="form-group row">
-                  {% csrf_token %}
-                  <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter project name" name="name" required>
-                </div>
-                  <div class="col-sm-4">
-                  <input class="form-control" type="text" placeholder="Enter project description" name="desc" required>
-                </div>
-                <div class="col-sm-2">
-                  Due date
-                </div>
-                <div class="col-sm-2">
-                  <div>
-                  <input id="datetime" class="form-control" type="datetime-local" placeholder="Due date" name="duedate">
-                  </div>
-                </div>
-                <div class="col-sm-12" style="margin-top: 10px">
-                  <textarea class="form-control" type="text" placeholder="Project Checkpoints" name="proj_checks" rows=8 cols=50 style="white-space: pre-wrap;"></textarea>
-                </div>
-                <div class="col-sm-12" style="margin-top: 10px">
-                  <input class="form-control" type="number" placeholder="Number of students per group" name="num_studs" />
-                </div>
-                  <div class="col-sm-4" style="margin-top: 10px">
-                  <button class="btn btn-outline-success" type="submit">create</button>
-                </div>
-                </form>
-            </div>
-            {% comment %} <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div> {% endcomment %}
-          </div>
-        </div>
-      </div>
-
 
       <br>
 
       <div class="row">
-      {% for i in all_projs %}
+      {% for i in groups %}
           
 
         {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
@@ -206,13 +173,13 @@ input:checked + .slider:before {
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Project ?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Assignment ?</h5>
                 <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                <a class="btn btn-danger" onclick="deletepro({{ i.pro_id }})" >
+                <a class="btn btn-danger" onclick="deleteass({{ i.0.assignment_id }})" >
                 {% comment %} <a class="btn btn-danger" href="announcement/{{i.id}}" > {% endcomment %}
                   Delete
                 </a>
@@ -229,7 +196,7 @@ input:checked + .slider:before {
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
           <div class="card-header">
             <div style="font-weight: 600; font-size: 18px">
-              {{ i.proj_name }}
+              ID: {{ i.group_id }}
             </div>
             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
               <i class="fa fa-trash"></i>
@@ -237,11 +204,12 @@ input:checked + .slider:before {
           </div>
           <div class="card-body">
             <blockquote class="blockquote mb-0">
-              <p><small>Number of students per group : {{ i.num_studs }}</small></p>
-              <p><small>Description : {{ i.proj_desc }}</small></p>
-              <p><small style = "font-size: 13px">Due date : {{ i.proj_due }}</small></p>
-              <a class="btn btn-success" href="{% url 'view_groups' pk=pk pk2=pk2 pk3=i.pro_id %}" class="card-link"><small>Go to project</small></a>
-              <a class="btn btn-success" class="card-link" data-toggle="modal" data-target="#CheckModal" onclick="fetchcheck({{ i.pro_id }})"><small>View checkpoints</small></a>
+              <p><small>Max marks: {{ i.0.max_marks }}</small></p>
+              <p><small>Description : {{ i.0.assignment_description }}</small></p>
+              <p><small>Due Date : {{ i.0.duedate }}</small></p>
+              <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
+              <p><small style = "font-size: 13px">Not submitted by : {{ j }} </small></p>
+              {% comment %} <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a> {% endcomment %}
             </blockquote>
           </div>
         </div>
@@ -257,30 +225,6 @@ input:checked + .slider:before {
       <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a> {% endcomment %}
     </div>
     </div>
-
-    <div class="modal fade" id="CheckModal" tabindex="-1" role="dialog" aria-labelledby="checkModalTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 50vw;">
-        <div class="modal-content" style="height: 40vh;">
-          <div class="modal-header">
-            <h5 class="modal-title" id="pro_nam"></h5>
-            <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div id="checkp">
-            </div>    
-          </div>
-          </form>
-          </div>
-          {% comment %} <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div> {% endcomment %}
-        </div>
-      </div>
-    </div>
-
 {% endblock content %}
 {% block script %}
 <script>
@@ -292,48 +236,19 @@ input:checked + .slider:before {
     });
   });
 
-function deletepro(id)
+function deleteass(id)
 {
-  console.log(id)
   $.ajax(
       {
           type:"POST",
-          url: "{% url 'projectdelete' pk=pk pk2=pk2 %}",
+          url: "{% url 'assignmentdelete' pk=pk pk2=pk2 %}",
           data:{
-            pro_id: id,
+            assignment_id: id,
             csrfmiddlewaretoken: '{{ csrf_token }}'
           },
           success: function( data ) 
           {
               location.reload();
-          }
-      })
-}
-
-function fetchcheck(id)
-{
-  $.ajax(
-      {
-          type:"GET",
-          url: "{% url 'fetchcheck' pk=pk pk2=pk2 %}",
-          data:{
-            pro_id: id,
-          },
-          success: function( data ) 
-          {
-            $('#pro_nam').empty();
-            $('#checkp').empty();
-            $('#pro_nam').text(data['name']);
-            let all_checks=data['points'][0].split("\r");
-            let ul=document.createElement('ul');
-            for(let i=0;i<all_checks.length;i++)
-            {
-              let li=document.createElement('li');
-              li.innerHTML = all_checks[i];
-              ul.append(li);
-            }
-            let maindiv=document.getElementById('checkp');
-            maindiv.append(ul);
           }
       })
 }

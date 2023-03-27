@@ -704,7 +704,13 @@ def deletepro(request, pk, pk2):
 
 def fetchcheck(request, pk, pk2):
     pro=Project.objects.get(pro_id=request.GET.get('pro_id'))
-    return JsonResponse({'name': pro.proj_name, 'checks': pro.prog_check})
+    checkpointsc = pro.prog_check.split("*")
+    return JsonResponse({'name': pro.proj_name, 'checks': pro.prog_check, 'points': checkpointsc})
+
+def view_groups(request, pk, pk2, pk3):
+    pro=Project.objects.get(pro_id=pk3)
+    groups = Groups.objects.filter(pro_id=pk3)
+    return render(request, 'Teacher/view_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'groups': groups})
 
 def logout(request, pk):
     request.session.flush()

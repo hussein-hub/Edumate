@@ -1,0 +1,65 @@
+{% extends './base_student.html' %}
+{% load static %}
+
+{% block title %}
+<title>Project Tracking</title>
+{% endblock title %}
+
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn " href="{% url 'sporjecttrack' pk=pk pk2=pk2 %}">Back to Project Tracking</a>
+          </li>
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
+  {% block content %}
+  <div class="container">
+    <p>Project Name: {{ project.proj_name }}</p> 
+    <p>Deadline: {{ project.proj_due }}</p> 
+    <p>Description: {{ project.proj_desc }}</p> 
+    <p>Group ID: {{ group.group_id }}</p>
+    <h5>Group members: </h5>
+    {% for i in members %}
+     <p>{{ i.stud_id.name }}</p>
+    {% endfor %}
+    <form method="POST">
+        {% csrf_token %}
+        {% for i in check %}
+        <input type="checkbox" name="checks_{{forloop.counter}}" />{{ i }} 
+        <br>
+        {% endfor %}
+        <button type="submit"> submit </button>
+    </form>
+  </div>
+  {% endblock content %}
