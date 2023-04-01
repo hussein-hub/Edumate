@@ -1,0 +1,288 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block title %}
+<title>PeerGrading Groups</title>
+{% endblock title %}
+
+{% block navbar %}
+
+<style>
+
+  #customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #customers tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #customers tr:hover {background-color: #ddd;}
+  
+  #customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA6D;
+    color: white;
+  }
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
+  
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
+
+</style>
+
+<header id="header" class="header d-flex align-items-center">
+
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="#" class="logo d-flex align-items-center">
+      <!-- Uncomment the line below if you also wish to use an image logo -->
+      <!-- <img src="assets/img/logo.png" alt=""> -->
+      <h1>EDUMATE<span>.</span></h1>
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li>
+          <a href="{% url 'grouppeergrading' pk=pk pk2=pk2 %}" class="btn">Back</a>
+        </li>
+        <li class="dropdown">
+          <a href="#">
+            <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+          </a>
+          <ul>
+            <li>
+              {% if pk %}
+              <a href="{% url 'logout' pk=pk %}">logout</a>
+              {% else %}
+              <a href="{% url 'logout' pk=pk1 %}">logout</a>
+              {% endif %}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav><!-- .navbar -->
+
+    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+  </div>
+</header>
+{% endblock navbar %}
+
+
+
+{% block content %}
+{% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  
+         <script>alert('{{ message }}')</script>
+        {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+<div class="row">
+  <h1 style="margin-top: 20px">Assignment</h1>
+  {% for i in submit %}
+  <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+    <div class="card-header">
+      <div style="font-weight: 600; font-size: 18px">
+        {{i.0.get_student_name}}
+      </div>
+      {% if i.1 %}
+        <span class="badge rounded-pill bg-danger"><small>Late Submission</small></span>
+        {% else %}
+        <span class="badge rounded-pill bg-success"><small>Submitted on time</small></span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+      <blockquote class="blockquote mb-0">
+        <p><small>Description: {{ i.0.assign_desc }}</small></p>
+        <p><small>View file: <a href="{{ i.0.assign_file.url }}" target="_blank">file</a></small></p>
+        <p><small>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.0.stud_id.stud_id %}" > {{ i.0.get_student_name }}</a></small></p>
+        <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.0.stud_id.stud_id %}" class="card-link btn btn-success">Go to Assignment</a>
+      </blockquote>
+    </div>
+  </div>
+  {% endfor %}
+
+  {% if peerf %}
+  {% if is_create == "Y" %}
+  <div>
+      <input name="peer" value="peer" style="display: none">
+      <button class="btn btn-outline-success" onclick="check()">Start the peergrading</button>
+  </div>
+  {% endif %}
+  {% endif %}
+
+  <div class="row" style="margin-top: 25px;">
+    <h1 style="margin-top: 20px">Not Submitted Assignment</h1>
+    {% if students_not_submitted %}
+      {% for i in students_not_submitted %}
+        <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+          <div class="card-header">
+            <div style="font-weight: 600; font-size: 18px">
+              {{i.stud_id.name}}
+            </div>
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0">
+              <p><small>Email ID: {{ i.stud_id.email }}</small></p>
+            </blockquote>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+        <div class="card-header">
+          <div style="font-weight: 600; font-size: 18px">
+            All students have submitted the assignment
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>  
+</div>
+    
+<hr />
+<div>
+        {% if peerf %}
+        <h4>Peergrading Results</h4>
+        <hr />
+        <h4>Peergrading questions</h4>
+        <hr />
+        {% for i, j in quest_and_ans %}
+        <ul> {{ forloop.counter }}. {{ i }}
+        {% for k in j %}
+        <li>{{ k }}</li>
+        {% endfor %}
+      </ul>
+        {% endfor %}
+        <hr />
+        <table id="customers">
+          <tr>
+            <th>Student Name</th>
+            {% for i in num %}
+            <th>Assigned peer {{ forloop.counter }}</th>
+            <th>Marks given</th>
+            {% endfor %}
+          </tr>
+          {% for i, j in peer.items %}
+          <tr>
+            <td>{{ i.name }} (ID: {{ i.stud_id }})</td>
+            {% for k in j %}
+            <td>{{ k.assigned_stud_id.name }} (ID: {{ k.assigned_stud_id.stud_id }})</td>
+            <td>{{ k.marks|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+        <div>
+          {% comment %} <a href="{% url 'classroom' pk=pk pk2=pk2 %}" class="btn btn-outline-success">Back to classroom</a>
+          <a href="{% url 'assignmentSimilarityCheck' pk=pk pk2=pk2 pk3=pk3 %}" class="btn btn-outline-success">Check Similarity</a> {% endcomment %}
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Enter Peergrading Questions</h5>
+            <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post"class="form-group row" style="display: flex; flex-direction: column; flex-wrap: nowrap; align-items: center;">
+              {% csrf_token %}
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-wrap: wrap;">
+                <div class="col-sm-12 my-2">
+                  <input class="form-control" type="text" placeholder="Question 1" name="ques1" required>
+                  <div style="display: flex">
+                  Opt 1 &nbsp; <input class="form-control" type="text" placeholder="Option 1" name="opt11" required style="width: 70%"> (M: 50%)
+                  </div>
+                  <div style="display: flex">
+                  Opt 2 &nbsp; <input class="form-control" type="text" placeholder="Option 2" name="opt12" required style="width: 70%"> (M: 75%)
+                  </div>
+                  <div style="display: flex">
+                  Opt 3 &nbsp; <input class="form-control" type="text" placeholder="Option 3" name="opt13" required style="width: 70%"> (M: 100%)
+                  </div>
+                </div>
+                  <div class="col-sm-12 my-2">
+                  <input class="form-control" type="text" placeholder="Question 2" name="ques2" required>
+                  <div style="display: flex">
+                    Opt 1 &nbsp; <input class="form-control" type="text" placeholder="Option 1" name="opt21" required style="width: 70%"> (M: 50%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 2 &nbsp; <input class="form-control" type="text" placeholder="Option 2" name="opt22" required style="width: 70%"> (M: 75%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 3 &nbsp; <input class="form-control" type="text" placeholder="Option 3" name="opt23" required style="width: 70%"> (M: 100%)
+                    </div>
+                </div>
+                <div class="col-sm-12 my-2">
+                  <input class="form-control" type="text" placeholder="Question 3" name="ques3" required>
+                  <div style="display: flex">
+                    Opt 1 &nbsp; <input class="form-control" type="text" placeholder="Option 1" name="opt31" required style="width: 70%"> (M: 50%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 2 &nbsp; <input class="form-control" type="text" placeholder="Option 2" name="opt32" required style="width: 70%"> (M: 75%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 3 &nbsp; <input class="form-control" type="text" placeholder="Option 3" name="opt33" required style="width: 70%"> (M: 100%)
+                    </div>
+                </div>
+              </div>
+              <div class="col-sm-12" style="margin-top: 10px">
+                <button class="btn btn-outline-success" type="submit">Assign Peers</button>
+              </div>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  function check()
+  {
+    $.ajax(
+      {
+          type:"GET",
+          url: "{% url 'details' pk=pk pk2=pk2 pk3=pk3 %}",
+          data:{
+          },
+          success: function( data ) 
+          {
+            let res=data['message'];
+            if(res=="P")
+            {
+              alert('Peer grading already created for this assignment');
+            }
+            else if(res=="S")
+            {
+              alert('Some students are still left to submit their assignments');
+            }
+            else
+            {
+              $('#ModalCenter').modal('show');
+            }
+            return;
+          }
+      })
+  }
+</script>
+{% endblock script %}

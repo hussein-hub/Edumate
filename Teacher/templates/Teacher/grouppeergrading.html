@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<title>Classroom</title>
+<title>Group Peer Grading</title>
 {% endblock title %}
 
 {% block navbar %}
@@ -17,37 +17,12 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li>
-            <a class="btn " href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
+            <a class="btn " href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to Classroom</a>
           </li>
           <li>
             <a type="button" class="btn " data-toggle="modal" data-target="#ModalCenter">
-              Create Assignment
+              Create Group Peergrading
             </a>
-          </li>
-          <li class="dropdown">
-            <a href="#">
-              <span>More</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
-            </a>
-            <ul>
-              <li>
-                <a class="btn " href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
-              </li>
-              <li>
-                <a class="btn " href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
-              </li>
-              <li>
-                <a class="btn " href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
-              </li>
-              <li>
-                <a class="btn " href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a>
-              </li>
-              <li>
-                <a class="btn " href="{% url 'projecttracking' pk=pk pk2=pk2 %}">Project Tracking</a>
-              </li>
-              <li>
-                <a class="btn " href="{% url 'grouppeergrading' pk=pk pk2=pk2 %}">Group Peergrading</a>
-              </li>
-            </ul>
           </li>
           <li class="dropdown">
             <a href="#">
@@ -151,24 +126,6 @@ input:checked + .slider:before {
   background-color: white !important;
   color: #008374 !important;
 }
-@media screen and (max-width: 500px) {
-  .modal-dialog {
-    width: 95vw;
-  }
-  .model-content {
-    height: 55vh;
-  }
-}
-
-@media screen and (min-width: 501px) {
-  .modal-dialog {
-    width: 35vw;
-  }
-  .modal-content {
-    height: 45vh;
-  }
-}
-
 
 
 </style>
@@ -185,52 +142,42 @@ input:checked + .slider:before {
 
       <!--  model body -->
       <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 70vw;">
+          <div class="modal-content" style="height: 35vh;">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Create a New Assignment</h5>
+              <h5 class="modal-title" id="exampleModalLongTitle">Create a Group Peergrading</h5>
               <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <form method="post"class="form-group row" style="display: flex; flex-direction: column; flex-wrap: nowrap; align-items: center;">
-                {% csrf_token %}
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-wrap: wrap;">
-                  <div class="col-sm-12 my-2">
-                    <input class="form-control" type="text" placeholder="Enter assignment name" name="name" required>
-                  </div>
-                    <div class="col-sm-12 my-2">
-                    <input class="form-control" type="text" placeholder="Enter assignment description" name="description" required>
-                  </div>
-                  <div class="col-sm-12 my-2">
-                    <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks" required>
-                  </div>
+                <form method="post"class="form-group row">
+                  {% csrf_token %}
+                <div class="col-sm-4">
+                  <input class="form-control" type="text" placeholder="Enter assignment name" name="name" required>
                 </div>
-                <div class="col-sm-12" style="display: flex; align-items: center; margin-top: 10px; justify-content: space-around">
-                  Peer grading
+                <div class="col-sm-4">
+                  <input class="form-control" type="text" placeholder="Enter assignment description" name="desc" required>
+                </div>
+                <div class="col-sm-2">
+                  Due date
+                </div>
+                <div class="col-sm-2">
                   <div>
-                  <label class="switch" style="margin-left: 10px;">
-                    <input type="checkbox" name="peer" id="checkb">
-                    <span class="slider round"></span>
-                  </label>
-                </div>
-                <div>
-                  <input class="form-control" type="number" placeholder="Peergrade number" name="numpeers" disabled="disbaled" id="peernum" min="1" step="1">
-                </div>
-                </div>
-                <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; flex-wrap: nowrap;">
-                  <div class="col-sm-6" style="margin-top: 10px">
-                    Due date
-                  </div>
-                  <div class="col-sm-6" style="margin-top: 10px">
-                    <div>
-                    <input id="datetime" class="form-control" type="datetime-local" placeholder="Due date" name="duedate">
-                    </div>
+                  <input id="datetime" class="form-control" type="datetime-local" placeholder="Due date" name="duedate">
                   </div>
                 </div>
-                  <div class="col-sm-12" style="margin-top: 10px">
-                  <button class="btn btn-outline-success" type="submit">create</button>
+                <div class="col-sm-4" style="margin-top: 10px">
+                  <input class="form-control" type="number" placeholder="Enter maximum marks" name="marks" required>
+                </div>
+                <div class="col-sm-4" style="margin-top: 10px">
+                  <input class="form-control" type="number" placeholder="Number of students per group" name="num_studs" />
+                </div>
+                <div class="col-sm-4" style="margin-top: 10px">
+                  <input class="form-control" type="number" placeholder="Peergrading number" name="num_peers" />
+                </div>
+                  <div class="col-sm-4" style="margin-top: 10px">
+                  <button class="btn btn-outline-success" type="submit">Create</button>
                 </div>
                 </form>
             </div>
@@ -246,7 +193,7 @@ input:checked + .slider:before {
       <br>
 
       <div class="row">
-      {% for i, j in assign %}
+      {% for i in all_groups %}
           
 
         {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
@@ -262,13 +209,13 @@ input:checked + .slider:before {
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Assignment ?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Group peergrading ?</h5>
                 <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                <a class="btn btn-danger" onclick="deleteass({{ i.0.assignment_id }})" >
+                <a class="btn btn-danger" onclick="deletepro({{ i.gro_id }})" >
                 {% comment %} <a class="btn btn-danger" href="announcement/{{i.id}}" > {% endcomment %}
                   Delete
                 </a>
@@ -285,7 +232,7 @@ input:checked + .slider:before {
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
           <div class="card-header">
             <div style="font-weight: 600; font-size: 18px">
-              {{ i.0.assignment_name }}
+              {{ i.gpeer_name }}
             </div>
             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
               <i class="fa fa-trash"></i>
@@ -293,12 +240,12 @@ input:checked + .slider:before {
           </div>
           <div class="card-body">
             <blockquote class="blockquote mb-0">
-              <p><small>Max marks: {{ i.0.max_marks }}</small></p>
-              <p><small>Description : {{ i.0.assignment_description }}</small></p>
-              <p><small>Due Date : {{ i.0.duedate }}</small></p>
-              <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
-              <p><small style = "font-size: 13px">Not submitted by : {{ j }} </small></p>
-              <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>
+              <p><small>Number of students per group : {{ i.num_studs }}</small></p>
+              <p><small>Description : {{ i.gpeer_desc }}</small></p>
+              <p><small style = "font-size: 13px">Creation date : {{ i.created_date }}</small></p>
+              <p><small style = "font-size: 13px">Due date : {{ i.gpeer_due }}</small></p>
+              <p><small style = "font-size: 13px">Max marks: {{ i.marks }}</small></p>
+              <a class="btn btn-success" href="{% url 'showpeergroups' pk=pk pk2=pk2 pk3=i.gro_id %}" class="card-link"><small>Go to Assignment</small></a>
             </blockquote>
           </div>
         </div>
@@ -314,13 +261,10 @@ input:checked + .slider:before {
       <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a> {% endcomment %}
     </div>
     </div>
+
 {% endblock content %}
 {% block script %}
 <script>
-
-document.getElementById('checkb').onchange = function() {
-    document.getElementById('peernum').disabled = !this.checked;
-};
 
   $(document).ready(function() {
     $('.nav-link-collapse').on('click', function() {
@@ -329,14 +273,14 @@ document.getElementById('checkb').onchange = function() {
     });
   });
 
-function deleteass(id)
+function deletepro(id)
 {
   $.ajax(
       {
           type:"POST",
-          url: "{% url 'assignmentdelete' pk=pk pk2=pk2 %}",
+          url: "{% url 'delgroup' pk=pk pk2=pk2 %}",
           data:{
-            assignment_id: id,
+            gro_id: id,
             csrfmiddlewaretoken: '{{ csrf_token }}'
           },
           success: function( data ) 
@@ -345,6 +289,7 @@ function deleteass(id)
           }
       })
 }
+
   
 </script>
 {% endblock %}

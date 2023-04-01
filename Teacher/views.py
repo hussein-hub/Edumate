@@ -780,6 +780,46 @@ def group_details(request, pk, pk2, pk3, pk4):
         progress=list("b"*len(project.prog_check.split('\r')))
     return render(request, 'Teacher/group_details.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'members': members, 'progress': progress, 'project': project, 'progr': zip(project.prog_check.split('\r'), progress)})
 
+def grouppeergrading(request, pk, pk2):
+    all_g_assigns=Grouppeers.objects.filter(class_code=pk2).order_by('-created_date')
+    if request.method=="POST":
+        group=Grouppeers()
+        group.class_code=ClassTeachers.objects.get(class_code=pk2)
+        group.gpeer_name=request.POST.get('name')
+        group.gpeer_desc=request.POST.get('desc')
+        group.gpeer_due=request.POST.get('duedate')
+        group.num_studs=request.POST.get('num_studs')
+        group.marks=request.POST.get('marks')
+        group.num_peers=request.POST.get('num_peers')
+        group.save()
+        allstuds=ClassStudents.objects.filter(class_code=pk2)
+        all_groups=[]
+        for i in range(len(allstuds)//int(group.num_studs)):
+            pgroup=PeerGroups()
+            pgroup.gro_id=group
+            pgroup.save()
+            all_groups.append(pgroup)
+        count=0
+        for i in allstuds:
+            member=Peermembers()
+            member.pgro_id=all_groups[count]
+            member.stud_id=i.stud_id
+            member.save()
+            count=count+1
+            if(count==len(all_groups)):
+                count=0
+        return redirect('grouppeergrading', pk=pk, pk2=pk2)
+    return render(request, 'Teacher/grouppeergrading.html', {'pk': pk, 'pk2': pk2, 'all_groups': all_g_assigns})
+
+def delgroup(request, pk, pk2):
+    if request.method=="POST":
+        Grouppeers.objects.get(gro_id=request.POST.get('gro_id')).delete()
+        return JsonResponse({'message': 'deleted'})
+
+def showpeergroups(request, pk, pk2, pk3):
+    all_groups=PeerGroups.objects.filter(gro_id=pk3)
+    return render(request, 'Teacher/showpeer.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_groups': all_groups})
+
 def logout(request, pk):
     request.session.flush()
     return redirect('home')

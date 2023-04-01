@@ -83,4 +83,6 @@ class QuizAdmin(admin.ModelAdmin):
 
 admin.site.register(Peergrade)
 admin.site.register(PeerAssigns)
-
+admin.site.register(Grouppeers)
+admin.site.register(PeerGroups)
+admin.site.register(Peermembers)

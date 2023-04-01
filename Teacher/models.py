@@ -184,3 +184,35 @@ class PeerAssigns(models.Model):
         db_table = "Peerassigns"
 
 
+class Grouppeers(models.Model):
+    gro_id = models.AutoField(primary_key=True)
+    class_code = models.ForeignKey(ClassTeachers, on_delete=models.CASCADE, blank=True, null=True)
+    gpeer_name = models.CharField(max_length=100)
+    gpeer_desc = models.CharField(max_length=300)
+    gpeer_due = models.DateTimeField(default=datetime.now)
+    num_studs = models.IntegerField(default=2)
+    num_peers = models.IntegerField(default=2)
+    marks = models.FloatField()
+    created_date = models.DateTimeField(default=datetime.now)
+    class Meta:
+        db_table = "Grouppeers"
+
+class PeerGroups(models.Model):
+    group_id = models.AutoField(primary_key=True)
+    gro_id = models.ForeignKey(Grouppeers, on_delete=models.CASCADE, blank=True, null=True)
+    submit_file = models.FileField(upload_to='Teacher/static/upload/', default=None, blank=True, null=True)
+    submit_desc = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    submit_by = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True)
+    marksbyteacher = models.FloatField(default=None, blank=True, null=True)
+    submit_date = models.DateTimeField(default=datetime.now)
+    class Meta:
+        db_table = "Peergroups"
+
+class Peermembers(models.Model):
+    mem_id = models.AutoField(primary_key=True)
+    pgro_id = models.ForeignKey(PeerGroups, on_delete=models.CASCADE, blank=True, null=True)
+    stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True)
+    class Meta:
+        db_table = "Peermembers"
+
+
