@@ -24,16 +24,6 @@ class SubmittedAssignments(models.Model):
     def __str__(self):
         return self.stud_id.name
 
-class PeerStudents(models.Model):
-    peerstud_id = models.AutoField(primary_key=True)
-    stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True)
-    assign_id = models.ForeignKey("Teacher.Assignments", on_delete=models.CASCADE, blank=True, null=True)
-    as_peer_1 = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
-    as_1_marks = models.FloatField()
-    as_peer_2 = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
-    as_2_marks = models.FloatField()
-    class Meta:
-        db_table = "PeerStudents"
 
 class Quiz_marks(models.Model):
     quiz = models.ForeignKey('Teacher.Quiz', on_delete=models.CASCADE, default=0, blank=True, null=True)

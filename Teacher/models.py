@@ -27,15 +27,6 @@ class Assignments(models.Model):
         db_table = "Assignments"
     def __str__(self):
          return self.assignment_name +" - "+ self.class_code.class_code
-
-class PeerGrade(models.Model):
-    peergrade_id = models.AutoField(primary_key=True)
-    stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, null=True, blank=True)
-    assign_id = models.ForeignKey(Assignments, on_delete=models.CASCADE, null=True, blank=True)
-    peer_1 = models.ForeignKey("Student.SubmittedAssignments", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
-    peer_2 = models.ForeignKey("Student.SubmittedAssignments", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
-    class Meta:
-        db_table = "PeerGrade"
     
 class Announcements(models.Model):
     ann_id = models.AutoField(primary_key=True)
@@ -169,3 +160,27 @@ class Members(models.Model):
         db_table = "Members"
     def __str__(self):
         return str(self.mem_id)
+
+class Peergrade(models.Model):
+    peergrade_id = models.AutoField(primary_key=True)
+    class_code = models.ForeignKey(ClassTeachers, on_delete=models.CASCADE, blank=True, null=True)
+    assignment_id = models.ForeignKey(Assignments, on_delete=models.CASCADE, blank=True, null=True)
+    number_of_peers = models.IntegerField(default=0)
+    questions = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    opt1 = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    opt2 = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    opt3 = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    class Meta:
+        db_table = "Peergrade"
+
+class PeerAssigns(models.Model):
+    peergrade_id = models.ForeignKey(Peergrade, on_delete=models.CASCADE, blank=True, null=True)
+    stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+    assigned_stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+    feedb = models.CharField(max_length=100, default=None, blank=True, null=True)
+    marks = models.FloatField(default=None, blank=True, null=True)
+    options_selec = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    class Meta:
+        db_table = "Peerassigns"
+
+

@@ -9,7 +9,7 @@ from django.http import FileResponse, Http404, HttpResponseRedirect, StreamingHt
 from django.urls import reverse
 
 from Edumate_app.models import Students, Teachers
-from Student.models import ClassStudents, SubmittedAssignments, PeerStudents, Quiz_marks, Progress
+from Student.models import ClassStudents, SubmittedAssignments,  Quiz_marks, Progress
 from Teacher.forms import EventForm
 from .models import *
 import random
@@ -104,6 +104,12 @@ def classroom(request, pk, pk2):
         else:
             assignment.peer_grade=False
         assignment.save()
+        if assignment.peer_grade:
+            peers=Peergrade()
+            peers.class_code=assignment.class_code
+            peers.assignment_id=assignment
+            peers.number_of_peers=request.POST.get('numpeers')
+            peers.save()
         return redirect('classroom', pk=pk, pk2=pk2)
     a=Assignments.objects.filter(class_code=pk2).order_by('-duedate')
     assign = []
@@ -121,89 +127,131 @@ def classroom(request, pk, pk2):
     return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2, 'total': total_studs_value})
 
 def assignmentsub(request, pk, pk2, pk3):
-
     submitted_assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)
     all_students = ClassStudents.objects.filter(class_code=pk2)
     students_not_submitted = []
     submitted_assignments_ids = [i.stud_id for i in submitted_assignments]
     for i in all_students:
-        # print(i.stud_id.name)
         if i.stud_id not in submitted_assignments_ids:
             students_not_submitted.append(i)
-    # print(students_not_submitted)
-
     submitted=SubmittedAssignments.objects.filter(assignment_id=pk3)
-    peerassign=PeerStudents.objects.filter(assign_id=pk3)
     assign_grade=Assignments.objects.filter(assignment_id =pk3)
-    
     lateSubmissions = [False for i in range(len(submitted))]
     k = 0
     for i in submitted:
         if timezone.localtime(i.sub_date) > timezone.localtime(assign_grade[0].duedate):
             lateSubmissions[k] = True  
         k += 1
-
     assign_flag=assign_grade[0].peer_grade
-    sorterval=[]
-    for i in submitted:
-        received1=PeerStudents.objects.filter(assign_id=pk3, as_peer_1=i.stud_id.stud_id)
-        received2=PeerStudents.objects.filter(assign_id=pk3, as_peer_2=i.stud_id.stud_id)
-        temp=[i.stud_id]
-        for j in received1:
-            temp.append(j.stud_id)
-            temp.append(j.as_1_marks)
-        for j in received2:
-            temp.append(j.stud_id)
-            temp.append(j.as_2_marks)
-        sorterval.append(temp)
-    
     submittedAssignmentData = []
     for i in range(len(submitted)):
         submittedAssignmentData.append([submitted[i], lateSubmissions[i]])
-
     # sort submittedAssignmentData by the second element of each sublist
     submittedAssignmentData.sort(key=lambda x: x[1])
-
+    calc_assign=Assignments.objects.get(assignment_id=pk3)
+    final_assigns=[]
+    assign_map={}
+    num_pee=0
+    is_create="Y"
+    quest_and_ans=[]
+    ans_options=[]
+    if calc_assign.peer_grade:
+        temp_peer=Peergrade.objects.get(class_code=pk2, assignment_id=pk3)
+        temp_check=PeerAssigns.objects.filter(peergrade_id=temp_peer.peergrade_id)
+        num_pee=temp_peer.number_of_peers
+        if temp_check:
+            is_create="X"
+            quest_and_ans=temp_peer.questions.split("*")
+            ans_options.append(temp_peer.opt1.split("*"))
+            ans_options.append(temp_peer.opt2.split("*"))
+            ans_options.append(temp_peer.opt3.split("*"))
+            for i in temp_check:
+                if i.stud_id in assign_map:
+                    assign_map[i.stud_id].append(i)
+                else:
+                    assign_map[i.stud_id]=[i]
     if(request.method=="POST"):
-        pe=PeerGrade.objects.filter(assign_id=pk3)
-        if len(pe)>0:
-            messages.error(request, "Peer grading already created for this assignment")
-            return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
+        pet=Peergrade.objects.get(class_code=pk2, assignment_id=pk3)
+        pe=PeerAssigns.objects.filter(peergrade_id=pet.peergrade_id)
         sub_stud=SubmittedAssignments.objects.filter(assignment_id=pk3)
         studs=ClassStudents.objects.filter(class_code=pk2)
-        if(len(sub_stud)!=len(studs)):
-            messages.error(request, "Some students are still left to submit their assignments")
-            return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
-        else:
-            a=[]
-            stud_sub=[]
-            for i in sub_stud:
-                a.append(i.assign_id)
-                stud_sub.append(i.stud_id.stud_id)
-            b=copy.deepcopy(a)
-            random.shuffle(a)
-            a=a+a
-            ans=[]
-            j=0
-            for i in range(0, len(b)):
-                while(a[j]==b[i] or a[j]=="X"):
-                    j=(j+1)%len(a)
-                ans.append([a[j]])
-                a[j]="X"
-                while(a[j]==b[i] or ans[i][0]==a[j] or a[j]=="X"):
-                    j=(j+1)%len(a)
-                ans[i].append(a[j])
-                a[j]="X"
-            for i in range(0,len(stud_sub)):
-                peer=PeerGrade()
-                peer.stud_id=Students.objects.get(stud_id=stud_sub[i])
-                peer.assign_id=Assignments.objects.get(assignment_id=pk3)
-                peer.peer_1=SubmittedAssignments.objects.get(assign_id=ans[i][0])
-                peer.peer_2=SubmittedAssignments.objects.get(assign_id=ans[i][1])
-                peer.save()
-            return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
-    
-    return render(request, 'Teacher/show_assignments.html', {'submit': submittedAssignmentData, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, "peer": peerassign, "shr": sorterval, 'peerf': assign_flag, 'students_not_submitted': students_not_submitted})
+        num_peers=pet.number_of_peers
+        student_list=[]
+        for i in studs:
+            student_list.append(i.stud_id.stud_id)
+        peer_dict = {}
+        for i in student_list:
+            peer_dict[i]=[]
+        b=num_peers*student_list
+        random.shuffle(b)
+        count=len(b)
+        i=0
+        j=0
+        another_count=0
+        while(count!=0):
+            if b[j]!=student_list[i] and b[j] not in peer_dict[student_list[i]]:
+                peer_dict[student_list[i]].append(b[j])
+                b.remove(b[j])
+                count=count-1
+                if len(peer_dict[student_list[i]])==num_peers:
+                    i=i+1
+                    random.shuffle(b)
+                    another_count=0
+            if(len(b)==0):
+                break
+            j=(j-1)%len(b)
+            if j==0:
+                another_count=another_count+1
+            if(another_count==2):
+                b=num_peers*student_list
+                i=0
+                j=0
+                count=len(b)
+                another_count=0
+                random.shuffle(b)
+                for k in student_list:
+                    peer_dict[k]=[]
+        for i in peer_dict.keys():
+            for j in peer_dict[i]:
+                p_as_ings=PeerAssigns()
+                p_as_ings.peergrade_id=pet
+                p_as_ings.stud_id=Students.objects.get(stud_id=i)
+                p_as_ings.assigned_stud_id=Students.objects.get(stud_id=j)
+                p_as_ings.save()
+        ques1=request.POST.get('ques1')
+        ques2=request.POST.get('ques2')
+        ques3=request.POST.get('ques3')
+        opt11=request.POST.get('opt11')
+        opt12=request.POST.get('opt12')
+        opt13=request.POST.get('opt13')
+        opt21=request.POST.get('opt21')
+        opt22=request.POST.get('opt22')
+        opt23=request.POST.get('opt23')
+        opt31=request.POST.get('opt31')
+        opt32=request.POST.get('opt32')
+        opt33=request.POST.get('opt33')
+        final_ques=ques1+"*"+ques2+"*"+ques3
+        final_opt1=opt11+"*"+opt12+"*"+opt13
+        final_opt2=opt21+"*"+opt22+"*"+opt23
+        final_opt3=opt31+"*"+opt32+"*"+opt33
+        pet.questions=final_ques
+        pet.opt1=final_opt1
+        pet.opt2=final_opt2
+        pet.opt3=final_opt3
+        pet.save()
+        return redirect('assignmentteach', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Teacher/show_assignments.html', {'submit': submittedAssignmentData, 'pk': pk, 'pk2': pk2 ,'pk3': pk3, 'peerf': assign_flag, 'students_not_submitted': students_not_submitted, 'peer': assign_map, 'num': range(num_pee), 'is_create': is_create, 'quest_and_ans': zip(quest_and_ans, ans_options)})
+
+def details(request, pk, pk2, pk3):
+    pet=Peergrade.objects.get(class_code=pk2, assignment_id=pk3)
+    pe=PeerAssigns.objects.filter(peergrade_id=pet.peergrade_id)
+    if len(pe)>0:
+        return JsonResponse({'message': 'P'})
+    sub_stud=SubmittedAssignments.objects.filter(assignment_id=pk3)
+    studs=ClassStudents.objects.filter(class_code=pk2)
+    if(len(sub_stud)!=len(studs)):
+        return JsonResponse({'message': 'S'})
+    return JsonResponse({'message': 'X'})
 
 def assignmentdelete(request, pk, pk2):
     Assignments.objects.get(assignment_id=request.POST.get('assignment_id')).delete()
@@ -215,17 +263,11 @@ def assignmentgrade(request, pk, pk2, pk3,pk4):
     stud = Students.objects.get(stud_id = pk4)
     file_url = "http://127.0.0.1:8000"+submitted.assign_file.url
     final_peer=[]
-    peerstu=PeerStudents.objects.filter(assign_id=pk3, as_peer_1=pk4)
-    peerstu1=PeerStudents.objects.filter(assign_id=pk3, as_peer_2=pk4)
-    for j in peerstu:
-        final_peer.append(j.stud_id.name)
-        final_peer.append(j.as_1_marks)
-    for j in peerstu1:
-        final_peer.append(j.stud_id.name)
-        final_peer.append(j.as_2_marks)
-    print(final_peer)
+    if assignment.peer_grade:
+        pet=Peergrade.objects.get(class_code=pk2, assignment_id=pk3)
+        final_peer=PeerAssigns.objects.filter(peergrade_id=pet.peergrade_id, assigned_stud_id=pk4)
     if request.method=="POST":
-        if(float(request.POST.get('marks')) < float(assignment.max_marks)):
+        if(float(request.POST.get('marks')) <= float(assignment.max_marks)):
             submitted.marks=request.POST.get('marks')
             submitted.save()
             messages.error(request, "Marks updated successfully")

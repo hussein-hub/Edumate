@@ -204,12 +204,17 @@ input:checked + .slider:before {
                     <input class="form-control" type="text" placeholder="Enter maximum marks" name="marks" required>
                   </div>
                 </div>
-                <div class="col-sm-12" style="display: flex; align-items: center; margin-top: 10px">
+                <div class="col-sm-12" style="display: flex; align-items: center; margin-top: 10px; justify-content: space-around">
                   Peer grading
+                  <div>
                   <label class="switch" style="margin-left: 10px;">
-                    <input type="checkbox" name="peer">
+                    <input type="checkbox" name="peer" id="checkb">
                     <span class="slider round"></span>
                   </label>
+                </div>
+                <div>
+                  <input class="form-control" type="number" placeholder="Peergrade number" name="numpeers" disabled="disbaled" id="peernum" min="1" step="1">
+                </div>
                 </div>
                 <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; flex-wrap: nowrap;">
                   <div class="col-sm-6" style="margin-top: 10px">
@@ -309,6 +314,10 @@ input:checked + .slider:before {
 {% endblock content %}
 {% block script %}
 <script>
+
+document.getElementById('checkb').onchange = function() {
+    document.getElementById('peernum').disabled = !this.checked;
+};
 
   $(document).ready(function() {
     $('.nav-link-collapse').on('click', function() {

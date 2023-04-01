@@ -81,6 +81,6 @@ class MembersAdmin(admin.ModelAdmin):
 class QuizAdmin(admin.ModelAdmin):
     list_display = ("quiz_name", "time_limit", "quiz_date", "teach_id", "class_code")
 
-@admin.register(PeerGrade)
-class PeerGradeAdmin(admin.ModelAdmin):
-    list_display = ("peergrade_id", "stud_id", "assign_id", "peer_1", "peer_2")
+admin.site.register(Peergrade)
+admin.site.register(PeerAssigns)
+

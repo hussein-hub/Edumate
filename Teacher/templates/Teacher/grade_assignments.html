@@ -129,8 +129,8 @@
               </form>
             </div>
             {% if assign.peer_grade %}
-            {% if peers|length == 4 %}
-            <div class="col-md-6">
+            {% if peers %}
+            <div class="col-md-12">
               <div style="background: rgba( 255, 255, 255, 0.25 );
               box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
               backdrop-filter: blur( 4px );
@@ -140,18 +140,20 @@
               padding: 1rem;" >
               <h4>Peer grading results</h4>
               <hr>
+                {% for i in peers %}
                 <div class="form-group mb-3">
-                  <label for="exampleInputEmail1">Peer 1: {{ peers.0 }}</label>
+                  <label for="exampleInputEmail1">Peer {{ forloop.counter }}: {{ i.stud_id.name }}</label>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="exampleInputEmail2">Marks given: {{ peers.1 }}</label>
+                  <div>
+                  <label for="exampleInputEmail2">Feedback: {{ i.feedb }}</label>
+                  </div>
+                  <div>
+                  <label for="exampleInputEmail2">Marks given: {{ i.marks }}</label>
+                  </div>
                 </div>
-                <div class="form-group mb-3">
-                  <label for="exampleInputEmail3">Peer 2: {{ peers.2 }}</label>
-                </div>
-                <div class="form-group mb-3">
-                  <label for="exampleInputEmail2">Marks given: {{ peers.3 }}</label>
-                </div>
+                <hr />
+                {% endfor %}
               </div>
             </div>
             {% endif %}

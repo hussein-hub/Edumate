@@ -9,9 +9,6 @@ class SubmittedAssignmentsAdmin(admin.ModelAdmin):
 
 # admin.site.register(PeerStudents)
 
-@admin.register(PeerStudents)
-class PeerStudentsAdmin(admin.ModelAdmin):
-	list_display = ("peerstud_id", "stud_id", "assign_id", "as_peer_1", "as_1_marks", "as_peer_2", "as_2_marks")
 
 # admin.site.register(Quiz_marks)
 

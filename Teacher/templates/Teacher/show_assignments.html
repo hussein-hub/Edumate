@@ -120,6 +120,15 @@
   </div>
   {% endfor %}
 
+  {% if peerf %}
+  {% if is_create == "Y" %}
+  <div>
+      <input name="peer" value="peer" style="display: none">
+      <button class="btn btn-outline-success" onclick="check()">Start the peergrading</button>
+  </div>
+  {% endif %}
+  {% endif %}
+
   <div class="row" style="margin-top: 25px;">
     <h1 style="margin-top: 20px">Not Submitted Assignment</h1>
     {% if students_not_submitted %}
@@ -149,49 +158,36 @@
   </div>  
 </div>
     
-
+<hr />
 <div>
         {% if peerf %}
-          <form method="post">
-            {% csrf_token %}
-            <input name="peer" value="peer" style="display: none">
-            <button type="submit" class="btn btn-outline-success">Start the peergrading</button>
-          </form>
-        {% endif %}
-        {% if peerf %}
+        <h4>Peergrading Results</h4>
+        <hr />
+        <h4>Peergrading questions</h4>
+        <hr />
+        {% for i, j in quest_and_ans %}
+        <ul> {{ forloop.counter }}. {{ i }}
+        {% for k in j %}
+        <li>{{ k }}</li>
+        {% endfor %}
+      </ul>
+        {% endfor %}
+        <hr />
         <table id="customers">
           <tr>
             <th>Student Name</th>
-            <th>Assigned peer 1</th>
+            {% for i in num %}
+            <th>Assigned peer {{ forloop.counter }}</th>
             <th>Marks given</th>
-            <th>Assigned peer 2</th>
-            <th>Marks given</th>
+            {% endfor %}
           </tr>
-          {% for i in peer %}
+          {% for i, j in peer.items %}
           <tr>
-            <td>{{ i.stud_id.name }} (ID: {{ i.stud_id.stud_id }})</td>
-            <td>{{ i.as_peer_1.name }} (ID: {{ i.as_peer_1.stud_id }})</td>
-            <td>{{ i.as_1_marks }}</td>
-            <td>{{ i.as_peer_2.name }} (ID: {{ i.as_peer_2.stud_id }})</td>
-            <td>{{ i.as_2_marks }}</td>
-          </tr>
-          {% endfor %}
-        </table>
-        <table id="customers">
-          <tr>
-            <th>Student ID</th>
-            <th>Marks given by peer1</th>
-            <th>Marks given</th>
-            <th>Marks given by peer2</th>
-            <th>Marks given</th>
-          </tr>
-          {% for i in shr %}
-          <tr>
-            <td>{{ i.0.name }} (ID: {{ i.0.stud_id }})</td>
-            <td>{{ i.1.name }} (ID: {{ i.1.stud_id }})</td>
-            <td>{{ i.2 }}</td>
-            <td>{{ i.3.name }} (ID: {{ i.3.stud_id }})</td>
-            <td>{{ i.4 }}</td>
+            <td>{{ i.name }} (ID: {{ i.stud_id }})</td>
+            {% for k in j %}
+            <td>{{ k.assigned_stud_id.name }} (ID: {{ k.assigned_stud_id.stud_id }})</td>
+            <td>{{ k.marks|floatformat:2 }}</td>
+            {% endfor %}
           </tr>
           {% endfor %}
         </table>
@@ -201,4 +197,95 @@
           <a href="{% url 'assignmentSimilarityCheck' pk=pk pk2=pk2 pk3=pk3 %}" class="btn btn-outline-success">Check Similarity</a> {% endcomment %}
         </div>
     </div>
+
+    <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Enter Peergrading Questions</h5>
+            <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post"class="form-group row" style="display: flex; flex-direction: column; flex-wrap: nowrap; align-items: center;">
+              {% csrf_token %}
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-wrap: wrap;">
+                <div class="col-sm-12 my-2">
+                  <input class="form-control" type="text" placeholder="Question 1" name="ques1" required>
+                  <div style="display: flex">
+                  Opt 1 &nbsp; <input class="form-control" type="text" placeholder="Option 1" name="opt11" required style="width: 70%"> (M: 50%)
+                  </div>
+                  <div style="display: flex">
+                  Opt 2 &nbsp; <input class="form-control" type="text" placeholder="Option 2" name="opt12" required style="width: 70%"> (M: 75%)
+                  </div>
+                  <div style="display: flex">
+                  Opt 3 &nbsp; <input class="form-control" type="text" placeholder="Option 3" name="opt13" required style="width: 70%"> (M: 100%)
+                  </div>
+                </div>
+                  <div class="col-sm-12 my-2">
+                  <input class="form-control" type="text" placeholder="Question 2" name="ques2" required>
+                  <div style="display: flex">
+                    Opt 1 &nbsp; <input class="form-control" type="text" placeholder="Option 1" name="opt21" required style="width: 70%"> (M: 50%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 2 &nbsp; <input class="form-control" type="text" placeholder="Option 2" name="opt22" required style="width: 70%"> (M: 75%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 3 &nbsp; <input class="form-control" type="text" placeholder="Option 3" name="opt23" required style="width: 70%"> (M: 100%)
+                    </div>
+                </div>
+                <div class="col-sm-12 my-2">
+                  <input class="form-control" type="text" placeholder="Question 3" name="ques3" required>
+                  <div style="display: flex">
+                    Opt 1 &nbsp; <input class="form-control" type="text" placeholder="Option 1" name="opt31" required style="width: 70%"> (M: 50%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 2 &nbsp; <input class="form-control" type="text" placeholder="Option 2" name="opt32" required style="width: 70%"> (M: 75%)
+                    </div>
+                    <div style="display: flex">
+                    Opt 3 &nbsp; <input class="form-control" type="text" placeholder="Option 3" name="opt33" required style="width: 70%"> (M: 100%)
+                    </div>
+                </div>
+              </div>
+              <div class="col-sm-12" style="margin-top: 10px">
+                <button class="btn btn-outline-success" type="submit">Assign Peers</button>
+              </div>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock content %}
+
+{% block script %}
+<script>
+  function check()
+  {
+    $.ajax(
+      {
+          type:"GET",
+          url: "{% url 'details' pk=pk pk2=pk2 pk3=pk3 %}",
+          data:{
+          },
+          success: function( data ) 
+          {
+            let res=data['message'];
+            if(res=="P")
+            {
+              alert('Peer grading already created for this assignment');
+            }
+            else if(res=="S")
+            {
+              alert('Some students are still left to submit their assignments');
+            }
+            else
+            {
+              $('#ModalCenter').modal('show');
+            }
+            return;
+          }
+      })
+  }
+</script>
+{% endblock script %}

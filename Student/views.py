@@ -2,7 +2,7 @@ from django.http import QueryDict
 from django.shortcuts import render, redirect
 from Edumate_app.models import Students, Teachers
 import json, os
-from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments, PeerStudents, Progress
+from Student.models import ClassStudents, Quiz_marks, SubmittedAssignments,  Progress
 from Student.utils import Calendar
 from Teacher.models import *
 import calendar
@@ -80,72 +80,49 @@ def classroom(request, pk, pk2):
 def assignmentsub(request, pk, pk2, pk3):
     assign=Assignments.objects.filter(assignment_id=pk3)
     pflag=assign[0].peer_grade
-    peer_1=[]
-    peer_2=[]
-    marks_1=""
-    marks_2=""
-    temp=False
     submi=SubmittedAssignments.objects.filter(stud_id=pk, assignment_id=pk3)
     submidone={}
-    marks_given=0
+    assigned=[]
+    pe_assigned=[]
+    marks=0
+    marksflag=True
+    pe=None
+    feeds=None
+    if pflag:
+        pet=Peergrade.objects.get(class_code=pk2, assignment_id=pk3)
+        pe=PeerAssigns.objects.filter(peergrade_id=pet.peergrade_id, stud_id=pk)
+        assigned=pe
+        feeds=PeerAssigns.objects.filter(peergrade_id=pet.peergrade_id, assigned_stud_id=pk)
+        for i in feeds:
+            if i.feedb:
+                pe_assigned.append(i.feedb)
+            else:
+                pe_assigned.append(None)
     if submi:
         submidone['desc']=submi[0].assign_desc
         submidone['file']=submi[0].assign_file
-        if assign[0].peer_grade:
-            peer1=PeerStudents.objects.filter(assign_id=pk3, as_peer_1=pk)
-            peer2=PeerStudents.objects.filter(assign_id=pk3, as_peer_2=pk)
-            flag1=False
-            flag2=False
-            flag3=False
-            for i in peer1:
-                if i.as_1_marks:
-                    marks_given=marks_given+i.as_1_marks
-                    flag1=True
-            for i in peer2:
-                if i.as_2_marks:
-                    marks_given=marks_given+i.as_2_marks
-                    flag2=True
-            if submi[0].marks:
-                marks_given=marks_given+4*submi[0].marks
-                flag3=True
-            if flag1 and flag2 and flag3:
-                marks_given=marks_given/6
-            else:
-                marks_given=""
-        else:
-            if submi[0].marks:
-                marks_given=submi[0].marks
-            else:
-                marks_given=""
     else:
         submidone['desc']=""
         submidone['file']=""
-    if assign[0].peer_grade:
-        assigned=PeerGrade.objects.filter(stud_id=pk, assign_id=pk3)
-        temp_marks=PeerStudents.objects.filter(stud_id=pk, assign_id=pk3)
-        if temp_marks:
-            if temp_marks[0].as_1_marks:
-                marks_1=temp_marks[0].as_1_marks
-            if temp_marks[0].as_2_marks:
-                marks_2=temp_marks[0].as_2_marks
-        if(assigned):
-            peer_1=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_1.assign_id)
-            peer_2=SubmittedAssignments.objects.filter(assign_id=assigned[0].peer_2.assign_id)
-    if(request.method=="POST" and request.POST.get('caller')=="call"):
-        if float(request.POST.get('peer1'))>float(assign[0].max_marks) or float(request.POST.get('peer2'))>float(assign[0].max_marks):
-            messages.error(request, 'Marks cannot be greater than maximum marks')
-            return redirect('assignment', pk=pk, pk2=pk2, pk3=pk3)
-        peer_marks=PeerStudents()
-        peer_marks.stud_id=Students.objects.get(stud_id=pk)
-        peer_marks.assign_id=Assignments.objects.get(assignment_id=pk3)
-        peer_marks.as_peer_1=peer_1[0].stud_id
-        peer_marks.as_1_marks=request.POST.get('peer1')
-        peer_marks.as_peer_2=peer_2[0].stud_id
-        peer_marks.as_2_marks=request.POST.get('peer2')
-        peer_marks.save()
-        temp=True
-        return redirect('assignment', pk=pk, pk2=pk2, pk3=pk3)
-    if(request.method=="POST" and temp==False):
+    if submi and feeds:
+        if submi[0].marks:
+            marks=marks+4*submi[0].marks
+            for i in feeds:
+                if i.marks:
+                    marks=marks+i.marks
+                else:
+                    marks=0
+                    marksflag=False
+                    break
+        else:
+            marks=0
+            marksflag=False
+    else:
+        marks=0
+        marksflag=False
+    if marksflag:
+        marks=marks/(len(feeds)+4)
+    if(request.method=="POST"):
         if(submi):
             submi[0].assign_desc=request.POST.get('description')
             if request.FILES:
@@ -174,12 +151,46 @@ def assignmentsub(request, pk, pk2, pk3):
         assignment.sub_date=timezone.now()
         assignment.save()
         return redirect('assignment', pk=pk, pk2=pk2, pk3=pk3)
-    if(len(peer_1) and len(peer_2)):
-        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0], 'desc2': peer_2[0], 'pflag': pflag, 'submi': submidone, 'marks': marks_given, 'marks_1': marks_1, 'marks_2': marks_2})
-    else:
-        return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': "X", 'desc2': "X", 'pflag': pflag, 'submi': submidone, 'marks': marks_given, 'marks_1': marks_1, 'marks_2': marks_2})
-    # return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'desc1': peer_1[0].assign_desc, 'desc2': peer_2[0].assign_desc})
-    # return render(request, 'Student/assignment.html', {'pk': pk, 'pk2': pk2, })
+    return render(request, 'Student/assignment.html', {'assign': assign, 'pk': pk, 'pk2': pk2, 'pk3': pk3, 'submi': submidone, 'pflag': pflag, 'assigned': assigned, 'pe': pe_assigned, 'marks': marks, 'marksflag': marksflag})
+
+def grad(request, pk, pk2, pk3, pk4):
+    pet=Peergrade.objects.get(class_code=pk2, assignment_id=pk3)
+    pe=PeerAssigns.objects.get(peergrade_id=pet.peergrade_id, stud_id=pk, assigned_stud_id=pk4)
+    questions=pet.questions.split("*")
+    final_options=[]
+    final_options.append(pet.opt1.split("*"))
+    final_options.append(pet.opt2.split("*"))
+    final_options.append(pet.opt3.split("*"))
+    submitted=SubmittedAssignments.objects.get(assignment_id=pk3, stud_id=pk4)
+    assignment=Assignments.objects.get(assignment_id=pk3)
+    pe_assigned=[]
+    if request.method=="POST":
+        pe.feedb=request.POST.get('feedback')
+        pe.options_selec=request.POST.get('1')+"*"+request.POST.get('2')+"*"+request.POST.get('3')
+        total_marks=0
+        if request.POST.get('1')=='1':
+            total_marks=total_marks+assignment.max_marks*0.50
+        elif request.POST.get('1')=='2':
+            total_marks=total_marks+assignment.max_marks*0.75
+        elif request.POST.get('1')=='3':
+            total_marks=total_marks+assignment.max_marks
+        if request.POST.get('2')=='1':
+            total_marks=total_marks+assignment.max_marks*0.50
+        elif request.POST.get('2')=='2':
+            total_marks=total_marks+assignment.max_marks*0.75
+        elif request.POST.get('2')=='3':
+            total_marks=total_marks+assignment.max_marks
+        if request.POST.get('3')=='1':
+            total_marks=total_marks+assignment.max_marks*0.50
+        elif request.POST.get('3')=='2':
+            total_marks=total_marks+assignment.max_marks*0.75
+        elif request.POST.get('3')=='3':
+            total_marks=total_marks+assignment.max_marks
+        total_marks=total_marks/3
+        pe.marks=total_marks
+        pe.save()
+        return redirect('assignment', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Student/grad.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'ques_and_ans': zip(questions, final_options), 'submitted': submitted, 'assignment': assignment, 'pe': pe_assigned})
 
 def announcement_stud(request, pk, pk2):
     announcements = Announcements.objects.filter(class_code = pk2)

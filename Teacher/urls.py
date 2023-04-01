@@ -27,6 +27,7 @@ urlpatterns = [
     path('classroom/<pk2>/fetchcheck/', views.fetchcheck, name='fetchcheck'),
     path('classroom/<pk2>/projecttracking/<pk3>/', views.view_groups, name='view_groups'),
     path('classroom/<pk2>/projecttracking/<pk3>/group_details/<pk4>/', views.group_details, name='group_details'),
+    path('classroom/<pk2>/assignment/<pk3>/details/', views.details, name='details'),
     # path('video_feed', views.video_feed, name='video_feed'),
     path('logout/', views.logout, name="logout")
 ]
