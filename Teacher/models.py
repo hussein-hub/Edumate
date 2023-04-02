@@ -101,6 +101,7 @@ class AttStud(models.Model):
     stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True)
     att_time = models.CharField(max_length=100)
     img_number = models.IntegerField(default=0)
+    is_approved = models.BooleanField(default=True)
     class Meta:
         db_table = "AttStud"
 

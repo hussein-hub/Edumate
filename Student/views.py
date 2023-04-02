@@ -388,10 +388,40 @@ def submitatt(request, pk, pk2, pk3):
         att.att_id=att_obj
         att.stud_id=Students.objects.get(stud_id=pk)
         att.att_time=curr
+        att.is_approved = True
         att.save()
         return redirect('markatt', pk=pk, pk2=pk2, pk3=pk3)
     return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'imagePath': imagePath, 'folderName': folderName, 'final_list_list': final_list_list, 'all_marked_images': all_marked_images })
 
+def attcropimg(request, pk, pk2, pk3):
+    final_list_list=[]
+    att_obj = Attendance.objects.get(code=pk3)
+    mainAttObj = Attendance_images.objects.filter(att_id=att_obj.att_id)
+    all_marked_images = []
+    for j in mainAttObj:
+        all_marked_images.append(j.att_image.url.split('/')[0] + '/' + j.att_image.url.split('/')[1] + '/' + 'a' + j.att_image.url.split('/')[2])
+    # imagePath = mainAttObj[0].att_image.url.split('/')
+    # print(all_marked_images)
+    # try:
+    #     folderName = "."+"/".join(imagePath[:-1]) + "/" + imagePath[-1].split('.')[0]
+    # except:
+    #     print()
+    # att_objects = AttStud.objects.filter(att_id=att_obj.att_id)
+    # marked_img_numbers = att_objects.values_list('img_number', flat=True)
+    # names = att_objects
+    # marked_img_numbers = list(marked_img_numbers)
+    # marked_img_numbers= {marked_img_numbers[j]:names[j] for j in range(len(marked_img_numbers))}
+    # allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
+    # allImages = sorted(allImages, key = lambda x: (int(re.sub('\D','',x)),x))
+    # allImages = {allImages[j]:j for j in range(len(allImages))}
+    # for i, j in allImages.items():
+    #     if j in marked_img_numbers.keys():
+    #         final_list_list.append([i, marked_img_numbers[j].stud_id.name])
+    #     else:
+    #         final_list_list.append([i, ""])
+    # imagePath[-1] = "a" + imagePath[-1]
+    # imagePath = '/'.join(imagePath)
+    return render(request, 'Student/crop_img_attendance.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_marked_images': all_marked_images})
 
 def enterattcode(request, pk, pk2):
     if request.method=="POST":

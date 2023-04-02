@@ -512,6 +512,7 @@ def view_att(request, pk, pk2, pk3):
         val['time']=i.att_time
         val['att_id']=i.att_id.att_id
         val['stud_id']=i.stud_id.stud_id
+        val['is_approved']= True
         att_ids.append(i.stud_id.stud_id)
         all_att.append(val)
     stud_ids=[]
@@ -526,7 +527,7 @@ def view_att(request, pk, pk2, pk3):
                 all_stud_names_ids.append(single_stud)
             except:
                 continue
-    print(all_stud_names_ids)
+    # print(all_stud_names_ids)
     if request.method == "POST":
         if 'student_id' in request.POST:
             if request.POST['student_id']=="none":
