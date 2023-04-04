@@ -479,3 +479,37 @@ def single_project(request, pk, pk2, pk3):
         messages.error(request, "Progress saved!")
         return redirect('single_project', pk=pk, pk2=pk2, pk3=pk3)
     return render(request, 'Student/single_project.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'project': project, 'group': final_group, 'members': members, 'check': zip(checks, list(prog_value))})
+
+def stud_group(request, pk, pk2):
+    groups=Grouppeers.objects.filter(class_code=pk2).order_by('-created_date')
+    return render(request, 'Student/stud_group.html', {'pk': pk, 'pk2': pk2, 'groups': groups})
+
+def single_stud_group(request, pk, pk2, pk3):
+    group=Grouppeers.objects.get(gro_id=pk3)
+    all_group=PeerGroups.objects.filter(gro_id=group.gro_id)
+    single_group=None
+    members=None
+    for i in all_group:
+        mems=Peermembers.objects.filter(stud_id=pk, pgro_id=i.group_id)
+        if mems:
+            single_group=i
+            members=Peermembers.objects.filter(pgro_id=i.group_id)
+            break
+    submi=None
+    if single_group.submit_desc:
+        submi=single_group.submit_file.url
+    if request.method=="POST":
+        single_group.submit_desc=request.POST.get('description')
+        _, file = request.FILES.popitem()
+        file = file[0]
+        file._name="Group"+str(pk)+"_"+str(pk2)+"_"+str(pk3)+"_"+file._name
+        single_group.submit_file = file
+        single_group.submit_by=Students.objects.get(stud_id=pk)
+        if(timezone.now()>group.gpeer_due):
+            messages.error(request, "Assignment submitted late")
+        else:
+            messages.error(request, "Assignment submitted!!")
+        single_group.submit_date=timezone.now()
+        single_group.save()
+        return redirect('single_stud_group', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Student/single_stud_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'group': group, 'single_group': single_group, 'members': members, 'submi': submi})

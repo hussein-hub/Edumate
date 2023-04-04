@@ -819,7 +819,21 @@ def delgroup(request, pk, pk2):
 
 def showpeergroups(request, pk, pk2, pk3):
     all_groups=PeerGroups.objects.filter(gro_id=pk3)
-    return render(request, 'Teacher/showpeer.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_groups': all_groups})
+    assignment=Grouppeers.objects.get(gro_id=pk3)
+    submitted=[]
+    not_submitted=[]
+    late=[]
+    flag=True
+    for i in all_groups:
+        if i.submit_file:
+            submitted.append(i)
+            if i.submit_date > assignment.gpeer_due:
+                late.append(i.group_id)
+        else:
+            mems=Peermembers.objects.filter(pgro_id=i.group_id)
+            not_submitted.append([i, mems, len(mems)])
+            flag=False
+    return render(request, 'Teacher/showpeer.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'submitted': submitted, 'not_submitted': not_submitted, 'late': late, 'flag': flag})
 
 def logout(request, pk):
     request.session.flush()

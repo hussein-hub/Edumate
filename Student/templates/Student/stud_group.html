@@ -1,0 +1,246 @@
+{% extends './base_student.html' %}
+{% load static %}
+
+{% block title %}
+<title>Group Peergrading</title>
+{% endblock title %}
+
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn " href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to Classroom</a>
+          </li>
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.sname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}">logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
+
+
+
+
+
+{% block content %}
+<style>
+  /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+.btn-success, .btn-success:active, .btn-success:visited {
+  background-color: #008374 !important;
+}
+
+.btn-success:hover {
+  border-color: #008374 !important;
+  background-color: white !important;
+  color: #008374 !important;
+}
+
+
+</style>
+<br><br>
+<div class="container ">
+  <div class="container" >
+
+
+      <div>
+        {% comment %} <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalCenter">
+          Create Assignment
+        </button> {% endcomment %}
+      </div>
+
+      <!--  model body -->
+
+
+      <br>
+
+      <div class="row">
+      {% for i in groups %}
+          
+
+        {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
+          <div class="card-body">
+            <h5 class="card-title">Name:  {{ i.assignment_name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted"> Max marks: {{ i.max_marks }} </h6>
+            <p class="card-text">Description : {{ i.assignment_description }}</p>
+            <a href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.assignment_id %}" class="card-link">Go to submitted assignments</a>
+          </div>
+        </div> {% endcomment %}
+
+
+
+        <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
+          <div class="card-header">
+            <div style="font-weight: 600; font-size: 18px">
+              Assignment Name: {{ i.gpeer_name }}
+            </div>
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0">
+              <p><small>Number of students per group : {{ i.num_studs }}</small></p>
+              <p><small>Description : {{ i.gpeer_desc }}</small></p>
+              <p><small>Marks : {{ i.marks }}</small></p>
+              <p><small style = "font-size: 13px">Due date : {{ i.gpeer_due }}</small></p>
+              <a class="btn btn-success" href="{% url 'single_stud_group' pk=pk pk2=pk2 pk3=i.gro_id %}" class="card-link"><small>Go to Assignment</small></a>
+            </blockquote>
+          </div>
+        </div>
+
+
+      {% endfor %}
+    </div>
+    <br>
+      {% comment %} <a class="btn btn-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
+      <a class="btn btn-success" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
+      <a class="btn btn-success" href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
+      <a class="btn btn-success" href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
+      <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a> {% endcomment %}
+    </div>
+    </div>
+
+
+{% endblock content %}
+{% block script %}
+<script>
+
+  $(document).ready(function() {
+    $('.nav-link-collapse').on('click', function() {
+      $('.nav-link-collapse').not(this).removeClass('nav-link-show');
+      $(this).toggleClass('nav-link-show');
+    });
+  });
+
+function deletepro(id)
+{
+  console.log(id)
+  $.ajax(
+      {
+          type:"POST",
+          url: "{% url 'projectdelete' pk=pk pk2=pk2 %}",
+          data:{
+            pro_id: id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function( data ) 
+          {
+              location.reload();
+          }
+      })
+}
+
+function fetchcheck(id)
+{
+  $.ajax(
+      {
+          type:"GET",
+          url: "{% url 'fetchcheck' pk=pk pk2=pk2 %}",
+          data:{
+            pro_id: id,
+          },
+          success: function( data ) 
+          {
+            $('#pro_nam').empty();
+            $('#checkp').empty();
+            $('#pro_nam').text(data['name']);
+            let all_checks=data['points'][0].split("\r");
+            let ul=document.createElement('ul');
+            for(let i=0;i<all_checks.length;i++)
+            {
+              let li=document.createElement('li');
+              li.innerHTML = all_checks[i];
+              ul.append(li);
+            }
+            let maindiv=document.getElementById('checkp');
+            maindiv.append(ul);
+          }
+      })
+}
+  
+</script>
+{% endblock %}

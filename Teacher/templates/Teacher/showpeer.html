@@ -84,23 +84,22 @@
 
 {% block content %}
 {% if messages %}
-        {% for message in messages %}
-         {% if message.tags %}  
-         <script>alert('{{ message }}')</script>
-        {% endif %}
-
-        {% endfor %}
-
-    {% endif %}
+    {% for message in messages %}
+      {% if message.tags %}  
+      <script>alert('{{ message }}')</script>
+      {% endif %}
+    {% endfor %}
+{% endif %}
 <div class="row">
-  <h1 style="margin-top: 20px">Assignment</h1>
-  {% for i in submit %}
+  <h3 style="margin-top: 20px">Group Submissions</h3>
+  <hr />
+  {% for i in submitted %}
   <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
     <div class="card-header">
       <div style="font-weight: 600; font-size: 18px">
-        {{i.0.get_student_name}}
+        Group ID: {{i.group_id}}
       </div>
-      {% if i.1 %}
+      {% if i.group_id in late %}
         <span class="badge rounded-pill bg-danger"><small>Late Submission</small></span>
         {% else %}
         <span class="badge rounded-pill bg-success"><small>Submitted on time</small></span>
@@ -108,38 +107,41 @@
     </div>
     <div class="card-body">
       <blockquote class="blockquote mb-0">
-        <p><small>Description: {{ i.0.assign_desc }}</small></p>
-        <p><small>View file: <a href="{{ i.0.assign_file.url }}" target="_blank">file</a></small></p>
-        <p><small>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.0.stud_id.stud_id %}" > {{ i.0.get_student_name }}</a></small></p>
-        <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.0.stud_id.stud_id %}" class="card-link btn btn-success">Go to Assignment</a>
+        <p><small>Description: {{ i.submit_desc }}</small></p>
+        <p><small>View file: <a href="{{ i.submit_file.url }}" target="_blank">file</a></small></p>
+        {% comment %} <p><small>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.0.stud_id.stud_id %}" > {{ i.0.get_student_name }}</a></small></p> {% endcomment %}
+        <a href="{% url 'classroom1' pk=pk pk2=pk2 %}" class="card-link btn btn-success">Go to Assignment</a>
       </blockquote>
     </div>
   </div>
   {% endfor %}
 
-  {% if peerf %}
-  {% if is_create == "Y" %}
+  {% if flag %}
   <div>
       <input name="peer" value="peer" style="display: none">
-      <button class="btn btn-outline-success" onclick="check()">Start the peergrading</button>
+      <button class="btn btn-outline-success" data-toggle="modal" data-target="#ModalCenter">Start the peergrading</button>
   </div>
-  {% endif %}
   {% endif %}
 
   <div class="row" style="margin-top: 25px;">
-    <h1 style="margin-top: 20px">Not Submitted Assignment</h1>
-    {% if students_not_submitted %}
-      {% for i in students_not_submitted %}
+    <h3 style="margin-top: 20px">Late Submissions</h3>
+    <hr />
+    {% if not_submitted %}
+      {% for i in not_submitted %}
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
           <div class="card-header">
             <div style="font-weight: 600; font-size: 18px">
-              {{i.stud_id.name}}
+              Group ID: {{i.0.group_id}}
             </div>
           </div>
           <div class="card-body">
             <blockquote class="blockquote mb-0">
-              <p><small>Email ID: {{ i.stud_id.email }}</small></p>
-            </blockquote>
+              <p><small>Number of students in the group: {{ i.2 }}</small></p>
+              <p><small>Group Members: </small></p>
+              {% for j in i.1 %}
+              <p><small>Name: {{ j.stud_id.name }}</small></p>
+              {% endfor %}
+          </blockquote>
           </div>
         </div>
       {% endfor %}
