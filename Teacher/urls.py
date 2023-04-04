@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.teach_home, name='teacher_home'),
     path('classroom/<pk2>/', views.classroom, name="classroom"),
     path('deleteclass/', views.deleteclass, name="deleteclass"),
+    path('classroom/<pk2>/students/', views.all_students, name='all_students'),
     path('classroom/<pk2>/assignment/<pk3>/', views.assignmentsub, name='assignmentteach'),
     path('classroom/<pk2>/deleteassignment/', views.assignmentdelete, name='assignmentdelete'),
     path('classroom/<pk2>/assignment/<pk3>/similarity_check', views.assignmentSimilarityCheck, name='assignmentSimilarityCheck'),

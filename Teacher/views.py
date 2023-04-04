@@ -91,6 +91,13 @@ def deleteclass(request, pk):
         ClassTeachers.objects.get(class_code=request.POST['class_code']).delete()
         return JsonResponse({'info': 'succ'})
 
+def all_students(request, pk, pk2):
+    all_studs=ClassStudents.objects.filter(class_code=pk2)
+    if request.method=="POST":
+        ClassStudents.objects.get(stud_id=request.POST.get('stud_id'), class_code=pk2).delete()
+        return redirect('all_students', pk=pk, pk2=pk2)
+    return render(request, 'Teacher/all_students.html', {'pk': pk, 'pk2': pk2, 'all_studs': all_studs})
+
 def classroom(request, pk, pk2):
     if(request.method=="POST"):
         assignment=Assignments()
