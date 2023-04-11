@@ -99,6 +99,8 @@ def all_students(request, pk, pk2):
     return render(request, 'Teacher/all_students.html', {'pk': pk, 'pk2': pk2, 'all_studs': all_studs})
 
 def classroom(request, pk, pk2):
+
+    classroomName = ClassTeachers.objects.get(class_code=pk2).class_name
     if(request.method=="POST"):
         assignment=Assignments()
         assignment.assignment_name=request.POST.get('name')
@@ -131,7 +133,7 @@ def classroom(request, pk, pk2):
         assign.append([i, len(s)])
         studs.append(totalStudents-len(s))
     total_studs_value=len(ClassStudents.objects.filter(class_code=pk2))
-    return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2, 'total': total_studs_value})
+    return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2, 'total': total_studs_value, 'classroomName': classroomName})
 
 def assignmentsub(request, pk, pk2, pk3):
     submitted_assignments = SubmittedAssignments.objects.filter(assignment_id=pk3)

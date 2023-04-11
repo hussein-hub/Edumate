@@ -23,9 +23,9 @@
             <ul>
               <li>
                 {% if pk %}
-                <a href="{% url 'logout' pk=pk %}">logout</a>
+                <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
                 {% else %}
-                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
                 {% endif %}
               </li>
             </ul>

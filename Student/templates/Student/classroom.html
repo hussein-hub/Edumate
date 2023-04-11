@@ -25,22 +25,22 @@
             </a>
             <ul>
               <li>
-                <a class="btn" href="{% url 'schedule_student' pk=pk pk2=pk2 %}">Schedule</a>
+                <a class="btn" href="{% url 'schedule_student' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-regular fa-calendar"></i>Schedule</a>
               </li>
               <li>
-                <a class="btn" href="{% url 'quiz_stud' pk=pk pk2=pk2 %}">Quizes</a>
+                <a class="btn" href="{% url 'quiz_stud' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fas fa-book"></i>Quizes</a>
               </li>
               <li>
-                <a class="btn" href="{% url 'submitatt' pk=pk pk2=pk2 %}">Mark Attendance</a>
+                <a class="btn" href="{% url 'submitatt' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-solid fa-user"></i>Mark Attendance</a>
               </li>
               <li>
-                <a class="btn" href="{% url 'announcement_stud' pk=pk pk2=pk2 %}">Announcements</a>
+                <a class="btn" href="{% url 'announcement_stud' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa fa-bullhorn"></i>Announcements</a>
               </li>
               <li>
-                <a class="btn" href="{% url 'sporjecttrack' pk=pk pk2=pk2 %}">Project Tracking</a>
+                <a class="btn" href="{% url 'sporjecttrack' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-solid fa-clock"></i>Project Tracking</a>
               </li>
               <li>
-                <a class="btn" href="{% url 'stud_group' pk=pk pk2=pk2 %}">Group Peergrading</a>
+                <a class="btn" href="{% url 'stud_group' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-solid fa-people-group"></i>Group Peergrading</a>
               </li>
             </ul>
           </li>
@@ -51,9 +51,9 @@
             <ul>
               <li>
                 {% if pk %}
-                <a href="{% url 'logout' pk=pk %}">logout</a>
+                <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
                 {% else %}
-                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
                 {% endif %}
               </li>
             </ul>
@@ -75,6 +75,10 @@
   .btn-success, .btn-success:active, .btn-success:visited {
     background-color: #008374 !important;
   }
+
+  .navbar a {
+    justify-content: flex-start;
+  }
   
   .btn-success:hover {
     border-color: #008374 !important;
@@ -95,7 +99,13 @@
         {% endfor %}
 
     {% endif %}
-  <h1>Assignments</h1>
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">{{classroomName}}</h1>
+        <p class="lead"></p>
+      </div>
+    </div>
+  {% comment %} <h1>Assignments</h1> {% endcomment %}
   <div class="row">
         {% for i in assign %}
         {% comment %} <div>Assignment name : {{ i.assignment_name }}</div>

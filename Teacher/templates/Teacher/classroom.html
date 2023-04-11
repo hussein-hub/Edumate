@@ -33,22 +33,22 @@
                 <a class="btn " href="{% url 'all_students' pk=pk pk2=pk2 %}">All Students</a>
               </li>
               <li>
-                <a class="btn " href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
+                <a class="btn " href="{% url 'announcementteach' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa fa-bullhorn"></i>Make an announcement</a>
               </li>
               <li>
-                <a class="btn " href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
+                <a class="btn " href="{% url 'schedule' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-regular fa-calendar"></i>Schedule</a>
               </li>
               <li>
-                <a class="btn " href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
+                <a class="btn " href="{% url 'create_quiz' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fas fa-book"></i>Create Quiz</a>
               </li>
               <li>
-                <a class="btn " href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a>
+                <a class="btn " href="{% url 'attendance' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-solid fa-user"></i>Attendance</a>
               </li>
               <li>
-                <a class="btn " href="{% url 'projecttracking' pk=pk pk2=pk2 %}">Project Tracking</a>
+                <a class="btn " href="{% url 'projecttracking' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-solid fa-clock"></i>Project Tracking</a>
               </li>
               <li>
-                <a class="btn " href="{% url 'grouppeergrading' pk=pk pk2=pk2 %}">Group Peergrading</a>
+                <a class="btn " href="{% url 'grouppeergrading' pk=pk pk2=pk2 %}"><i style="margin-right: 6px;" class="fa-solid fa-people-group"></i>Group Peergrading</a>
               </li>
             </ul>
           </li>
@@ -59,9 +59,9 @@
             <ul>
               <li>
                 {% if pk %}
-                <a href="{% url 'logout' pk=pk %}">logout</a>
+                <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
                 {% else %}
-                <a href="{% url 'logout' pk=pk1 %}">logout</a>
+                <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
                 {% endif %}
               </li>
             </ul>
@@ -83,6 +83,9 @@
 
 {% block content %}
 <style>
+  .navbar a {
+    justify-content: flex-start;
+  }
   /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -178,6 +181,12 @@ input:checked + .slider:before {
 <br><br>
 <div class="container ">
   <div class="container" >
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">{{classroomName}}</h1>
+        <p class="lead"></p>
+      </div>
+    </div>
 
 
       <div>

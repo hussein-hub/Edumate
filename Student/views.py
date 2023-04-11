@@ -56,6 +56,7 @@ def stud_home(request, pk):
     return render(request, 'Student/student_home.html', {"data": data, 'pk': pk})
 
 def classroom(request, pk, pk2):
+    classroomName = ClassTeachers.objects.get(class_code=pk2).class_name
     assign=Assignments.objects.filter(class_code=pk2).order_by('-duedate')
     submitted_assign = SubmittedAssignments.objects.filter(stud_id=pk, assignment_id__class_code=pk2)
     # print(submitted_assign)
@@ -75,7 +76,7 @@ def classroom(request, pk, pk2):
     for i in range(len(assign)):
         data.append([assign[i], status[i], late_submit_status[i]])
     
-    return render(request, 'Student/classroom.html', {'assign': data, 'pk': pk, 'pk2': pk2, 'status': status})
+    return render(request, 'Student/classroom.html', {'assign': data, 'pk': pk, 'pk2': pk2, 'status': status, 'classroomName': classroomName})
 
 def assignmentsub(request, pk, pk2, pk3):
     assign=Assignments.objects.filter(assignment_id=pk3)
