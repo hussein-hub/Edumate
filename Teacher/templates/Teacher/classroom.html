@@ -175,6 +175,11 @@ input:checked + .slider:before {
   }
 }
 
+.accordion-button:not(.collapsed){
+  box-shadow: none;
+  color: black;
+  background-color: #f8f9fa;
+}
 
 
 </style>
@@ -308,8 +313,21 @@ input:checked + .slider:before {
               <p><small>Max marks: {{ i.0.max_marks }}</small></p>
               <p><small>Description : {{ i.0.assignment_description }}</small></p>
               <p><small>Due Date : {{ i.0.duedate }}</small></p>
-              <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
-              <p><small style = "font-size: 13px">Not submitted by : {{ j }} </small></p>
+              <div class="accordion" id="accordionExample_{{forloop.counter}}" style="margin-bottom: 2vh;">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_{{forloop.counter}}" aria-expanded="false" aria-controls="collapseOne_{{forloop.counter}}">
+                      Submissions
+                    </button>
+                  </h2>
+                  <div id="collapseOne_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample_{{forloop.counter}}">
+                    <div class="accordion-body">
+                      <p><small style = "font-size: 13px">Submitted By : {{ i.1 }}</small></p>
+                      <p><small style = "font-size: 13px">Not submitted by : {{ j }} </small></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>
             </blockquote>
           </div>
