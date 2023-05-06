@@ -842,7 +842,109 @@ def showpeergroups(request, pk, pk2, pk3):
             mems=Peermembers.objects.filter(pgro_id=i.group_id)
             not_submitted.append([i, mems, len(mems)])
             flag=False
-    return render(request, 'Teacher/showpeer.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'submitted': submitted, 'not_submitted': not_submitted, 'late': late, 'flag': flag})
+    temppeer=PeergradeGroups.objects.filter(class_code=pk2, assignment_id=pk3)
+    quest_and_ans=[]
+    ans_options=[]
+    questsadded=False
+    assign_map={}
+    temp_g_a_s={}
+    for i in all_groups:
+        membs=Peermembers.objects.filter(pgro_id=i.group_id)
+        for j in membs:
+            temp_g_a_s[j.stud_id.stud_id]=i.group_id
+    if temppeer:
+        flag=False
+        quest_and_ans=temppeer[0].questions.split("*")
+        ans_options.append(temppeer[0].opt1.split("*"))
+        ans_options.append(temppeer[0].opt2.split("*"))
+        ans_options.append(temppeer[0].opt3.split("*"))
+        questsadded=True
+        temp_peer=PeergradeGroups.objects.get(class_code=pk2, assignment_id=pk3)
+        temp_check=PeerAssignsGroups.objects.filter(peergrade_id=temp_peer.peergrade_id)
+        for i in temp_check:
+            if i.stud_id in assign_map:
+                assign_map[i.stud_id].append(i)
+            else:
+                assign_map[i.stud_id]=[temp_g_a_s[i.stud_id.stud_id], i]
+    if request.method == "POST":
+        student_list=[]
+        group_and_studs={}
+        for i in all_groups:
+            membs=Peermembers.objects.filter(pgro_id=i.group_id)
+            for j in membs:
+                student_list.append(j.stud_id.stud_id)
+                group_and_studs[j.stud_id.stud_id]=i.group_id
+        num_peers=assignment.num_peers
+        peer_dict = {}
+        peer_dict2= {}
+        for i in student_list:
+            peer_dict[i]=[]
+            peer_dict2[i]=[]
+        b=num_peers*student_list
+        random.shuffle(b)
+        count=len(b)
+        i=0
+        j=0
+        another_count=0
+        while(count!=0):
+            if (b[j]!=student_list[i]) and (b[j] not in peer_dict[student_list[i]]) and (group_and_studs[student_list[i]]!=group_and_studs[b[j]]) and (group_and_studs[b[j]] not in peer_dict2[student_list[i]]):
+                peer_dict[student_list[i]].append(b[j])
+                peer_dict2[student_list[i]].append(group_and_studs[b[j]])
+                b.remove(b[j])
+                count=count-1
+                if len(peer_dict[student_list[i]])==num_peers:
+                    i=i+1
+                    random.shuffle(b)
+                    another_count=0
+            if(len(b)==0):
+                break
+            j=(j-1)%len(b)
+            if j==0:
+                another_count=another_count+1
+            if(another_count==2):
+                b=num_peers*student_list
+                i=0
+                j=0
+                count=len(b)
+                another_count=0
+                random.shuffle(b)
+                for k in student_list:
+                    peer_dict[k]=[]
+                    peer_dict2[k]=[]
+        ques1=request.POST.get('ques1')
+        ques2=request.POST.get('ques2')
+        ques3=request.POST.get('ques3')
+        opt11=request.POST.get('opt11')
+        opt12=request.POST.get('opt12')
+        opt13=request.POST.get('opt13')
+        opt21=request.POST.get('opt21')
+        opt22=request.POST.get('opt22')
+        opt23=request.POST.get('opt23')
+        opt31=request.POST.get('opt31')
+        opt32=request.POST.get('opt32')
+        opt33=request.POST.get('opt33')
+        final_ques=ques1+"*"+ques2+"*"+ques3
+        final_opt1=opt11+"*"+opt12+"*"+opt13
+        final_opt2=opt21+"*"+opt22+"*"+opt23
+        final_opt3=opt31+"*"+opt32+"*"+opt33
+        peergr=PeergradeGroups()
+        peergr.class_code=ClassTeachers.objects.get(class_code=pk2)
+        peergr.assignment_id=assignment
+        peergr.questions=final_ques
+        peergr.opt1=final_opt1
+        peergr.opt2=final_opt2
+        peergr.opt3=final_opt3
+        peergr.save()
+        for i in peer_dict.keys():
+            for j in peer_dict[i]:
+                 new_assign=PeerAssignsGroups()
+                 new_assign.peergrade_id=peergr
+                 new_assign.stud_id=Students.objects.get(stud_id=i)
+                 new_assign.assigned_stud_id=Students.objects.get(stud_id=j)
+                 new_assign.group_id=PeerGroups.objects.get(group_id=group_and_studs[j])
+                 new_assign.save()
+        return redirect('showpeergroups', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Teacher/showpeer.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'submitted': submitted, 'not_submitted': not_submitted, 'late': late, 'flag': flag, 'quest_and_ans': zip(quest_and_ans, ans_options), 'ques': questsadded, 'num': range(assignment.num_peers), 'peer': assign_map})
 
 def logout(request, pk):
     request.session.flush()

@@ -159,7 +159,7 @@
     
 <hr />
 <div>
-        {% if peerf %}
+        {% if ques == True %}
         <h4>Peergrading Results</h4>
         <hr />
         <h4>Peergrading questions</h4>
@@ -182,10 +182,12 @@
           </tr>
           {% for i, j in peer.items %}
           <tr>
-            <td>{{ i.name }} (ID: {{ i.stud_id }})</td>
+            <td>{{ i.name }} (GID: {{ j.0 }})</td>
             {% for k in j %}
-            <td>{{ k.assigned_stud_id.name }} (ID: {{ k.assigned_stud_id.stud_id }})</td>
+            {% if forloop.counter != 1 %}
+            <td>{{ k.assigned_stud_id.name }} (GID: {{ k.group_id.group_id }})</td>
             <td>{{ k.marks|floatformat:2 }}</td>
+            {% endif %}
             {% endfor %}
           </tr>
           {% endfor %}

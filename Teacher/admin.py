@@ -86,3 +86,6 @@ admin.site.register(PeerAssigns)
 admin.site.register(Grouppeers)
 admin.site.register(PeerGroups)
 admin.site.register(Peermembers)
+
+admin.site.register(PeergradeGroups)
+admin.site.register(PeerAssignsGroups)

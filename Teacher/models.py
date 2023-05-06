@@ -216,4 +216,26 @@ class Peermembers(models.Model):
     class Meta:
         db_table = "Peermembers"
 
+class PeergradeGroups(models.Model):
+    peergrade_id = models.AutoField(primary_key=True)
+    class_code = models.ForeignKey(ClassTeachers, on_delete=models.CASCADE, blank=True, null=True)
+    assignment_id = models.ForeignKey(Grouppeers, on_delete=models.CASCADE, blank=True, null=True)
+    questions = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    opt1 = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    opt2 = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    opt3 = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    class Meta:
+        db_table = "Peergrade_Groups"
+
+class PeerAssignsGroups(models.Model):
+    peergrade_id = models.ForeignKey(PeergradeGroups, on_delete=models.CASCADE, blank=True, null=True)
+    stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+    assigned_stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True, related_name="+")
+    feedb = models.CharField(max_length=100, default=None, blank=True, null=True)
+    marks = models.FloatField(default=None, blank=True, null=True)
+    options_selec = models.CharField(max_length=1000, default=None, blank=True, null=True)
+    group_id = models.ForeignKey(PeerGroups, on_delete=models.CASCADE, blank=True, null=True)
+    class Meta:
+        db_table = "Peerassigns_Groups"
+
 
