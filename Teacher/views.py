@@ -946,6 +946,28 @@ def showpeergroups(request, pk, pk2, pk3):
         return redirect('showpeergroups', pk=pk, pk2=pk2, pk3=pk3)
     return render(request, 'Teacher/showpeer.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'submitted': submitted, 'not_submitted': not_submitted, 'late': late, 'flag': flag, 'quest_and_ans': zip(quest_and_ans, ans_options), 'ques': questsadded, 'num': range(assignment.num_peers), 'peer': assign_map})
 
+def groupgrade(request, pk, pk2, pk3, pk4):
+    assignment=Grouppeers.objects.get(gro_id=pk3)
+    group=PeerGroups.objects.get(group_id=pk4)
+    members=Peermembers.objects.filter(pgro_id=pk4)
+    peergroup=PeergradeGroups.objects.get(class_code=pk2, assignment_id=pk3)
+    peers=[]
+    for i in members:
+        assigned=PeerAssignsGroups.objects.filter(peergrade_id=peergroup.peergrade_id, assigned_stud_id=i.stud_id.stud_id)
+        peers.append([i, assigned])
+    if request.method == "POST":
+        marks=request.POST.get('marks')
+        feedback=request.POST.get('feedback')
+        if float(marks)>float(assignment.marks):
+            messages.error(request, "Entered marks must be less than maximum marks")
+        else:
+            messages.error(request, "Marks and feedback saved successfully")
+            group.marksbyteacher=float(marks)
+            group.feedbackbyteacher=feedback
+            group.save()
+        return redirect('groupgrade', pk=pk, pk2=pk2, pk3=pk3, pk4=pk4)
+    return render(request, 'Teacher/grouppeer_grade.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'group': group, 'members': members, 'assignment': assignment, 'peers': peers})
+
 def logout(request, pk):
     request.session.flush()
     return redirect('home')

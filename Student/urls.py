@@ -21,7 +21,8 @@ urlpatterns = [
     path('classroom/<pk2>/projecttrack/<pk3>/', views.single_project, name='single_project'),
     path('classroom/<pk2>/assignment/<pk3>/peergrade/<pk4>/', views.grad, name='grad'),
     path('classroom/<pk2>/grouppeergrading/', views.stud_group, name='stud_group'),
-    path('classroom/<pk2>/grouppeergrading/<pk3>/', views.single_stud_group, name='single_stud_group')
+    path('classroom/<pk2>/grouppeergrading/<pk3>/', views.single_stud_group, name='single_stud_group'),
+    path('classroom/<pk2>/grouppeergrading/<pk3>/peergrade/<pk4>/', views.gradesingle, name='gradesingle')
 ]
 
 if settings.DEBUG:

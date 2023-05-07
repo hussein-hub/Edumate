@@ -1,0 +1,228 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block title %}
+<title>Group Peergrade - Grade Assignments</title>
+{% endblock title %}
+
+{% block styles %}
+<style>
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+</style>
+{% endblock %}
+
+
+{% block navbar %}
+<style>
+ 
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
+  
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
+
+</style>
+
+<header id="header" class="header d-flex align-items-center">
+  {% if messages %}
+  {% for message in messages %}
+   {% if message.tags %}  
+       <script>alert('{{ message }}')</script>
+   {% endif %}
+
+   {% endfor %}
+
+{% endif %}
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="#" class="logo d-flex align-items-center">
+      <!-- Uncomment the line below if you also wish to use an image logo -->
+      <!-- <img src="assets/img/logo.png" alt=""> -->
+      <h1>EDUMATE<span>.</span></h1>
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>
+        
+        <li>
+          <a href="{% url 'showpeergroups' pk=pk pk2=pk2 pk3=pk3 %}" class="btn">Go back to assignments</a>
+        </li>
+        <li class="dropdown">
+          <a href="#">
+            <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+          </a>
+          <ul>
+            <li>
+              {% if pk %}
+              <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+              {% else %}
+              <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+              {% endif %}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav><!-- .navbar -->
+
+    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+  </div>
+</header>
+{% endblock navbar %}
+
+{% block content %}
+
+    {% comment %} <div>
+        {% for i in submit %}
+        <p>Student ID: {{ i.stud_id }}</p>
+        <p>Description: {{ i.assign_desc }}</p> 
+        <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
+        {% endfor %}
+      <a href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to classroom</a>
+    </div> {% endcomment %}
+
+     
+    <div class="container">
+        <div class="row" style="display: flex; align-items: center">
+
+            
+            <div class="col-sm-6">
+                <br><br>
+                <form method="POST" style="background: rgba( 255, 255, 255, 0.25 );
+                box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+                backdrop-filter: blur( 4px );
+                -webkit-backdrop-filter: blur( 4px );
+                border-radius: 10px;
+                border: 1px solid rgba( 255, 255, 255, 0.18 );
+                padding: 1rem;" >
+                  {% csrf_token %}
+                  <div class="form-group mb-3">
+                    <label for="exampleInputEmail1">Assignment Name: {{ assignment.gpeer_name }}</label>
+                  </div>
+                  <div class="form-group mb-3">
+                      <label for="exampleInputEmail1">Description: {{ assignment.gpeer_desc }}</label>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="exampleInputEmail3">Max marks: {{ assignment.marks }}</label>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="exampleInputEmail3">Due Date: {{ assignment.gpeer_due }}</label>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="exampleInputEmail3">Number of students per group: {{ assignment.num_studs }}</label>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="exampleInputEmail3">Number of students to peergrade: {{ assignment.num_peers }}</label>
+                  </div>
+                </form>
+              </div>
+
+
+            <div class="col-sm-6">
+              <br><br>
+              <form method="POST" style="background: rgba( 255, 255, 255, 0.25 );
+              box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+              backdrop-filter: blur( 4px );
+              -webkit-backdrop-filter: blur( 4px );
+              border-radius: 10px;
+              border: 1px solid rgba( 255, 255, 255, 0.18 );
+              padding: 1rem;" >
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                  <label for="exampleInputEmail1">Group ID: {{ group.group_id }}</label>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="exampleInputEmail2">Description: {{ group.submit_desc }}</label>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="exampleInputEmail1">Members: 
+                        <ul>
+                            {% for i in members %}
+                            <li>{{ i.stud_id.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </label>
+                </div>
+                <div style="display: flex; flex-direction: column">
+                    <div>
+                Marks: <input placeholder="Enter Marks" name="marks" style="margin-top: 5px" type="number" step="0.001" required value="{{ group.marksbyteacher }}" />
+                    </div>
+                    <div>
+                        {% if group.feedbackbyteacher %}
+                        Feedback: <input placeholder="Feedback" name="feedback" style="margin-top: 5px" type="text" required value="{{ group.feedbackbyteacher }}" />
+                        {% else %}
+                        Feedback: <input placeholder="Feedback" name="feedback" style="margin-top: 5px" type="text" required />
+                        {% endif %}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Submit</button>
+              </form>
+            </div>
+            <div class="col-md-12">
+              <div style="background: rgba( 255, 255, 255, 0.25 );
+              box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+              backdrop-filter: blur( 4px );
+              -webkit-backdrop-filter: blur( 4px );
+              border-radius: 10px;
+              border: 1px solid rgba( 255, 255, 255, 0.18 );
+              padding: 1rem;" >
+              <h4>Peer grading results</h4>
+              <hr>
+                {% for i in peers %}
+                <div class="form-group mb-3">
+                    <label for="exampleInputEmail1"><strong>Results for : {{ i.0.stud_id.name }}</strong></label>
+                  </div>
+                <hr />
+                  {% for j in i.1 %}
+                    <div class="form-group mb-3">
+                    <label for="exampleInputEmail1">Peer {{ forloop.counter }}: {{ j.stud_id.name }}</label>
+                    </div>
+                    <div class="form-group mb-3">
+                    <div>
+                    <label for="exampleInputEmail2">Feedback: {{ j.feedb }}</label>
+                    </div>
+                    <div>
+                    <label for="exampleInputEmail2">Marks given: {{ j.marks }}</label>
+                    </div>
+                    </div>
+                  {% endfor %}
+                <hr />
+                {% endfor %}
+              </div>
+            </div>
+            {% comment %} <div class="col-sm-6">
+              <iframe src={{ submit.assign_file.url }}#toolbar=0 style="height:40rem;  width: 100%; display:block;" frameborder="0"></iframe>
+          </div> {% endcomment %}
+        </div>
+        
+    </div>
+    <div id="adobe-dc-view"></div>
+ <script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
+ <script type="text/javascript">
+    document.addEventListener("adobe_dc_view_sdk.ready", function()
+    {
+        var adobeDCView = new AdobeDC.View({clientId: "a4a89fb3f3714753b882dad67e66d6a2", divId: "adobe-dc-view"});
+        adobeDCView.previewFile(
+       {
+          content:   {location: {url: "{{ group.submit_file.url }}"}},
+          metaData: {fileName: "{{ group.submit_desc }}"}
+       });
+    });
+ </script>
+{% endblock content %}
+
+{% block script %}
+<script>
+
+</script>
+{% endblock script %}

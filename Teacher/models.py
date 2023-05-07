@@ -205,6 +205,7 @@ class PeerGroups(models.Model):
     submit_desc = models.CharField(max_length=1000, default=None, blank=True, null=True)
     submit_by = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True)
     marksbyteacher = models.FloatField(default=None, blank=True, null=True)
+    feedbackbyteacher = models.CharField(max_length=100, default=None, blank=True, null=True)
     submit_date = models.DateTimeField(default=datetime.now)
     class Meta:
         db_table = "Peergroups"

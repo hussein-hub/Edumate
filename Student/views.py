@@ -490,6 +490,8 @@ def single_stud_group(request, pk, pk2, pk3):
     all_group=PeerGroups.objects.filter(gro_id=group.gro_id)
     single_group=None
     members=None
+    assigned=None
+    total_marks="X"
     for i in all_group:
         mems=Peermembers.objects.filter(stud_id=pk, pgro_id=i.group_id)
         if mems:
@@ -499,6 +501,23 @@ def single_stud_group(request, pk, pk2, pk3):
     submi=None
     if single_group.submit_desc:
         submi=single_group.submit_file.url
+    peerreviews=[]
+    p_groups=PeergradeGroups.objects.filter(class_code=pk2, assignment_id=pk3)
+    if p_groups:
+        p_groups=p_groups[0]
+        p_reviews=PeerAssignsGroups.objects.filter(peergrade_id=p_groups.peergrade_id, assigned_stud_id=pk)
+        peer_marks=[]
+        if single_group and single_group.marksbyteacher:
+            peer_marks.append(single_group.marksbyteacher)
+        for i in p_reviews:
+            if i.feedb:
+                peerreviews.append(i.feedb)
+                peer_marks.append(i.marks)
+            else:
+                peerreviews.append("X")
+        if len(peer_marks) == group.num_studs + 1:
+            total_marks=sum(peer_marks)/(group.num_studs + 1)
+        assigned=PeerAssignsGroups.objects.filter(peergrade_id=p_groups.peergrade_id, stud_id=pk)
     if request.method=="POST":
         single_group.submit_desc=request.POST.get('description')
         _, file = request.FILES.popitem()
@@ -513,4 +532,50 @@ def single_stud_group(request, pk, pk2, pk3):
         single_group.submit_date=timezone.now()
         single_group.save()
         return redirect('single_stud_group', pk=pk, pk2=pk2, pk3=pk3)
-    return render(request, 'Student/single_stud_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'group': group, 'single_group': single_group, 'members': members, 'submi': submi})
+    return render(request, 'Student/single_stud_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'group': group, 'single_group': single_group, 'members': members, 'submi': submi, 'pe': peerreviews, 'assigned': assigned, 'total_marks': total_marks})
+
+def gradesingle(request, pk, pk2, pk3, pk4):
+    pet=PeergradeGroups.objects.get(class_code=pk2, assignment_id=pk3)
+    pe=PeerAssignsGroups.objects.get(peergrade_id=pet.peergrade_id, stud_id=pk, assigned_stud_id=pk4)
+    questions=pet.questions.split("*")
+    final_options=[]
+    final_options.append(pet.opt1.split("*"))
+    final_options.append(pet.opt2.split("*"))
+    final_options.append(pet.opt3.split("*"))
+    submitted=[]
+    members=[]
+    assignment=Grouppeers.objects.get(gro_id=pk3)
+    all_groups=PeerGroups.objects.filter(gro_id=pk3)
+    for i in all_groups:
+        membs=Peermembers.objects.filter(stud_id=pk4, pgro_id=i.group_id)
+        if membs:
+            submitted=i
+            members=Peermembers.objects.filter(pgro_id=i.group_id)
+    pe_assigned=[]
+    if request.method=="POST":
+        pe.feedb=request.POST.get('feedback')
+        pe.options_selec=request.POST.get('1')+"*"+request.POST.get('2')+"*"+request.POST.get('3')
+        total_marks=0
+        if request.POST.get('1')=='1':
+            total_marks=total_marks+assignment.marks*0.50
+        elif request.POST.get('1')=='2':
+            total_marks=total_marks+assignment.marks*0.75
+        elif request.POST.get('1')=='3':
+            total_marks=total_marks+assignment.marks
+        if request.POST.get('2')=='1':
+            total_marks=total_marks+assignment.marks*0.50
+        elif request.POST.get('2')=='2':
+            total_marks=total_marks+assignment.marks*0.75
+        elif request.POST.get('2')=='3':
+            total_marks=total_marks+assignment.marks
+        if request.POST.get('3')=='1':
+            total_marks=total_marks+assignment.marks*0.50
+        elif request.POST.get('3')=='2':
+            total_marks=total_marks+assignment.marks*0.75
+        elif request.POST.get('3')=='3':
+            total_marks=total_marks+assignment.marks
+        total_marks=total_marks/3
+        pe.marks=total_marks
+        pe.save()
+        return redirect('single_stud_group', pk=pk, pk2=pk2, pk3=pk3)
+    return render(request, 'Student/gradesingle.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'ques_and_ans': zip(questions, final_options), 'submitted': submitted, 'assignment': assignment, 'pe': pe_assigned, 'members': members})

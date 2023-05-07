@@ -110,7 +110,7 @@
         <p><small>Description: {{ i.submit_desc }}</small></p>
         <p><small>View file: <a href="{{ i.submit_file.url }}" target="_blank">file</a></small></p>
         {% comment %} <p><small>Grade Assignment: <a href="{% url 'grade' pk=pk pk2=pk2 pk3=pk3 pk4=i.0.stud_id.stud_id %}" > {{ i.0.get_student_name }}</a></small></p> {% endcomment %}
-        <a href="{% url 'classroom1' pk=pk pk2=pk2 %}" class="card-link btn btn-success">Go to Assignment</a>
+        <a href="{% url 'groupgrade' pk=pk pk2=pk2 pk3=pk3 pk4=i.group_id %}" class="card-link btn btn-success">Go to Assignment</a>
       </blockquote>
     </div>
   </div>

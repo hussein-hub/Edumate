@@ -32,6 +32,7 @@ urlpatterns = [
     path('classroom/<pk2>/peergroups/', views.grouppeergrading, name='grouppeergrading'),
     path('classroom/<pk2>/peergroups/deletegroup/', views.delgroup, name='delgroup'),
     path('classroom/<pk2>/peergroups/<pk3>/', views.showpeergroups, name='showpeergroups'),
+    path('classroom/<pk2>/peergroups/<pk3>/showassignment/<pk4>/', views.groupgrade, name='groupgrade'),
     # path('video_feed', views.video_feed, name='video_feed'),
     path('logout/', views.logout, name="logout")
 ]

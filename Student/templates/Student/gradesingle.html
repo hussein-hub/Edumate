@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<title>Submit Assignment - Group Peergrading</title>
+<title>Group Peergrading - Peergrade</title>
 {% endblock title %}
 
 {% block styles %}
@@ -22,7 +22,7 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li>
-            <a class="btn" href="{% url 'stud_group' pk=pk pk2=pk2 %}">Back</a>
+            <a class="btn" href="{% url 'single_stud_group' pk=pk pk2=pk2 pk3=pk3 %}">Back</a>
           </li>
           
           <li class="dropdown">
@@ -131,106 +131,50 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly; 
-    height: 95vh;
+    height: 80vh;
     align-items: center;">
     <div class="main-content" style="background: rgba( 255, 255, 255, 0.25 );
       box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
       backdrop-filter: blur( 4px );
       -webkit-backdrop-filter: blur( 4px );
       border-radius: 10px;
-      border: 1px solid rgba( 255, 255, 255, 0.18 );">
+      border: 1px solid rgba( 255, 255, 255, 0.18 ); width: 90vw">
         <div>
-          <p style="padding-top: 30px"><b>Assignment name</b> : {{ group.gpeer_name }}</p> 
-          <p><b>Assignment description</b> : {{ group.gpeer_desc }}</p>
-          <p><b>Max Marks</b> : {{ group.marks }}</p>
-          {% if total_marks != "X" %}
-          <p><b>Marks given by teacher</b> : {{ total_marks|floatformat:2  }}</p>
-          {% else %}
-          <p><b>Marks given by teacher</b> : Not given</p>
-          {% endif %}
-          <p><b>Due date</b> : {{ group.gpeer_due }}</p>
-          <p><b>Group ID : {{ single_group.group_id }}</b></p>
-          <ul><p><b>Members : </b></p>
-          {% for i in members %}
-          <li><p> {{ i.stud_id.name }} </p></li>
-          {% endfor %}
-          </ul>
+          <p style="padding-top: 30px"><b>Assignment name</b> : {{ assignment.gpeer_name }}</p> 
+          <p><b>Assignment description</b> : {{ assignment.gpeer_desc }}</p>
+          <p><b>Marks</b> : {{ assignment.marks }}</p>
+          <p><b>Due date</b> : {{ assignment.gpeer_due }}</p>
+          <p><b>Group Members</b> :
+            <ul>
+                {% for i in members  %}
+                <li>{{ i.stud_id.name }}</li>
+                {% endfor %}
+            </ul>
+          </p>
+          <p><b>Description given by student</b> : {{ submitted.submit_desc }}</p> 
         </div>
-          <form method="post" action="#" enctype="multipart/form-data" >
-            {% csrf_token %}
-            {% if single_group.submit_desc %}
-            <p><b>Submitted by : {{ single_group.submit_by.name }}</b></p>
-            <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description" required value="{{ single_group.submit_desc }}">
-            {% else %}
-            <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description" required>
-            {% endif %}
-            <div class="form-group files">
-              {% comment %} <div> {% endcomment %}
-                {% if single_group.submit_file %}
-                <input onchange="updateFiles()" id="file" type="file" class="form-control" accept="application/pdf" name="submission">
-                {% else %}
-                <input onchange="updateFiles()" id="file" type="file" class="form-control" name="submission" accept="application/pdf" required>
-                {% endif %}
-                {% comment %} <span>Upload pdf file</span> {% endcomment %}
-              {% comment %} </div> {% endcomment %}
-            </div>
-            <div id="fileList">
-              
-            </div>
-            <button class="btn btn-success" type="submit">Submit</button>
-          </form>
-      </div>
-      <div class="col-md-4">
-      <div style="background: rgba( 255, 255, 255, 0.25 );
-      box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
-      backdrop-filter: blur( 4px );
-      -webkit-backdrop-filter: blur( 4px );
-      border-radius: 10px;
-      border: 1px solid rgba( 255, 255, 255, 0.18 ); margin: 10px 10px; padding: 10px 10px">
+        <hr />
         <div>
-          <p style="padding-top: 30px"><b>Peer Grading</p>
-            {% for i in assigned %}
-            <p>Assigned Peer {{ forloop.counter}}:
-              {% if i.marks %}
-              <a>Graded</a>
-              {% else %}
-              <a href="{% url 'gradesingle' pk=pk pk2=pk2 pk3=pk3 pk4=i.assigned_stud_id.stud_id %}">Link</a>
-              {% endif %}
-            </p>
-            {% endfor %}
-        </div>
+            <h3>Peergrade</h3>
+            <form method="post">
+                {% csrf_token %}
+                {% for i, j in ques_and_ans %}
+                <ul style="list-style: none">
+                    {{ forloop.counter }}. {{ i }}
+                    {% for k in j %}
+                    <li><input type="radio" name={{ forloop.parentloop.counter }} required value="{{ forloop.counter }}"/> &nbsp; {{ k }}</li>
+                    {% endfor %}
+                </ul>
+                {% endfor %}
+                <input type="text" name="feedback" placeholder="Feedback" required class="form-control" />
+                <button class="btn btn-success" type="submit">Submit</button>
+            </form>
+          </div>
       </div>
-      <div style="background: rgba( 255, 255, 255, 0.25 );
-      box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
-      backdrop-filter: blur( 4px );
-      -webkit-backdrop-filter: blur( 4px );
-      border-radius: 10px;
-      border: 1px solid rgba( 255, 255, 255, 0.18 ); margin: 10px 10px; padding: 10px 10px">
-        <div>
-          <p style="padding-top: 30px"><b>Peer reviews</p>
-            {% for i in pe %}
-            <p>Peer {{ forloop.counter}}:
-              {% if i != "X" %}
-              <a>{{ i }}</a>
-              {% else %}
-              <a>Not given</a>
-              {% endif %}
-            </p>
-            {% endfor %}
-        </div>
-      </div>
-    </div>
     </div>
   </div>
 
-
-
-  {% if submi %}
-    <div style="margin-left: 10%; margin-right: 10%;" id="adobe-dc-view"></div>
-  {% else %}
-    <div id="adobe-dc-view" style="display: none;"></div>
-  {% endif %}
-  {% comment %} <a class="btn btn-outline-success" href="{% url 'classroom1' pk=pk pk2=pk2 %}">Back to classroom</a> {% endcomment %}
+    <div style="margin-left: 10%; margin-right: 10%; margin-top: 10%" id="adobe-dc-view"></div>
 {% endblock content %}
 
 
@@ -244,11 +188,10 @@
         var adobeDCView = new AdobeDC.View({clientId: "3b858419caa348589cf28e0a25d0dd52", divId: "adobe-dc-view"});
         adobeDCView.previewFile(
        {
-          content:   {location: {url: "{{submi}}"}},
-          metaData: {fileName: "{{single_group.submit_desc}}"}
+          content:   {location: {url: "{{submitted.submit_file.url}}"}},
+          metaData: {fileName: "{{submitted.submit_desc}}"}
        });
     });
-    console.log("{{ submi }}");
 
   // create a variable that fetched value from input field with id "file" every second
   var singleFile; 
