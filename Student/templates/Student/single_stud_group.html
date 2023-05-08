@@ -140,26 +140,26 @@
       border-radius: 10px;
       border: 1px solid rgba( 255, 255, 255, 0.18 );">
         <div>
-          <p style="padding-top: 30px"><b>Assignment name</b> : {{ group.gpeer_name }}</p> 
-          <p><b>Assignment description</b> : {{ group.gpeer_desc }}</p>
-          <p><b>Max Marks</b> : {{ group.marks }}</p>
+          <p style="padding-top: 30px"><b style="color: #008374">Assignment name</b> : {{ group.gpeer_name }}</p> 
+          <p><b style="color: #008374">Assignment description</b> : {{ group.gpeer_desc }}</p>
+          <p><b style="color: #008374">Max Marks</b> : {{ group.marks }}</p>
           {% if total_marks != "X" %}
-          <p><b>Marks given by teacher</b> : {{ total_marks|floatformat:2  }}</p>
+          <p><b style="color: #008374">Marks given by teacher</b> : {{ total_marks|floatformat:2  }}</p>
           {% else %}
-          <p><b>Marks given by teacher</b> : Not given</p>
+          <p><b style="color: #008374">Marks given by teacher</b> : Not given</p>
           {% endif %}
-          <p><b>Due date</b> : {{ group.gpeer_due }}</p>
-          <p><b>Group ID : {{ single_group.group_id }}</b></p>
-          <ul><p><b>Members : </b></p>
-          {% for i in members %}
-          <li><p> {{ i.stud_id.name }} </p></li>
-          {% endfor %}
-          </ul>
+          <p><b style="color: #008374">Due date</b> : {{ group.gpeer_due }}</p>
+          <p><b style="color: #008374">Group ID : {{ single_group.group_id }}</b></p>
+          <div style="margin-bottom: 12px"><b style="color: #008374">Members : </b>
+            {% for i in members %}
+              <li style="margin-left: 12px">{{ i.stud_id.name }}</li>
+            {% endfor %}
+          </div>
         </div>
           <form method="post" action="#" enctype="multipart/form-data" >
             {% csrf_token %}
             {% if single_group.submit_desc %}
-            <p><b>Submitted by : {{ single_group.submit_by.name }}</b></p>
+            <p><b style="color: #008374">Submitted by : {{ single_group.submit_by.name }}</b></p>
             <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description" required value="{{ single_group.submit_desc }}">
             {% else %}
             <input style="margin-bottom: 10px;" class="form-control" type="text" placeholder="Enter assignment description" name="description" required>
@@ -188,7 +188,7 @@
       border-radius: 10px;
       border: 1px solid rgba( 255, 255, 255, 0.18 ); margin: 10px 10px; padding: 10px 10px">
         <div>
-          <p style="padding-top: 30px"><b>Peer Grading</p>
+          <p style="padding-top: 30px"><b  style="color: #008374">Peer Grading</b></p>
             {% for i in assigned %}
             <p>Assigned Peer {{ forloop.counter}}:
               {% if i.marks %}
@@ -207,7 +207,7 @@
       border-radius: 10px;
       border: 1px solid rgba( 255, 255, 255, 0.18 ); margin: 10px 10px; padding: 10px 10px">
         <div>
-          <p style="padding-top: 30px"><b>Peer reviews</p>
+          <p style="padding-top: 30px"><b style="color: #008374">Peer reviews</b></p>
             {% for i in pe %}
             <p>Peer {{ forloop.counter}}:
               {% if i != "X" %}

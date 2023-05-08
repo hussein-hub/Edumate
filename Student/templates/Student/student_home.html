@@ -16,6 +16,13 @@
     background-color: white !important;
     color: #008374 !important;
   }
+
+  .accordion-button:not(.collapsed){
+    box-shadow: none;
+    color: black;
+    background-color: #f8f9fa;
+  }
+  
 </style>
 {% endblock styles %}
 
@@ -106,14 +113,34 @@
                 <blockquote class="blockquote mb-0">
                   <p>Instructor: {{ i.2 }}</p>
                   <p>Class code: {{ i.0 }}</p>
-                  <p>Upcoming assignments:</p>
+                  <div class="accordion" id="accordionExample_{{forloop.counter}}" style="margin-bottom: 2vh;">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_{{forloop.counter}}" aria-expanded="false" aria-controls="collapseOne_{{forloop.counter}}">
+                          Upcoming assignments
+                        </button>
+                      </h2>
+                      <div id="collapseOne_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample_{{forloop.counter}}">
+                        <div class="accordion-body">
+                          {% for j in i.3 %}
+                            {% if j.4 %}
+                              <p style="font-size: 14px; color: red;">{{j.1}} : {{j.3}}</p>
+                            {% else %}
+                              <p style="font-size: 14px">{{j.1}} : {{j.3}}</p>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% comment %} <p>Upcoming assignments:</p>
                   {% for j in i.3 %}
                     {% if j.4 %}
                     <p style="font-size: 14px; color: red;">{{j.1}} : {{j.3}}</p>
                     {% else %}
                     <p style="font-size: 14px">{{j.1}} : {{j.3}}</p>
                     {% endif %}
-                  {% endfor %}
+                  {% endfor %} {% endcomment %}
                   <a class="btn btn-success" href="{% url 'classroom1' pk=pk pk2=i.0 %}">Go to classroom</a>
                 </blockquote>
               </div>

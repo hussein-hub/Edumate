@@ -100,8 +100,9 @@ class AttStud(models.Model):
     att_id = models.ForeignKey(Attendance, on_delete=models.CASCADE, blank=True, null=True)
     stud_id = models.ForeignKey("Edumate_app.Students", on_delete=models.CASCADE, blank=True, null=True)
     att_time = models.CharField(max_length=100)
-    img_number = models.IntegerField(default=0)
+    img_number = models.IntegerField(default=0, max_length=100)
     is_approved = models.BooleanField(default=True)
+    is_cropped = models.BooleanField(default=False)
     class Meta:
         db_table = "AttStud"
 

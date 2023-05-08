@@ -16,6 +16,8 @@ from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
 import re
+import cv2
+from django.http import JsonResponse
 # Create your views here.
 
 def stud_home(request, pk):
@@ -358,7 +360,11 @@ def submitatt(request, pk, pk2, pk3):
     names = att_objects
     marked_img_numbers = list(marked_img_numbers)
     marked_img_numbers= {marked_img_numbers[j]:names[j] for j in range(len(marked_img_numbers))}
-    allImages = [folderName[1:]+"/"+i for i in os.listdir(folderName)]
+    allImages = []#[folderName[1:]+"/"+i if os.path.isFile(i) else continue for i in os.listdir(folderName)]
+    for i in os.listdir(folderName):
+        if os.path.isfile(folderName+"/"+i):
+            allImages.append(folderName[1:]+"/"+i)
+
     allImages = sorted(allImages, key = lambda x: (int(re.sub('\D','',x)),x))
     allImages = {allImages[j]:j for j in range(len(allImages))}
     for i, j in allImages.items():
@@ -368,6 +374,9 @@ def submitatt(request, pk, pk2, pk3):
             final_list_list.append([i, ""])
     imagePath[-1] = "a" + imagePath[-1]
     imagePath = '/'.join(imagePath)
+    
+    att_check = AttStud.objects.filter(att_id=att_obj.att_id, stud_id=pk)
+
     if(request.method=="POST"):
         att = AttStud()
         obj=AttStud.objects.filter(att_id=att_obj.att_id,stud_id=pk)
@@ -392,7 +401,52 @@ def submitatt(request, pk, pk2, pk3):
         att.is_approved = True
         att.save()
         return redirect('markatt', pk=pk, pk2=pk2, pk3=pk3)
-    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'imagePath': imagePath, 'folderName': folderName, 'final_list_list': final_list_list, 'all_marked_images': all_marked_images })
+    return render(request, 'Student/markatt.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'imagePath': imagePath, 'folderName': folderName, 'final_list_list': final_list_list, 'all_marked_images': all_marked_images , 'att_crop_check': len(att_check)})
+
+def testing(request,pk, pk2, pk3):
+    if request.method == "POST":
+        x = float(request.POST.get('x'))
+        y = float(request.POST.get('y'))
+        w = float(request.POST.get('w'))
+        h = float(request.POST.get('h'))
+        num = int(request.POST.get('num'))
+
+        att_obj = Attendance.objects.get(code=pk3)
+        mainAttObj = Attendance_images.objects.filter(att_id=att_obj.att_id)
+
+        cropped_folder_name = "./"+mainAttObj[0].att_image.url.split('/')[0] + '/' + mainAttObj[0].att_image.url.split('/')[1] + '/' + mainAttObj[0].att_image.url.split('/')[2].split(".")[0] + '/' + mainAttObj[num-1].att_image.url.split('/')[2].split(".")[0] + '/'
+        image_folder_path = mainAttObj[num-1].att_image.url.split('/')[0] + '/' + mainAttObj[num-1].att_image.url.split('/')[1] + '/' + 'a' + mainAttObj[num-1].att_image.url.split('/')[2]
+        img = cv2.imread("./"+image_folder_path)
+        copy_img = cv2.imread("./"+image_folder_path)
+
+        print("Creating directory")
+        try:
+            os.mkdir(cropped_folder_name)
+        except:
+            print("Dir already present")
+
+        cropped_img = copy_img[int(round(y,0)):int(round(y+h,0)),int(round(x,0)):int(round(x+w,0))]
+        count = 0
+        for root_dir, cur_dir, files in os.walk("./"+mainAttObj[0].att_image.url.split('/')[0] + '/' + mainAttObj[0].att_image.url.split('/')[1] + '/' + mainAttObj[0].att_image.url.split('/')[2].split(".")[0] + '/'):
+            count += len(files)
+
+        new_cropped_image_number = count
+        cv2.imwrite(cropped_folder_name+str(new_cropped_image_number)+".jpg",cropped_img)
+
+        img = cv2.rectangle(img, (int(round(x,0)),int(round(y,0))), (int(round(x+w,0)),int(round(y+h,0))), (255,0,0), 2)
+        img = cv2.putText(img, "crop"+str(new_cropped_image_number), (int(round(x,0)), int(round(y,0))-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255,0,0), 2)
+        cv2.imwrite("./"+image_folder_path,img)
+
+        student_att = AttStud()
+        student_att.att_id = att_obj
+        student_att.stud_id = Students.objects.get(stud_id=pk)
+        student_att.att_time = datetime.now()
+        student_att.img_number = new_cropped_image_number
+        student_att.is_approved = False
+        student_att.is_cropped = True
+        student_att.save()
+        
+        return JsonResponse(data={"url":reverse('submitatt', kwargs={'pk':pk,'pk2':pk2})})
 
 def attcropimg(request, pk, pk2, pk3):
     final_list_list=[]

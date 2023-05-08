@@ -17,6 +17,7 @@ urlpatterns = [
     path('classroom/<pk2>/submitatt/', views.enterattcode, name='submitatt'),
     path('classroom/<pk2>/submitatt/<pk3>/', views.submitatt, name='markatt'),
     path('classroom/<pk2>/submitatt/crop/<pk3>/', views.attcropimg, name='cropimg'),
+    path('classroom/<pk2>/submitatt/crop/<pk3>/testing', views.testing, name='testing'),
     path('classroom/<pk2>/porjecttrack/', views.projecttrack, name='sporjecttrack'),
     path('classroom/<pk2>/projecttrack/<pk3>/', views.single_project, name='single_project'),
     path('classroom/<pk2>/assignment/<pk3>/peergrade/<pk4>/', views.grad, name='grad'),

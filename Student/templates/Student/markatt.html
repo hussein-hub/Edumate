@@ -26,9 +26,9 @@
           <ul>
             <li>
               {% if pk %}
-              <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+              <a href="{% url 'logout' pk=pk %}">logout</a>
               {% else %}
-              <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+              <a href="{% url 'logout' pk=pk1 %}">logout</a>
               {% endif %}
             </li>
           </ul>
@@ -91,78 +91,90 @@
   }
 
   @keyframes slideOutTop {
-    from { display: block; }
-    to { transform: translateY(-100%); opacity: 0;}
-}
+    from {
+      display: block;
+    }
+
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+
   @keyframes slideInTop {
     0% {
-        transform: translateY(-100%);
+      transform: translateY(-100%);
     }
-    100% {
-        transform: translateY(0);
-    }
-}
 
-@keyframes slideInLeft {
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
     0% {
-        transform: translateX(-100%);
+      transform: translateX(-100%);
     }
-    100% {
-        transform: translateX(0);
-    }
-}
 
-@keyframes slideInRight {
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
     0% {
-        transform: translateX(100%);
+      transform: translateX(100%);
     }
-    100% {
-        transform: translateX(0);
-    }
-}
 
-@keyframes slideInBottom {
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInBottom {
     0% {
-        transform: translateY(100%);
+      transform: translateY(100%);
     }
+
     100% {
-        transform: translateY(0);
+      transform: translateY(0);
     }
-}
-  
-@keyframes fadeInAnimation {
+  }
+
+  @keyframes fadeInAnimation {
     0% {
-        opacity: 0;
+      opacity: 0;
     }
-    100% {
-        opacity: 1;
-    }
-}
 
-@keyframes fadeOutAnimation {
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOutAnimation {
     0% {
-        opacity: 1;
+      opacity: 1;
     }
+
     100% {
-        opacity: 0;
+      opacity: 0;
     }
-}
+  }
 
-#alert-message {
-  animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInTop;
-}
-
+  #alert-message {
+    animation: 1s cubic-bezier(0.42, 0, 0.11, 1.01) 0s 1 slideInTop;
+  }
 </style>
 
 <div class="container" style="margin-top: 100px">
   {% if messages %}
-    {% for message in messages %}
-      {% if message.tags %}
-        <div id="alert-message" style="background-color: #cc3c23;" class="alert {{ message.tags }}" role="alert">
-          {{ message }}
-        </div>
-      {% endif %}
-    {% endfor %}
+  {% for message in messages %}
+  {% if message.tags %}
+  <div id="alert-message" style="background-color: #cc3c23;" class="alert {{ message.tags }}" role="alert">
+    {{ message }}
+  </div>
+  {% endif %}
+  {% endfor %}
   {% endif %}
 
   <div class="container">
@@ -183,10 +195,13 @@
                 <button>Learn More >></button> {% endcomment %}
                 {% for image in all_marked_images %}
                 <div class="container">
-                <img style="margin-bottom: 30px;" width="80%" src={{image}}>
-                {% comment %} <canvas id="draw"></canvas> {% endcomment %}
+                  <img style="margin-bottom: 30px;" width="80%" src={{image}}>
+                  {% comment %} <canvas id="draw"></canvas> {% endcomment %}
                 </div>
                 {% endfor %}
+                {% if not att_crop_check %}
+                  <a href="{% url 'cropimg' pk=pk pk2=pk2 pk3=pk3 %}" class="btn btn-success">Mark with cropping of face</a>
+                {% endif %}
               </div>
               <div id="right-side" class="col-md-6  jumbotron text-center">
                 <div class="">

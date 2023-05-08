@@ -108,11 +108,13 @@
 			<br>
 			<button type="submit" class="btn btn-success">Mark Present</button>
 		</form>
+	
 
 		<table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-striped table-bordered hover select" id="attendance-table">
 			<thead>
 				<tr>
           			<th>Sr. No.</th>
+          			<th>Face</th>
 					<th>Name</th>
 					<th>Time</th>
 					<th>Delete</th>
@@ -122,6 +124,37 @@
 				{% for i in all_att %}
 				<tr>
 	 				<td>{{forloop.counter}}</td>
+	 				<td><img height=100 src="{{i.image}}" /></td>
+	 				<td>{{i.name}}</td>
+	 				<td>{{ i.time }}</td>
+	 				<td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.att_id.att_id}}" data-product-name="{{i.name}}" onclick="caller('{{i.stud_id}}', '{{i.att_id}}')">Delete</button></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<div style="margin-top: 50px; margin-bottom: 50px">
+			{% for i in all_a_images %}
+				<img height=500 src="{{i}}" />
+			{% endfor %}
+		</div>
+
+
+		<table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-striped table-bordered hover select" id="attendance-table-cropped">
+			<thead>
+				<tr>
+          			<th>Sr. No.</th>
+          			<th>Face</th>
+					<th>Name</th>
+					<th>Time</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody class="two-col-form">
+				{% for i in cropped_image_att %}
+				<tr>
+	 				<td>{{forloop.counter}}</td>
+	 				<td><img height=100 src="{{i.image}}" /></td>
 	 				<td>{{i.name}}</td>
 	 				<td>{{ i.time }}</td>
 	 				<td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.att_id.att_id}}" data-product-name="{{i.name}}" onclick="caller('{{i.stud_id}}', '{{i.att_id}}')">Delete</button></td>
@@ -177,6 +210,24 @@
 
 $(document).ready( function () {
 	$('#attendance-table').DataTable({
+		"order": [],
+		dom: 'Bfrtip',
+		buttons: [
+		{ extend: 'copy', className: 'btn btn-success glyphicon' },
+   		{ extend: 'csv', className: 'btn btn-success glyphicon' },
+    	{ extend: 'excel', className: 'btn btn-success glyphicon' },
+    	{ extend: 'pdf', className: 'btn btn-success glyphicon' },
+		],
+		"columnDefs": [ {
+			"targets": 3,
+			"sortable": false,
+			"searchable": true
+		} ],
+		"paging": true
+		});
+});
+$(document).ready( function () {
+	$('#attendance-table-cropped').DataTable({
 		"order": [],
 		dom: 'Bfrtip',
 		buttons: [

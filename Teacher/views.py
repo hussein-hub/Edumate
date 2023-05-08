@@ -513,17 +513,53 @@ def deleteatt(request, pk, pk2):
 def view_att(request, pk, pk2, pk3):
     all_att_id=AttStud.objects.filter(att_id=pk3)
     all_att=[]
+    att_obj = Attendance.objects.get(att_id=pk3)
+    mainAttObj = Attendance_images.objects.filter(att_id=att_obj.att_id)
+    all_a_images = [i.att_image.url.split('/')[0] + '/' + i.att_image.url.split('/')[1] + '/' + 'a' + i.att_image.url.split('/')[2] for i in mainAttObj]
+    all_small_images = []
+    all_small_uncropped_images = []
+    for i in mainAttObj:
+        folname = "."+i.att_image.url.split('/')[0] + '/' + i.att_image.url.split('/')[1] + '/' + mainAttObj[0].att_image.url.split('/')[2].split('.')[0] +'/'+ i.att_image.url.split('/')[2].split('.')[0]+"/"
+        for j in os.listdir(folname):
+            all_small_images.append(folname+j)
+    
+    folname = "."+i.att_image.url.split('/')[0] + '/' + i.att_image.url.split('/')[1] + '/'+ mainAttObj[0].att_image.url.split('/')[2].split('.')[0] +'/'
+    for i in os.listdir(folname):
+        if os.path.isfile(folname+i):
+            all_small_uncropped_images.append(folname+i)
+    
+    print(all_small_uncropped_images)
     all_studs=ClassStudents.objects.filter(class_code=pk2)
     att_ids=[]
+    cropped_image_att = []
     for i in all_att_id:
+        indi_cropped_image_att = {}
         val={}
-        val['name']=i.stud_id.name
-        val['time']=i.att_time
-        val['att_id']=i.att_id.att_id
-        val['stud_id']=i.stud_id.stud_id
-        val['is_approved']= True
+        if i.is_cropped:
+            indi_cropped_image_att['name'] = i.stud_id.name
+            indi_cropped_image_att['time'] = i.att_time
+            indi_cropped_image_att['att_id'] = i.att_id.att_id
+            indi_cropped_image_att['stud_id'] = i.stud_id.stud_id
+            indi_cropped_image_att['is_approved'] = True
+            indi_cropped_image_att['is_cropped'] = True
+            for j in all_small_images:
+                if i.img_number == int(j.split('/')[-1].split('.')[0]):
+                    indi_cropped_image_att['image'] = j[1:]
+                    break
+            cropped_image_att.append(indi_cropped_image_att)
+        else:
+            val['name']=i.stud_id.name
+            val['time']=i.att_time
+            val['att_id']=i.att_id.att_id
+            val['stud_id']=i.stud_id.stud_id
+            val['is_approved']= True
+            val['is_cropped'] = i.is_cropped
+            for j in all_small_uncropped_images:
+                if i.img_number == int(j.split('/')[-1].split('.')[0]):
+                    val['image'] = j[1:]
+                    break
+            all_att.append(val)
         att_ids.append(i.stud_id.stud_id)
-        all_att.append(val)
     stud_ids=[]
     for i in all_studs:
         stud_ids.append(i.stud_id.stud_id)
@@ -559,7 +595,7 @@ def view_att(request, pk, pk2, pk3):
         AttStud.objects.get(att_id=request.POST['att_id'], stud_id=request.POST['stud_id']).delete()
         messages.error(request, "Deleted successfully")
         return redirect('viewatt', pk=pk, pk2=pk2, pk3=pk3)
-    return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att, 'all_stud': all_stud_names_ids})
+    return render(request, 'Teacher/view_att.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_att': all_att, 'all_stud': all_stud_names_ids, 'cropped_image_att': cropped_image_att, 'all_a_images': all_a_images})
 
 def quiz_info(request, pk, pk2, pk3):
     quiz = Quiz.objects.get(id = pk3)
@@ -834,12 +870,12 @@ def showpeergroups(request, pk, pk2, pk3):
     late=[]
     flag=True
     for i in all_groups:
+        mems=Peermembers.objects.filter(pgro_id=i.group_id)
         if i.submit_file:
-            submitted.append(i)
+            submitted.append([i, mems])
             if i.submit_date > assignment.gpeer_due:
                 late.append(i.group_id)
         else:
-            mems=Peermembers.objects.filter(pgro_id=i.group_id)
             not_submitted.append([i, mems, len(mems)])
             flag=False
     temppeer=PeergradeGroups.objects.filter(class_code=pk2, assignment_id=pk3)

@@ -126,7 +126,7 @@
     {% endif %}
   </div> {% endcomment %}
 
-  <div class="container">
+  <div class="container" style="margin-top: 7vh;">
     <div class="row" style="display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -138,36 +138,36 @@
       backdrop-filter: blur( 4px );
       -webkit-backdrop-filter: blur( 4px );
       border-radius: 10px;
-      border: 1px solid rgba( 255, 255, 255, 0.18 ); width: 90vw">
+      border: 1px solid rgba( 255, 255, 255, 0.18 ); width: 60vw">
         <div>
-          <p style="padding-top: 30px"><b>Assignment name</b> : {{ assignment.gpeer_name }}</p> 
-          <p><b>Assignment description</b> : {{ assignment.gpeer_desc }}</p>
-          <p><b>Marks</b> : {{ assignment.marks }}</p>
-          <p><b>Due date</b> : {{ assignment.gpeer_due }}</p>
-          <p><b>Group Members</b> :
+          <p style="padding-top: 30px"><b style="color: #008374">Assignment name</b> : {{ assignment.gpeer_name }}</p> 
+          <p><b style="color: #008374">Assignment description</b> : {{ assignment.gpeer_desc }}</p>
+          <p><b style="color: #008374">Marks</b> : {{ assignment.marks }}</p>
+          <p><b style="color: #008374">Due date</b> : {{ assignment.gpeer_due }}</p>
+          <p><b style="color: #008374">Group Members</b> :
             <ul>
                 {% for i in members  %}
                 <li>{{ i.stud_id.name }}</li>
                 {% endfor %}
             </ul>
           </p>
-          <p><b>Description given by student</b> : {{ submitted.submit_desc }}</p> 
+          <p><b style="color: #008374">Description given by student</b> : {{ submitted.submit_desc }}</p> 
         </div>
         <hr />
         <div>
-            <h3>Peergrade</h3>
+            <h3 style="color: #008374">Peergrade</h3>
             <form method="post">
                 {% csrf_token %}
                 {% for i, j in ques_and_ans %}
-                <ul style="list-style: none">
+                <div style="list-style: none">
                     {{ forloop.counter }}. {{ i }}
                     {% for k in j %}
-                    <li><input type="radio" name={{ forloop.parentloop.counter }} required value="{{ forloop.counter }}"/> &nbsp; {{ k }}</li>
+                    <li style="margin-left: 12px"><input type="radio" name={{ forloop.parentloop.counter }} required value="{{ forloop.counter }}"/> &nbsp; {{ k }}</li>
                     {% endfor %}
-                </ul>
+                </div>
                 {% endfor %}
-                <input type="text" name="feedback" placeholder="Feedback" required class="form-control" />
-                <button class="btn btn-success" type="submit">Submit</button>
+                <input style="margin-top: 12px" type="text" name="feedback" placeholder="Feedback" required class="form-control" />
+                <button style="margin-top: 12px" class="btn btn-success" type="submit">Submit</button>
             </form>
           </div>
       </div>
