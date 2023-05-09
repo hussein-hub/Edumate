@@ -1,0 +1,217 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block title %}
+<title>View Grades</title>
+{% endblock title %}
+
+{% block styles %}
+{% comment %} <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css"> {% endcomment %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+
+
+
+<style>
+.btn-success, .btn-success:active, .btn-success:visited {
+  background-color: #008374 !important;
+}
+
+.btn-success:hover {
+  border-color: #008374 !important;
+  background-color: white !important;
+  color: #008374 !important;
+}
+</style>
+{% endblock styles %}
+
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn" href="{% url 'classroom' pk=pk pk2=pk2 %}">Back</a>
+          </li>
+          
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
+
+{% block content %}
+
+<br><br>
+<div class="container ">
+    {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  
+         <script>alert('{{ message }}')</script>
+        {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+		<div class="row">
+			<div class="col">
+				<h2>Grades</h2>
+			</div>
+			<div class="col">
+				{% comment %} <a href="{% url 'product_add' %}" id="add_product_btn"><button type="button" class="btn btn-primary">Add New</button></a> {% endcomment %}
+			</div>
+		</div>
+
+        <div class="container">
+            <div class="row" style="display: flex; align-items: center">
+                
+                <div class="col-sm-6">
+                  <br><br>
+                  <form method="POST" style="background: rgba( 255, 255, 255, 0.25 );
+                  box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+                  backdrop-filter: blur( 4px );
+                  -webkit-backdrop-filter: blur( 4px );
+                  border-radius: 10px;
+                  border: 1px solid rgba( 255, 255, 255, 0.18 );
+                  padding: 1rem;" >
+                    <div class="form-group mb-3">
+                      <label for="exampleInputEmail1">Assignment Name: {{ assignment.assignment_name }}</label>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="exampleInputEmail2">Assignment Description: {{ assignment.assignment_description }}</label>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="exampleInputEmail3">Max marks: {{ assignment.max_marks }}</label>
+                    </div>
+                    <div class="form-group mb-3">
+                        {% if assignment.peer_grade %}
+                        <label for="exampleInputEmail3">Peergrade: Enabled</label>
+                        {% else %}
+                        <label for="exampleInputEmail3">Peergrade: Disabled</label>
+                        {% endif %}
+                      </div>
+                  </form>
+                </div>
+            </div>
+        </div>
+	
+
+		<table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-striped table-bordered hover select" id="attendance-table">
+			<thead>
+				<tr>
+          			<th>Sr. No.</th>
+					<th>Name</th>
+					<th>Grade</th>
+					<th>Submission</th>
+				</tr>
+			</thead>
+			<tbody class="two-col-form">
+				{% for i in all_submit %}
+				<tr>
+	 				<td>{{forloop.counter}}</td>
+	 				<td>{{i.name}}</td>
+                    {% if i.marks == "Y" %}
+                    <td>Marks not given</td>
+                    {% elif i.marks != "X" %}
+	 				<td>{{ i.marks|floatformat:2 }}</td>
+                    {% else %}
+                    <td>Marks not given</td>
+                    {% endif %}
+                    {% if i.status == "L" %}
+	 				<td style="background: red; color: white">Late</td>
+                    {% else %}
+                    <td style="background: green; color: white">On Time</td>
+                    {% endif %}
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+{% endblock content %}
+{% block script %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
+
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+
+<script>
+
+
+$(document).ready( function () {
+	$('#attendance-table').DataTable({
+		"order": [],
+		dom: 'Bfrtip',
+		buttons: [
+		{ extend: 'copy', className: 'btn btn-success glyphicon' },
+   		{ extend: 'csv', className: 'btn btn-success glyphicon' },
+    	{ extend: 'excel', className: 'btn btn-success glyphicon' },
+    	{ extend: 'pdf', className: 'btn btn-success glyphicon' },
+		],
+		"columnDefs": [ {
+			"targets": 3,
+			"sortable": false,
+			"searchable": true
+		} ],
+		"paging": true
+		});
+});
+$(document).ready( function () {
+	$('#attendance-table-cropped').DataTable({
+		"order": [],
+		dom: 'Bfrtip',
+		buttons: [
+		{ extend: 'copy', className: 'btn btn-success glyphicon' },
+   		{ extend: 'csv', className: 'btn btn-success glyphicon' },
+    	{ extend: 'excel', className: 'btn btn-success glyphicon' },
+    	{ extend: 'pdf', className: 'btn btn-success glyphicon' },
+		],
+		"columnDefs": [ {
+			"targets": 3,
+			"sortable": false,
+			"searchable": true
+		} ],
+		"paging": true
+		});
+});
+function caller(id1, id2)
+{
+	$("[name=att_id]").val(id2);
+	$("[name=stud_id]").val(id1);
+}	
+
+</script>
+{% endblock script %}

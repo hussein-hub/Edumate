@@ -18,6 +18,8 @@ from django.core.mail import send_mail
 import re
 import cv2
 from django.http import JsonResponse
+from datetime import datetime, timedelta
+
 # Create your views here.
 
 def stud_home(request, pk):
@@ -633,3 +635,71 @@ def gradesingle(request, pk, pk2, pk3, pk4):
         pe.save()
         return redirect('single_stud_group', pk=pk, pk2=pk2, pk3=pk3)
     return render(request, 'Student/gradesingle.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'ques_and_ans': zip(questions, final_options), 'submitted': submitted, 'assignment': assignment, 'pe': pe_assigned, 'members': members})
+
+def analytics(request, pk, pk2):
+    class_info=ClassTeachers.objects.get(class_code=pk2)
+    today = datetime.today()
+    week1 = today + timedelta(days=-7)
+    week1_data = Attendance.objects.filter(class_id=pk2, start_time__gte=week1)
+    week2 = today + timedelta(days=-14)
+    week2_data = Attendance.objects.filter(class_id=pk2, start_time__gte=week2, start_time__lte=week1)
+    week3 = today + timedelta(days=-21)
+    week3_data = Attendance.objects.filter(class_id=pk2, start_time__gte=week3, start_time__lte=week2)
+    week4 = today + timedelta(days=-28)
+    week4_data = Attendance.objects.filter(class_id=pk2, start_time__gte=week4, start_time__lte=week3)
+    total_lecs=len(week1_data)+len(week2_data)+len(week3_data)+len(week4_data)
+    final_data=[]
+    count=0
+    for i in week1_data:
+        check=AttStud.objects.filter(att_id=i.att_id, stud_id=pk)
+        if check:
+            count=count+1
+    final_data.append(count)
+    count=0
+    for i in week2_data:
+        check=AttStud.objects.filter(att_id=i.att_id, stud_id=pk)
+        if check:
+            count=count+1
+    final_data.append(count)
+    count=0
+    for i in week3_data:
+        check=AttStud.objects.filter(att_id=i.att_id, stud_id=pk)
+        if check:
+            count=count+1
+    final_data.append(count)
+    count=0
+    for i in week4_data:
+        check=AttStud.objects.filter(att_id=i.att_id, stud_id=pk)
+        if check:
+            count=count+1
+    final_data.append(count)
+    perct=0
+    if total_lecs!=0:
+        perct=float(sum(final_data)/total_lecs)*100
+    assignments=Assignments.objects.filter(class_code=pk2)
+    academics=[]
+    pending_assignments=[]
+    for i in assignments:
+        sub=SubmittedAssignments.objects.filter(assignment_id=i.assignment_id)
+        if sub:
+            if sub[0].marks:
+                if sub[0].sub_date > i.duedate:
+                    academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'L'])
+                else:
+                    academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'O'])
+        else:
+            pending_assignments.append([i.assignment_name, i.duedate])
+    quizzes=Quiz_marks.objects.filter(class_id=pk2, student=pk)
+    marks_quiz=[]
+    for i in quizzes:
+        if i.total_marks:
+            marks_quiz.append([i.quiz.quiz_name, i.total_marks])
+    all_class_quizzes=Quiz.objects.filter(class_code=pk2)
+    pending_quiz=[]
+    for i in all_class_quizzes:
+        temp=Quiz_marks.objects.filter(class_id=pk2, student=pk, quiz=i.id)
+        if temp:
+            continue
+        else:
+            pending_quiz.append([i.quiz_name, i.quiz_date])
+    return render(request, 'Student/analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': class_info, 'final_data': final_data, 'total_lecs': total_lecs, 'attended': sum(final_data), 'perct': perct, 'assign': academics, 'quiz': marks_quiz, 'pending_assignments': pending_assignments, 'pending_quiz': pending_quiz})

@@ -62,6 +62,7 @@
                   <p><small>Class Code: </small>{{ i.class_code }}</p>
                   <p><small>Number of Students: </small>{{ j }}</p>
                   <a class="btn btn-success" style="background-color: #008374; color: white;" href="{% url 'classroom' pk=teacher.teach_id pk2=i.class_code %}">Go to classroom</a>
+                  <a class="btn btn-success" style="background-color: #008374; color: white;" href="{% url 'teacher_analytics' pk=teacher.teach_id pk2=i.class_code %}">Analytics</a>
                 </blockquote>
               </div>
             </div>

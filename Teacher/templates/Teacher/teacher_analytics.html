@@ -1,0 +1,366 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block styles %}
+<link href="{% static 'Teacher/assets/css/assignment.css' %}" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+{% endblock styles %}
+
+{% block title %}
+<title>Analytics</title>
+{% endblock title %}
+
+
+
+
+{% block navbar %}
+<style>
+ 
+  .btn-success, .btn-success:active, .btn-success:visited {
+    background-color: #008374 !important;
+  }
+  
+  .btn-success:hover {
+    border-color: #008374 !important;
+    background-color: white !important;
+    color: #008374 !important;
+  }
+
+</style>
+
+<header id="header" class="header d-flex align-items-center">
+  {% if messages %}
+  {% for message in messages %}
+   {% if message.tags %}  
+       <script>alert('{{ message }}')</script>
+   {% endif %}
+
+   {% endfor %}
+
+{% endif %}
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="#" class="logo d-flex align-items-center">
+      <!-- Uncomment the line below if you also wish to use an image logo -->
+      <!-- <img src="assets/img/logo.png" alt=""> -->
+      <h1>EDUMATE<span>.</span></h1>
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>
+        
+        <li>
+            <a class="btn" href="{% url 'teacher_home' pk=pk %}">Back</a>
+        </li>
+        <li class="dropdown">
+          <a href="#">
+            <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+          </a>
+          <ul>
+            <li>
+              {% if pk %}
+              <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+              {% else %}
+              <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+              {% endif %}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav><!-- .navbar -->
+
+    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+  </div>
+</header>
+{% endblock navbar %}
+
+{% block content %}
+
+    {% comment %} <div>
+        {% for i in submit %}
+        <p>Student ID: {{ i.stud_id }}</p>
+        <p>Description: {{ i.assign_desc }}</p> 
+        <p>View file: <a href="{{ i.assign_file.url }}" target="_blank">file</a></p> 
+        {% endfor %}
+      <a href="{% url 'classroom' pk=pk pk2=pk2 %}">Back to classroom</a>
+    </div> {% endcomment %}
+
+
+    <div class="container">
+        <div class="jumbotron jumbotron-fluid" style="margin-top: 20px">
+            <div class="container">
+              <h1 class="display-4">{{class_info.class_name}}</h1>
+              <p class="lead"></p>
+            </div>
+        </div>
+        <div class="row" style="display: flex; align-items: center">
+            
+            <div class="col-sm-6">
+                <div style="background: rgba( 255, 255, 255, 0.25 );
+              box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+              backdrop-filter: blur( 4px );
+              -webkit-backdrop-filter: blur( 4px );
+              border-radius: 10px;
+              border: 1px solid rgba( 255, 255, 255, 0.18 );
+              padding: 1rem; margin-bottom: 30px" >
+              <h4>Attendance Summary - Last 7 Lectures</h4>
+              <hr>
+              <canvas id="myChart" style="width:65%; height:75%"></canvas>
+              <hr>
+              <p><strong>Number of lectures scheduled:</strong> {{ total }}</p>
+              {% if perct == "X" %}
+              <p><strong>Percentage attendance:</strong> None </p>
+              {% else %}
+              <p><strong>Percentage attendance:</strong> {{ perct }} %</p>
+              {% endif %}
+              </div>
+              </div>
+
+
+            <div class="col-sm-6">
+              <div style="background: rgba( 255, 255, 255, 0.25 );
+              box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+              backdrop-filter: blur( 4px );
+              -webkit-backdrop-filter: blur( 4px );
+              border-radius: 10px;
+              border: 1px solid rgba( 255, 255, 255, 0.18 );
+              padding: 1rem; margin-bottom: 30px" >
+              <h4>Academics Summary</h4>
+              <hr>
+              <h5>Assignments</h5>
+              <canvas id="myChart2" style="width:65%; height:75%"></canvas>
+              <hr>
+              <p><strong>Number of assignments created:</strong> {{ total2 }}</p>
+              {% if perct2 == "X" %}
+              <p><strong>Percentage submission:</strong> None </p>
+              {% else %}
+              <p><strong>Percentage submission:</strong> {{ perct2 }} %</p>
+              {% endif %}
+              </div>
+            </div>
+
+            <div>
+                <div style="background: rgba( 255, 255, 255, 0.25 );
+                box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
+                backdrop-filter: blur( 4px );
+                -webkit-backdrop-filter: blur( 4px );
+                border-radius: 10px;
+                border: 1px solid rgba( 255, 255, 255, 0.18 );
+                padding: 1rem;" >
+                <h4>Pending Tasks</h4>
+                <hr>
+                <h5>Assignments</h5>
+              <hr>
+              <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in pending_assignments %}
+                    <tr>
+                    <td>{{ i.0 }}</td>
+                    <td>{{ i.1 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <hr>
+              <h5>Quiz</h5>
+              <hr>
+              <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in pending_quiz %}
+                    <tr>
+                    <td>{{ i.0 }}</td>
+                    <td>{{ i.1 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+                </div>
+              </div>
+
+        </div>
+        
+    </div>
+
+    <script>
+        let data={{att_data|safe}};
+        var xyValues = [
+          {x:'Week 1', y:data[3]},
+          {x:'Week 2', y:data[2]},
+          {x:'Week 3', y:data[1]},
+          {x:'Week 4', y:data[0]}
+        ];
+        let final_data=[];
+        let final_dates=[];
+        for(let i=0;i<data.length;i++)
+        {
+            final_data.push(data[i][0]);
+            final_dates.push(data[i][1]);
+        }
+
+        let data2={{ graph2|safe }};
+        console.log(data2)
+        let final_2_data=[];
+        let final_2_dates=[];
+        for(let i=0;i<data2.length;i++)
+        {
+            final_2_data.push(data2[i][0]);
+            final_2_dates.push(data2[i][1]);
+        }
+
+        new Chart("myChart", {
+            type: 'line',
+            data: {
+                labels: final_dates,
+                datasets: [{
+                    data: final_data,
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgba(255, 255, 255, 0)',
+                    pointHoverBackgroundColor: 'rgba(255, 255, 255, 1)',
+                    pointBorderColor: 'rgba(66, 133, 244, 0)',
+                    pointBorderWidth: 10,
+                    pointHoverBorderWidth: 3,
+                    pointHitRadius: 20,
+                    cubicInterpolationMode: 'monotone',
+                    fill: true,
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            fontColor: 'rgba(153, 153, 153, 1)',
+                            maxTicksLimit: 7,
+                            maxRotation: 0
+                        },
+                        gridLines: {
+                            zeroLineColor: 'rgba(232, 232, 232, 1)',
+                            drawOnChartArea: false,
+                        },
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: 'rgba(153, 153, 153, 1)',
+                            callback: function(value, index, values) {
+                                if (Math.floor(value) === value) {
+                                    return value;
+                                }
+                            }
+                        },
+                        gridLines: {
+                            zeroLineColor: 'rgba(232, 232, 232, 0)',
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Number of lectures attended'
+                          }
+                    }],
+                },
+                responsive: true,
+                tooltips: {
+                    backgroundColor: 'rgba(0, 39, 69, 1)',
+                    cornerRadius: 7,
+                    mode: 'index',
+                    intersect: false,
+                    displayColors: false,
+                    xPadding: 10,
+                    yPadding: 10,
+                    titleFontColor: 'rgba(255, 255, 255, .7)',
+                    bodyFontColor: 'rgba(255, 255, 255, 1)',
+                    titleFontStyle: 'normal',
+                    bodyFontStyle: 'bold',
+                },
+                legend: {
+                    display: false,
+                }
+            }
+        });
+
+        new Chart("myChart2", {
+            type: 'line',
+            data: {
+                labels: final_2_data,
+                datasets: [{
+                    data: final_2_dates,
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgba(255, 255, 255, 0)',
+                    pointHoverBackgroundColor: 'rgba(255, 255, 255, 1)',
+                    pointBorderColor: 'rgba(66, 133, 244, 0)',
+                    pointBorderWidth: 10,
+                    pointHoverBorderWidth: 3,
+                    pointHitRadius: 20,
+                    cubicInterpolationMode: 'monotone',
+                    fill: true,
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            fontColor: 'rgba(153, 153, 153, 1)',
+                            maxTicksLimit: 7,
+                            maxRotation: 0
+                        },
+                        gridLines: {
+                            zeroLineColor: 'rgba(232, 232, 232, 1)',
+                            drawOnChartArea: false,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Assignments'
+                          }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: 'rgba(153, 153, 153, 1)',
+                            callback: function(value, index, values) {
+                                if (Math.floor(value) === value) {
+                                    return value;
+                                }
+                            }
+                        },
+                        gridLines: {
+                            zeroLineColor: 'rgba(232, 232, 232, 0)',
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Submissions'
+                          }
+                    }],
+                },
+                responsive: true,
+                tooltips: {
+                    backgroundColor: 'rgba(0, 39, 69, 1)',
+                    cornerRadius: 7,
+                    mode: 'index',
+                    intersect: false,
+                    displayColors: false,
+                    xPadding: 10,
+                    yPadding: 10,
+                    titleFontColor: 'rgba(255, 255, 255, .7)',
+                    bodyFontColor: 'rgba(255, 255, 255, 1)',
+                    titleFontStyle: 'normal',
+                    bodyFontStyle: 'bold',
+                },
+                legend: {
+                    display: false,
+                }
+            }
+        });
+        </script>
+        
+{% endblock content %}
+

@@ -266,6 +266,40 @@ def assignmentdelete(request, pk, pk2):
     Assignments.objects.get(assignment_id=request.POST.get('assignment_id')).delete()
     return redirect('classroom', pk=pk, pk2=pk2)
 
+def viewgrades(request, pk, pk2, pk3):
+    all_submit=SubmittedAssignments.objects.filter(assignment_id=pk3)
+    assignment=Assignments.objects.get(assignment_id=pk3)
+    final_list=[]
+    for i in all_submit:
+        data={}
+        data['name']=i.stud_id.name
+        if assignment.peer_grade:
+            peergrade=Peergrade.objects.get(assignment_id=pk3)
+            membs=PeerAssigns.objects.filter(peergrade_id=peergrade.peergrade_id, assigned_stud_id=i.stud_id.stud_id)
+            temp_marks=0
+            for j in membs:
+                if j.marks:
+                    temp_marks=temp_marks+float(j.marks)
+                else:
+                    temp_marks="X"
+                    break
+            if i.marks and temp_marks!="X":
+                temp_marks=temp_marks+float(i.marks)
+            if temp_marks!="X":
+                temp_marks=temp_marks/(peergrade.number_of_peers + 1)
+            data['marks']=temp_marks
+        else:
+            if i.marks:
+                data['marks']=i.marks
+            else:
+                data['marks']="Y"
+        if i.sub_date > assignment.duedate:
+            data['status']="L"
+        else:
+            data['status']="O"
+        final_list.append(data)
+    return render(request, 'Teacher/viewgrades.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'all_submit': final_list, 'assignment': assignment})
+
 def assignmentgrade(request, pk, pk2, pk3,pk4):
     submitted=SubmittedAssignments.objects.get(assignment_id=pk3,stud_id = pk4)
     assignment=Assignments.objects.get(assignment_id=pk3)
@@ -986,11 +1020,13 @@ def groupgrade(request, pk, pk2, pk3, pk4):
     assignment=Grouppeers.objects.get(gro_id=pk3)
     group=PeerGroups.objects.get(group_id=pk4)
     members=Peermembers.objects.filter(pgro_id=pk4)
-    peergroup=PeergradeGroups.objects.get(class_code=pk2, assignment_id=pk3)
+    peergroup=PeergradeGroups.objects.filter(class_code=pk2, assignment_id=pk3)
     peers=[]
-    for i in members:
-        assigned=PeerAssignsGroups.objects.filter(peergrade_id=peergroup.peergrade_id, assigned_stud_id=i.stud_id.stud_id)
-        peers.append([i, assigned])
+    if peergroup:
+        peergroup=peergroup[0]
+        for i in members:
+            assigned=PeerAssignsGroups.objects.filter(peergrade_id=peergroup.peergrade_id, assigned_stud_id=i.stud_id.stud_id)
+            peers.append([i, assigned])
     if request.method == "POST":
         marks=request.POST.get('marks')
         feedback=request.POST.get('feedback')
@@ -1003,6 +1039,87 @@ def groupgrade(request, pk, pk2, pk3, pk4):
             group.save()
         return redirect('groupgrade', pk=pk, pk2=pk2, pk3=pk3, pk4=pk4)
     return render(request, 'Teacher/grouppeer_grade.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'group': group, 'members': members, 'assignment': assignment, 'peers': peers})
+
+def view_grades(request, pk, pk2, pk3):
+    assignment=Grouppeers.objects.get(gro_id=pk3)
+    groups=PeerGroups.objects.filter(gro_id=pk3)
+    all_submit=[]
+    for i in groups:
+        mems=Peermembers.objects.filter(pgro_id=i.group_id)
+        for j in mems:
+            data={}
+            data['name']=j.stud_id.name
+            data['group_id']=i.group_id
+            if i.submit_file:
+                if i.submit_date > assignment.gpeer_due:
+                    data['date']="L"
+                else:
+                    data['date']="O"
+            else:
+                data['date']="Not Submitted"
+            data['marks']="Y"
+            if i.marksbyteacher:
+                total_marks=float(i.marksbyteacher)
+                peeron=PeergradeGroups.objects.filter(assignment_id=assignment.gro_id)
+                if peeron:
+                    peeron=peeron[0]
+                    peermembr=PeerAssignsGroups.objects.filter(peergrade_id=peeron.peergrade_id, assigned_stud_id=j.stud_id.stud_id)
+                    for k in peermembr:
+                        if k.marks:
+                            total_marks=total_marks+float(k.marks)
+                        else:
+                            total_marks="X"
+                            break
+                if total_marks != "X":
+                    data['marks']=total_marks/(assignment.num_peers+1)
+            all_submit.append(data)
+    return render(request, 'Teacher/view_grades.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignment': assignment, 'all_submit': all_submit})
+
+def teacher_analytics(request, pk, pk2):
+    classroom=ClassTeachers.objects.get(class_code=pk2)
+    attends=Attendance.objects.filter(class_id=pk2).order_by('-start_time')
+    strength=len(ClassStudents.objects.filter(class_code=pk2))
+    data=[]
+    count=0
+    total_classes=0
+    atts=0
+    for i in attends:
+        n=len(AttStud.objects.filter(att_id=i.att_id))
+        data.append([n, i.start_time[0:10]])
+        total_classes=total_classes+1
+        atts=atts+n/strength
+        count=count+1
+        if count == 7:
+            break
+    perct="X"
+    if total_classes:
+        perct=float(atts/total_classes)*100
+    if count!=7:
+        while count!=7:
+            data.append([0, "None"])
+            count=count+1
+    data.reverse()
+    all_assignments=Assignments.objects.filter(class_code=pk2).order_by('-duedate')
+    total2=len(all_assignments)
+    graph2_data=[]
+    count=0
+    per=0
+    for i in all_assignments:
+        n=len(SubmittedAssignments.objects.filter(assignment_id=i.assignment_id))
+        graph2_data.append([i.assignment_name, n])
+        per=per+n/strength
+        count=count+1
+        if count == 7:
+            break
+    perct2="X"
+    if total2:
+        perct2=float(per/total2)*100
+    if count!=7:
+        while count!=7:
+            graph2_data.append(["None", 0])
+            count=count+1
+    graph2_data.reverse()
+    return render(request, 'Teacher/teacher_analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': classroom, 'att_data': data, 'perct': perct, 'total': total_classes, 'graph2': graph2_data, 'total2': total2, 'perct2': perct2})
 
 def logout(request, pk):
     request.session.flush()

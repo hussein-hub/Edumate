@@ -234,7 +234,7 @@ input:checked + .slider:before {
             <div style="font-weight: 600; font-size: 18px">
               {{ i.gpeer_name }}
             </div>
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
+            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
               <i class="fa fa-trash"></i>
             </button>
           </div>
@@ -246,6 +246,7 @@ input:checked + .slider:before {
               <p><small style = "font-size: 13px">Due date : {{ i.gpeer_due }}</small></p>
               <p><small style = "font-size: 13px">Max marks: {{ i.marks }}</small></p>
               <a class="btn btn-success" href="{% url 'showpeergroups' pk=pk pk2=pk2 pk3=i.gro_id %}" class="card-link"><small>View Details</small></a>
+              <a class="btn btn-success" href="{% url 'view_grades' pk=pk pk2=pk2 pk3=i.gro_id %}" class="card-link"><small>View Grades</small></a>
             </blockquote>
           </div>
         </div>

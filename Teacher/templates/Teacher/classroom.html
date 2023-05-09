@@ -304,7 +304,7 @@ input:checked + .slider:before {
             <div style="font-weight: 600; font-size: 18px">
               {{ i.0.assignment_name }}
             </div>
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
+            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModalCenter{{forloop.counter}}">
               <i class="fa fa-trash"></i>
             </button>
           </div>
@@ -329,6 +329,7 @@ input:checked + .slider:before {
                 </div>
               </div>
               <a class="btn btn-success" href="{% url 'assignmentteach' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>Go to submitted assignments</small></a>
+              <a class="btn btn-success" href="{% url 'viewgrades' pk=pk pk2=pk2 pk3=i.0.assignment_id %}" class="card-link"><small>View Grades</small></a>
             </blockquote>
           </div>
         </div>
