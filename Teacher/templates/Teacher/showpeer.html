@@ -104,6 +104,11 @@
         {% else %}
         <span class="badge rounded-pill bg-success"><small>Submitted on time</small></span>
         {% endif %}
+        {% if i.0.marksbyteacher %}
+        <span class="badge rounded-pill bg-success"><small>Graded</small></span>
+        {% else %}
+        <span class="badge rounded-pill bg-warning"><small>Not graded</small></span>
+        {% endif %}
     </div>
     <div class="card-body">
       <blockquote class="blockquote mb-0">

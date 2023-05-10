@@ -140,9 +140,17 @@ def assignmentsub(request, pk, pk2, pk3):
             marks=0
             marksflag=False
     else:
-        marks=0
-        marksflag=False
-    if marksflag:
+        if submi:
+            if submi[0].marks:
+                marks=submi[0].marks
+                marksflag=True
+            else:
+                marks=0
+                marksflag=False
+        else:
+            marks=0
+            marksflag=False
+    if marksflag and feeds:
         marks=marks/(len(feeds)+4)
     if(request.method=="POST"):
         if(submi):
@@ -558,7 +566,18 @@ def single_project(request, pk, pk2, pk3):
 
 def stud_group(request, pk, pk2):
     groups=Grouppeers.objects.filter(class_code=pk2).order_by('-created_date')
-    return render(request, 'Student/stud_group.html', {'pk': pk, 'pk2': pk2, 'groups': groups})
+    temp=[]
+    for i in groups:
+        peers=PeerGroups.objects.filter(gro_id=i.gro_id)
+        for j in peers:
+            peer_members=Peermembers.objects.filter(pgro_id=j.group_id, stud_id=pk)
+            if peer_members:
+                if j.submit_file:
+                    temp.append("T")
+                else:
+                    temp.append("F")
+                break
+    return render(request, 'Student/stud_group.html', {'pk': pk, 'pk2': pk2, 'groups': zip(groups, temp)})
 
 def single_stud_group(request, pk, pk2, pk3):
     group=Grouppeers.objects.get(gro_id=pk3)
@@ -583,7 +602,7 @@ def single_stud_group(request, pk, pk2, pk3):
         p_reviews=PeerAssignsGroups.objects.filter(peergrade_id=p_groups.peergrade_id, assigned_stud_id=pk)
         peer_marks=[]
         if single_group and single_group.marksbyteacher:
-            peer_marks.append(single_group.marksbyteacher)
+            peer_marks.append(single_group.marksbyteacher*4)
         for i in p_reviews:
             if i.feedb:
                 peerreviews.append(i.feedb)
@@ -591,7 +610,7 @@ def single_stud_group(request, pk, pk2, pk3):
             else:
                 peerreviews.append("X")
         if len(peer_marks) == group.num_studs + 1:
-            total_marks=sum(peer_marks)/(group.num_studs + 1)
+            total_marks=sum(peer_marks)/(group.num_studs + 4)
         assigned=PeerAssignsGroups.objects.filter(peergrade_id=p_groups.peergrade_id, stud_id=pk)
     if request.method=="POST":
         single_group.submit_desc=request.POST.get('description')
@@ -700,13 +719,31 @@ def analytics(request, pk, pk2):
     pending_assignments=[]
     for i in assignments:
         sub=SubmittedAssignments.objects.filter(assignment_id=i.assignment_id, stud_id=pk)
+        temp_list=[]
         if len(sub):
-            # if sub[0].marks:
-            print(i.assignment_name, sub[0].sub_date, i.duedate)
             if sub[0].sub_date > i.duedate:
-                academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'L'])
+                temp_list=[i.assignment_name, sub[0].marks, i.max_marks, 'L']
             else:
-                academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'O'])
+                temp_list=[i.assignment_name, sub[0].marks, i.max_marks, 'O']
+            if i.peer_grade:
+                temp_list.append("P")
+                per_g=Peergrade.objects.get(assignment_id=i.assignment_id)
+                per_m=PeerAssigns.objects.filter(peergrade_id=per_g.peergrade_id, assigned_stud_id=pk)
+                marks_list=[]
+                for j in per_m:
+                    if j.marks:
+                        marks_list.append(j.marks)
+                    else:
+                        marks_list=[]
+                        break
+                if marks_list and sub[0].marks:
+                    marks_list.append(4*sub[0].marks)
+                    temp_list[1]=sum(marks_list)/(len(marks_list)+3)
+                else:
+                    temp_list[1]=""
+            else:
+                temp_list.append("NP")
+            academics.append(temp_list)
         else:
             pending_assignments.append([i.assignment_name, i.duedate])
     quizzes=Quiz_marks.objects.filter(class_id=pk2, student=pk)
@@ -722,4 +759,31 @@ def analytics(request, pk, pk2):
             continue
         else:
             pending_quiz.append([i.quiz_name, i.quiz_date])
-    return render(request, 'Student/analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': class_info, 'final_data': final_data, 'total_lecs': total_lecs, 'attended': sum(final_data), 'perct': perct, 'assign': academics, 'quiz': marks_quiz, 'pending_assignments': pending_assignments, 'pending_quiz': pending_quiz})
+    all_peers=Grouppeers.objects.filter(class_code=pk2)
+    group_peer_grading=[]
+    group_peer_marks=[]
+    for i in all_peers:
+        all_gs=PeerGroups.objects.filter(gro_id=i.gro_id)
+        for j in all_gs:
+            peer_m=Peermembers.objects.filter(pgro_id=j.group_id)
+            if peer_m:
+                created_peer=PeergradeGroups.objects.filter(assignment_id=i.gro_id)
+                if created_peer:
+                    created_peer=created_peer[0]
+                    peer_assign=PeerAssignsGroups.objects.filter(peergrade_id=created_peer.peergrade_id, assigned_stud_id=pk)
+                    all_marks=[]
+                    for k in peer_assign:
+                        if k.marks:
+                            all_marks.append(k.marks)
+                        else:
+                            all_marks=[]
+                            break
+                    if all_marks and j.marksbyteacher:
+                        print(all_marks, " . ", j.marksbyteacher)
+                        group_peer_marks.append([i.gpeer_name, (sum(all_marks)+j.marksbyteacher*4)/(len(all_marks)+4)])
+                    else:
+                        group_peer_marks.append([i.gpeer_name, ""])
+                if not j.submit_file:
+                    group_peer_grading.append([i.gpeer_name, i.gpeer_due])
+                break
+    return render(request, 'Student/analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': class_info, 'final_data': final_data, 'total_lecs': total_lecs, 'attended': sum(final_data), 'perct': perct, 'assign': academics, 'quiz': marks_quiz, 'pending_assignments': pending_assignments, 'pending_quiz': pending_quiz, 'group_peer_grading': group_peer_grading, 'group_peer_marks': group_peer_marks})

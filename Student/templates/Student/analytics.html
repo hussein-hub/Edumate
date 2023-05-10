@@ -162,8 +162,16 @@
                 <tbody>
                 {% for i in assign %}
                     <tr>
+                      {% if i.4 == "P" %}
+                    <td>{{ i.0 }} (Peergrade)</td>
+                    {% else %}
                     <td>{{ i.0 }}</td>
+                    {% endif %}
+                    {% if i.1 %}
                     <td>{{ i.1|floatformat:2 }} / {{ i.2|floatformat:2 }}</td>
+                    {% else %}
+                    <td>Not graded</td>
+                    {% endif %}
                     {% if i.3 == "L" %}
                     <td><span class="badge rounded-pill bg-danger">Late</span></td>
                     {% else %}
@@ -188,6 +196,29 @@
                     <tr>
                     <td>{{ i.0 }}</td>
                     <td>{{ i.1|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <hr>
+              <h5>Group Peergrading</h5>
+              <hr>
+              <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in group_peer_marks %}
+                    <tr>
+                    <td>{{ i.0 }}</td>
+                    {% if i.1 %}
+                    <td>{{ i.1|floatformat:2 }}</td>
+                    {% else %}
+                    <td>Not Given</td>
+                    {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -235,6 +266,25 @@
                 </thead>
                 <tbody>
                     {% for i in pending_quiz %}
+                    <tr>
+                    <td>{{ i.0 }}</td>
+                    <td>{{ i.1 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <hr>
+              <h5>Group Peergrading Assignments</h5>
+              <hr>
+              <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in group_peer_grading %}
                     <tr>
                     <td>{{ i.0 }}</td>
                     <td>{{ i.1 }}</td>

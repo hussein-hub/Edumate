@@ -155,11 +155,11 @@
                 <thead>
                     <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Due Date</th>
+                    <th scope="col">Number of assignments left to grade</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for i in pending_assignments %}
+                    {% for i in pending %}
                     <tr>
                     <td>{{ i.0 }}</td>
                     <td>{{ i.1 }}</td>
@@ -168,17 +168,17 @@
                 </tbody>
               </table>
               <hr>
-              <h5>Quiz</h5>
+                <h5>Group Peergrading Assignments</h5>
               <hr>
               <table class="table table-bordered">
                 <thead>
                     <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Due Date</th>
+                    <th scope="col">Number of assignments left to grade</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for i in pending_quiz %}
+                    {% for i in groups %}
                     <tr>
                     <td>{{ i.0 }}</td>
                     <td>{{ i.1 }}</td>
@@ -264,7 +264,7 @@
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: 'Number of lectures attended'
+                            labelString: 'Number of Students'
                           }
                     }],
                 },

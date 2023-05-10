@@ -131,7 +131,8 @@ def classroom(request, pk, pk2):
     for i in a:
         s = SubmittedAssignments.objects.filter(assignment_id=i.assignment_id)
         assign.append([i, len(s)])
-        studs.append(totalStudents-len(s))
+        strength=len(ClassStudents.objects.filter(class_code=pk2))
+        studs.append(strength-len(s))
     total_studs_value=len(ClassStudents.objects.filter(class_code=pk2))
     return render(request, 'Teacher/classroom.html', {'assign': zip(assign, studs), 'pk': pk, 'pk2': pk2, 'total': total_studs_value, 'classroomName': classroomName})
 
@@ -284,9 +285,9 @@ def viewgrades(request, pk, pk2, pk3):
                     temp_marks="X"
                     break
             if i.marks and temp_marks!="X":
-                temp_marks=temp_marks+float(i.marks)
+                temp_marks=temp_marks+float(i.marks)*4
             if temp_marks!="X":
-                temp_marks=temp_marks/(peergrade.number_of_peers + 1)
+                temp_marks=temp_marks/(peergrade.number_of_peers + 4)
             data['marks']=temp_marks
         else:
             if i.marks:
@@ -1065,7 +1066,7 @@ def view_grades(request, pk, pk2, pk3):
                 data['date']="Not Submitted"
             data['marks']="Y"
             if i.marksbyteacher:
-                total_marks=float(i.marksbyteacher)
+                total_marks=float(i.marksbyteacher)*4
                 peeron=PeergradeGroups.objects.filter(assignment_id=assignment.gro_id)
                 if peeron:
                     peeron=peeron[0]
@@ -1077,7 +1078,8 @@ def view_grades(request, pk, pk2, pk3):
                             total_marks="X"
                             break
                 if total_marks != "X":
-                    data['marks']=total_marks/(assignment.num_peers+1)
+                    print(total_marks-i.marksbyteacher*4)
+                    data['marks']=total_marks/(assignment.num_peers+4)
             all_submit.append(data)
     return render(request, 'Teacher/view_grades.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'assignment': assignment, 'all_submit': all_submit})
 
@@ -1108,6 +1110,16 @@ def teacher_analytics(request, pk, pk2):
     all_assignments=Assignments.objects.filter(class_code=pk2).order_by('-duedate')
     total2=len(all_assignments)
     graph2_data=[]
+    pending_tasks=[]
+    for i in all_assignments:
+        all_subm=SubmittedAssignments.objects.filter(assignment_id=i.assignment_id)
+        count=0
+        for j in all_subm:
+            if not j.marks:
+                count=count+1
+        if count > 0:
+            pending_tasks.append([i.assignment_name, count])
+    print(pending_tasks)
     count=0
     per=0
     for i in all_assignments:
@@ -1125,7 +1137,16 @@ def teacher_analytics(request, pk, pk2):
             graph2_data.append(["None", 0])
             count=count+1
     graph2_data.reverse()
-    return render(request, 'Teacher/teacher_analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': classroom, 'att_data': data, 'perct': perct, 'total': total_classes, 'graph2': graph2_data, 'total2': total2, 'perct2': perct2})
+    group_peers=[]
+    all_peers=Grouppeers.objects.filter(class_code=pk2)
+    for i in all_peers:
+        all_gs=PeerGroups.objects.filter(gro_id=i.gro_id)
+        count=0
+        for j in all_gs:
+            if not j.marksbyteacher:
+                count=count+1
+        group_peers.append([i.gpeer_name, count])
+    return render(request, 'Teacher/teacher_analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': classroom, 'att_data': data, 'perct': perct, 'total': total_classes, 'graph2': graph2_data, 'total2': total2, 'perct2': perct2, 'pending': pending_tasks, 'groups': group_peers})
 
 def logout(request, pk):
     request.session.flush()
