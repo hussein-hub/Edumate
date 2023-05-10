@@ -834,8 +834,14 @@ def fetchcheck(request, pk, pk2):
 def view_groups(request, pk, pk2, pk3):
     pro=Project.objects.get(pro_id=pk3)
     groups = Groups.objects.filter(pro_id=pk3)
+    student_names = []
     progressval = []
     for i in groups:
+        members=Members.objects.filter(group_id=i.group_id)
+        temp = []
+        for j in members:
+            temp.append(j.stud_id.name)
+        student_names.append(temp)
         prog=Progress.objects.filter(group_id=i.group_id)
         if prog:
             total=pro.prog_check.split("\r")
@@ -843,10 +849,10 @@ def view_groups(request, pk, pk2, pk3):
             for j in prog[0].prog:
                 if j=="a":
                     count=count+1
-            progressval.append((count/len(total))*100)
+            progressval.append([((count/len(total))*100), ((count/len(total))*100)*2.55])
         else:
-            progressval.append(0)
-    return render(request, 'Teacher/view_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'groups': zip(groups, progressval)})
+            progressval.append([0, 0])
+    return render(request, 'Teacher/view_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'groups': zip(groups, progressval, student_names)})
 
 def group_details(request, pk, pk2, pk3, pk4):
     project=Project.objects.get(pro_id=pk3)
@@ -1124,3 +1130,11 @@ def teacher_analytics(request, pk, pk2):
 def logout(request, pk):
     request.session.flush()
     return redirect('home')
+
+
+def checkpointsupdate(request, pk, pk2):
+    if request.method == "POST":
+        project = Project.objects.get(pro_id=request.POST.get('pro_id'))
+        project.prog_check = request.POST.get('data')
+        project.save()
+        return JsonResponse({'status': 'success'})

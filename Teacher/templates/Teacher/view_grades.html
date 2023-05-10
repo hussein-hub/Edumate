@@ -140,11 +140,11 @@
 	 				<td>{{ i.marks|floatformat:2 }}</td>
                     {% endif %}
                     {% if i.date == "L" %}
-	 				<td style="background: red; color: white">Late</td>
+	 				          <td><span class="badge rounded-pill bg-danger">Late</span></td>
                     {% elif i.date == "O" %}
-	 				<td style="background: green; color: white">On Time</td>
+                    <td><span class="badge rounded-pill bg-success">On Time</span></td>
                     {% else %}
-                    <td style="background: grey; color: white">Not Submitted</td>
+                    <td><span class="badge rounded-pill bg-secondary">Not Submitted</span></td>
                     {% endif %}
 				</tr>
 				{% endfor %}

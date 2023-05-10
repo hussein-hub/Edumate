@@ -142,8 +142,8 @@ input:checked + .slider:before {
 
       <!--  model body -->
       <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 70vw;">
-          <div class="modal-content" style="height: 60vh;">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 70vw; margin: auto;">
+          <div class="modal-content" style="height: fit-content;">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLongTitle">Create a project</h5>
               <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -259,18 +259,20 @@ input:checked + .slider:before {
     </div>
 
     <div class="modal fade" id="CheckModal" tabindex="-1" role="dialog" aria-labelledby="checkModalTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 50vw;">
-        <div class="modal-content" style="height: 40vh;">
+      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 30vw;">
+        <div class="modal-content" style="height: fit-content;" id="parent">
           <div class="modal-header">
             <h5 class="modal-title" id="pro_nam"></h5>
             <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+          
           <div class="modal-body">
             <div id="checkp">
             </div>    
           </div>
+
           </form>
           </div>
           {% comment %} <div class="modal-footer">
@@ -284,6 +286,13 @@ input:checked + .slider:before {
 {% endblock content %}
 {% block script %}
 <script>
+
+  /*
+  <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; margin-bottom: 1vh;">
+    <button class="btn btn-success">Update</button>
+  </div>
+  */
+  
 
   $(document).ready(function() {
     $('.nav-link-collapse').on('click', function() {
@@ -310,6 +319,25 @@ function deletepro(id)
       })
 }
 
+function updatepro(id)
+{
+  console.log($('[name="checkpoints_updated"]').val())
+  $.ajax(
+      {
+          type:"POST",
+          url: "{% url 'checkpointsupdate' pk=pk pk2=pk2 %}",
+          data:{
+            pro_id: id,
+            data: $('[name="checkpoints_updated"]').val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function( data ) 
+          {
+              location.reload();
+          }
+      })
+}
+
 function fetchcheck(id)
 {
   $.ajax(
@@ -321,19 +349,38 @@ function fetchcheck(id)
           },
           success: function( data ) 
           {
+            var main_parent_removal = document.getElementById("parent");
+            main_parent_removal.removeChild(main_parent_removal.lastChild);
             $('#pro_nam').empty();
             $('#checkp').empty();
             $('#pro_nam').text(data['name']);
             let all_checks=data['points'][0].split("\r");
-            let ul=document.createElement('ul');
+            let ul=document.createElement('textarea');
+            ul.setAttribute('style','height: 15vh; width: -webkit-fill-available; border: none');
+            ul.setAttribute('name', 'checkpoints_updated');
+            var data = "";
             for(let i=0;i<all_checks.length;i++)
             {
               let li=document.createElement('li');
               li.innerHTML = all_checks[i];
-              ul.append(li);
+              {% comment %} ul.append(li); {% endcomment %}
+              data += all_checks[i];
             }
+            ul.innerHTML = data;
             let maindiv=document.getElementById('checkp');
             maindiv.append(ul);
+
+
+            var main_parent = document.getElementById("parent");
+
+            var parent_div = document.createElement("div");
+            parent_div.setAttribute("style", "display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; margin-bottom: 1vh;");
+            var update_button = document.createElement("button");
+            update_button.setAttribute("class", "btn btn-success");
+            update_button.setAttribute("onclick", "updatepro("+id+")");
+            update_button.innerHTML = "Update";
+            parent_div.appendChild(update_button);
+            main_parent.appendChild(parent_div);
           }
       })
 }

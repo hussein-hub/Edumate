@@ -55,49 +55,47 @@
 
     {% endif %}
   </div>
-  <div class="container">
+  <div class="container"  >
     <div class="row" style="display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly; 
     height: 80vh;
     align-items: center;">
-    <div class="main-content" style="background: rgba( 255, 255, 255, 0.25 );
+    <div class="main-content row" style="background: rgba( 255, 255, 255, 0.25 );
       box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
       backdrop-filter: blur( 4px );
       -webkit-backdrop-filter: blur( 4px );
       border-radius: 10px;
       border: 1px solid rgba( 255, 255, 255, 0.18 );">
+        
+      <div class="col-sm-6" style="padding: 2rem;">
+        <p><b>Group ID: </b> : {{ pk4 }}</p> 
+        <p><b>Project name</b> : {{ project.proj_name }}</p> 
+        <p><b>Project description</b> : {{ project.proj_desc }}</p>
+        <p><b>Due date</b> : {{ project.proj_due }}</p>
+        <p><b>Members : </b></p>
         <div>
-          <p style="padding-top: 30px"><b>Group ID: </b> : {{ pk4 }}</p> 
-          <p><b>Project name</b> : {{ project.proj_name }}</p> 
-          <p><b>Project description</b> : {{ project.proj_desc }}</p>
-          <p><b>Due date</b> : {{ project.proj_due }}</p>
-          <p><b>Members : </b></p>
-          <div>
-            <ul>
-              {% for i in members %}
-                <li>{{ i.stud_id.name }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        <hr />
-        <h5>Progress</h5>
-        {% if progress %}
-
-        {% else %}
-
-        {% endif %}
-            {% for i, j in progr %}
-            {% if j == 'a' %}
-            <input type="checkbox" name="checks_{{forloop.counter}}" checked disabled />&nbsp; {{ i }}
-            {% else %}
-            <input type="checkbox" name="checks_{{forloop.counter}}" disabled />&nbsp; {{ i }}
-            {% endif %} 
-            <br>
+          <ul>
+            {% for i in members %}
+              <li>{{ i.stud_id.name }}</li>
             {% endfor %}
-            <hr />
+          </ul>
+        </div>
+      </div>
+      
+      <div class="col-sm-6" style="padding: 2rem;">
+        <h5>Progress</h5>
+        {% for i, j in progr %}
+        {% if j == 'a' %}
+        <input type="checkbox" name="checks_{{forloop.counter}}" checked disabled />&nbsp; {{ i }}
+        {% else %}
+        <input type="checkbox" name="checks_{{forloop.counter}}" disabled />&nbsp; {{ i }}
+        {% endif %} 
+        <br>
+        {% endfor %}
+      </div>
+
       </div>
     </div>
   </div>
