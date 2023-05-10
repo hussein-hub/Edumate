@@ -63,24 +63,41 @@ def classroom(request, pk, pk2):
     classroomName = ClassTeachers.objects.get(class_code=pk2).class_name
     assign=Assignments.objects.filter(class_code=pk2).order_by('-duedate')
     submitted_assign = SubmittedAssignments.objects.filter(stud_id=pk, assignment_id__class_code=pk2)
-    # print(submitted_assign)
-    status = [False for i in range(len(assign))]
-    late_submit_status = [False for i in range(len(assign))]
-    k = 0
-    for i in assign:
-        for j in submitted_assign:
-            if i.assignment_id==j.assignment_id.assignment_id:
-                status[k]=True
-        # print(timezone.localtime(timezone.now()), i.duedate)
-        if timezone.localtime(timezone.now()) > i.duedate:
-            late_submit_status[k]=True
-        k += 1
-    # print(status)
     data = []
-    for i in range(len(assign)):
-        data.append([assign[i], status[i], late_submit_status[i]])
-    
-    return render(request, 'Student/classroom.html', {'assign': data, 'pk': pk, 'pk2': pk2, 'status': status, 'classroomName': classroomName})
+
+    for i in assign:
+        temp = [i]
+        check = SubmittedAssignments.objects.filter(stud_id=pk, assignment_id=i.assignment_id)
+        if len(check):
+            temp.append(True)
+            if check[0].sub_date > i.duedate:
+                temp.append(True)
+            else:
+                temp.append(False)
+        else:
+            temp.append(False)
+            temp.append(False)
+        data.append(temp)
+        
+    print(data)
+
+    # print(submitted_assign)
+    # status = [False for i in range(len(assign))]
+    # late_submit_status = [False for i in range(len(assign))]
+    # k = 0
+    # for i in assign:
+    #     for j in submitted_assign:
+    #         if i.assignment_id==j.assignment_id.assignment_id:
+    #             print(i.assignment_name, j.sub_date, i.duedate)
+    #             status[k]=True
+    #             if j.sub_date > i.duedate:
+    #                 late_submit_status[k]=True
+    #     k += 1
+    # data = []
+    # for i in range(len(assign)):
+    #     data.append([assign[i], status[i], late_submit_status[i]])
+
+    return render(request, 'Student/classroom.html', {'assign': data, 'pk': pk, 'pk2': pk2,'classroomName': classroomName})
 
 def assignmentsub(request, pk, pk2, pk3):
     assign=Assignments.objects.filter(assignment_id=pk3)
@@ -422,10 +439,12 @@ def testing(request,pk, pk2, pk3):
         copy_img = cv2.imread("./"+image_folder_path)
 
         print("Creating directory")
-        try:
-            os.mkdir(cropped_folder_name)
-        except:
-            print("Dir already present")
+        # try:
+        #     for i in mainAttObj:
+        #         os.mkdir(i.att_image.url.split('/')[2].split(".")[0])
+        #     os.mkdir(cropped_folder_name)
+        # except:
+        #     print("Dir already present")
 
         cropped_img = copy_img[int(round(y,0)):int(round(y+h,0)),int(round(x,0)):int(round(x+w,0))]
         count = 0
@@ -680,13 +699,14 @@ def analytics(request, pk, pk2):
     academics=[]
     pending_assignments=[]
     for i in assignments:
-        sub=SubmittedAssignments.objects.filter(assignment_id=i.assignment_id)
-        if sub:
-            if sub[0].marks:
-                if sub[0].sub_date > i.duedate:
-                    academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'L'])
-                else:
-                    academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'O'])
+        sub=SubmittedAssignments.objects.filter(assignment_id=i.assignment_id, stud_id=pk)
+        if len(sub):
+            # if sub[0].marks:
+            print(i.assignment_name, sub[0].sub_date, i.duedate)
+            if sub[0].sub_date > i.duedate:
+                academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'L'])
+            else:
+                academics.append([i.assignment_name, sub[0].marks, i.max_marks, 'O'])
         else:
             pending_assignments.append([i.assignment_name, i.duedate])
     quizzes=Quiz_marks.objects.filter(class_id=pk2, student=pk)

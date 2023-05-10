@@ -188,6 +188,7 @@ def draw_boxes(image_folder_name,image_file_name,v_boxes,count):
         img = cv2.putText(img, str(count+i+1), (start_point[0], start_point[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,255), 2)
         # print(img[x1:x2, y1:y2])
     cv2.imwrite(os.path.join(os.path.join('./images',"a"+image_file_name)),img)
+    os.mkdir(f'./images/{image_folder_name}/{image_file_name.split(".")[0]}')
     return count+len(v_boxes)
 
 

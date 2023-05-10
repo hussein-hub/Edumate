@@ -62,14 +62,14 @@
     justify-content: space-evenly; 
     height: 80vh;
     align-items: center;">
-    <div class="main-content" style="background: rgba( 255, 255, 255, 0.25 );
+    <div class="main-content row" style="background: rgba( 255, 255, 255, 0.25 );
       box-shadow: 0 5px 18px 0 rgba(26, 38, 135, 0.20 );
       backdrop-filter: blur( 4px );
       -webkit-backdrop-filter: blur( 4px );
       border-radius: 10px;
       border: 1px solid rgba( 255, 255, 255, 0.18 );">
-        <div>
-          <p style="padding-top: 30px"><b>Project name</b> : {{ project.proj_name }}</p> 
+        <div class="col-sm-6" style="padding: 2rem">
+          <p><b>Project name</b> : {{ project.proj_name }}</p> 
           <p><b>Project description</b> : {{ project.proj_desc }}</p>
           <p><b>Due date</b> : {{ project.proj_due }}</p>
           <p><b>Members : </b></p>
@@ -81,8 +81,9 @@
             </ul>
           </div>
         </div>
-        <hr />
-        <h5>Progress</h5>
+        
+        <div class="col-sm-6" style="padding: 2rem">
+          <h5>Progress</h5>
           <form method="post" action="#" enctype="multipart/form-data" >
             {% csrf_token %}
             {% for i, j in check %}
@@ -96,6 +97,8 @@
             <hr />
             <button class="btn btn-success" style="margin-top: 10px" type="submit">Update Progress</button>
           </form>
+        </div>
+
       </div>
     </div>
   </div>

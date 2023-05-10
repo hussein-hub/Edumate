@@ -144,9 +144,9 @@
                     <td>Marks not given</td>
                     {% endif %}
                     {% if i.status == "L" %}
-	 				<td style="background: red; color: white">Late</td>
+                    <td><span class="badge rounded-pill bg-danger">Late</span></td>
                     {% else %}
-                    <td style="background: green; color: white">On Time</td>
+                    <td><span class="badge rounded-pill bg-success">On Time</span></td>
                     {% endif %}
 				</tr>
 				{% endfor %}

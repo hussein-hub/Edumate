@@ -139,6 +139,73 @@ input:checked + .slider:before {
   }
 }
 
+.card_progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #ffffff;
+  {% comment %} margin: 0 20px; {% endcomment %}
+  {% comment %} width: 280px; {% endcomment %}
+  height: 350px;
+  border-radius: 5px;
+  {% comment %} box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2); {% endcomment %}
+}
+
+.card_progress .percent {
+  position: relative;
+}
+
+.card_progress svg {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  transform: rotate(-90deg);
+}
+
+.card_progress svg circle {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #f0f0f0;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.card_progress svg circle:last-of-type {
+  stroke-dasharray: 625px;
+  stroke-dashoffset: calc(625px - (625px * var(--percent)) / 100);
+  stroke: #008374; 
+}
+
+.card_progress .number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card_progress .number h3 {
+  font-weight: 200;
+  font-size: 3.5rem;
+}
+
+.card_progress .number h3 span {
+  font-size: 2rem;
+}
+
+.card_progress .title h2 {
+  margin: 25px 0 0;
+}
+
+{% comment %} .card_progress:nth-child(1) svg circle:last-of-type {
+  stroke: #f39c12;
+}
+
+.card_progress:nth-child(2) svg circle:last-of-type {
+  stroke: #2ecc71;
+} {% endcomment %}
+
 
 
 </style>
@@ -157,7 +224,7 @@ input:checked + .slider:before {
       <br>
 
       <div class="row">
-      {% for i, j in groups %}
+      {% for i, j, k in groups %}
           
 
         {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
@@ -199,9 +266,29 @@ input:checked + .slider:before {
               Group ID: {{ i.group_id }}
             </div>
           </div>
-          <div class="card-body">
+          <div class="card-body" style="padding: 4rem;">
             <blockquote class="blockquote mb-0">
-              {% if j < 30 %}
+              <div class="card_progress">
+                <div class="percent">
+                  <svg>
+                    <circle cx="105" cy="105" r="100"></circle>
+                    <circle cx="105" cy="105" r="100" style="--percent: {{j.0}};"></circle>
+                  </svg>
+                  <div class="number">
+                    <h3>{{j.0}}<span>%</span></h3>
+                  </div>
+                </div>
+                <div class="title" style="margin: 20px 10px">
+                  <div style="margin: 20px 10px">
+                    {% for name in k %}
+                      <li>{{name}}</li>
+                    {% endfor %}
+                  </div>
+                  <a class="btn btn-outline-success" style="width: 12rem; margin: auto" type="submit" href="{% url 'group_details' pk=pk pk2=pk2 pk3=pk3 pk4=i.group_id %}">Group Details</a>
+                </div>
+              </div>
+
+              {% comment %} {% if j < 30 %}
               <p style="background: red; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
               {% elif j < 50 %}
               <p style="background: gray; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
@@ -209,10 +296,9 @@ input:checked + .slider:before {
               <p style="background: blue; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
               {% else %}
               <p style="background: green; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
-              {% endif %}
+              {% endif %} {% endcomment %}
             </blockquote>
           </div>
-          <a class="btn btn-outline-success" style="width: 12rem; margin: auto" type="submit" href="{% url 'group_details' pk=pk pk2=pk2 pk3=pk3 pk4=i.group_id %}">Group Details</a>
         </div>
 
 

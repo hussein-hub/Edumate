@@ -165,13 +165,13 @@
                     <td>{{ i.0 }}</td>
                     <td>{{ i.1|floatformat:2 }} / {{ i.2|floatformat:2 }}</td>
                     {% if i.3 == "L" %}
-                    <td style="background: red; color: white">Late</td>
+                    <td><span class="badge rounded-pill bg-danger">Late</span></td>
                     {% else %}
-                    <td style="background: green; color: white">On time</td>
+                    <td><span class="badge rounded-pill bg-success">Submitted on time</span></td>
                     {% endif %}
                     </tr>
                 {% endfor %}
-                </tbody>
+                </tbody>  
               </table>
               <hr>
               <h5>Quiz</h5>
