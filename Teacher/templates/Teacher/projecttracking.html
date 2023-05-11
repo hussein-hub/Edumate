@@ -350,39 +350,25 @@ function fetchcheck(id)
           success: function( data ) 
           {
             var main_parent_removal = document.getElementById("parent");
-            main_parent_removal.removeChild(main_parent_removal.lastChild);
+          
             $('#pro_nam').empty();
             $('#checkp').empty();
             $('#pro_nam').text(data['name']);
             let all_checks=data['points'][0].split("\r");
-            let ul=document.createElement('textarea');
-            ul.setAttribute('class','form-control');
-            ul.setAttribute('type', 'text');
-            ul.setAttribute('style','height: 15vh; width: -webkit-fill-available; border: none;white-space: pre-wrap;');
-            ul.setAttribute('name', 'checkpoints_updated');
+            let ul=document.createElement('ul');
             var data = "";
             for(let i=0;i<all_checks.length;i++)
             {
               let li=document.createElement('li');
               li.innerHTML = all_checks[i];
-              {% comment %} ul.append(li); {% endcomment %}
+              ul.append(li);
               data += all_checks[i];
             }
-            ul.innerHTML = data;
             let maindiv=document.getElementById('checkp');
             maindiv.append(ul);
 
 
-            var main_parent = document.getElementById("parent");
-
-            var parent_div = document.createElement("div");
-            parent_div.setAttribute("style", "display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; margin-bottom: 1vh;");
-            var update_button = document.createElement("button");
-            update_button.setAttribute("class", "btn btn-success");
-            update_button.setAttribute("onclick", "updatepro("+id+")");
-            update_button.innerHTML = "Update";
-            parent_div.appendChild(update_button);
-            main_parent.appendChild(parent_div);
+            
           }
       })
 }

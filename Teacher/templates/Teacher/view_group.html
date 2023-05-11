@@ -236,28 +236,7 @@ input:checked + .slider:before {
           </div>
         </div> {% endcomment %}
 
-        <div class="modal fade" id="exampleModalCenter{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you sure want to Delete the Assignment ?</h5>
-                <button class="btn btn-secondary" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <a class="btn btn-danger" onclick="deleteass({{ i.0.assignment_id }})" >
-                {% comment %} <a class="btn btn-danger" href="announcement/{{i.id}}" > {% endcomment %}
-                  Delete
-                </a>
-              </div>
-              {% comment %} <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-              </div> {% endcomment %}
-            </div>
-          </div>
-        </div>
+       
 
 
         <div class="card my-2 mx-1 col-md-4" style="width: 25rem; padding:0px;">
@@ -275,7 +254,7 @@ input:checked + .slider:before {
                     <circle cx="105" cy="105" r="100" style="--percent: {{j.0}};"></circle>
                   </svg>
                   <div class="number">
-                    <h3>{{j.0}}<span>%</span></h3>
+                    <h3>{{j.0|floatformat:2}}<span>%</span></h3>
                   </div>
                 </div>
                 <div class="title" style="margin: 20px 10px">
@@ -288,15 +267,6 @@ input:checked + .slider:before {
                 </div>
               </div>
 
-              {% comment %} {% if j < 30 %}
-              <p style="background: red; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
-              {% elif j < 50 %}
-              <p style="background: gray; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
-              {% elif j < 75 %}
-              <p style="background: blue; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
-              {% else %}
-              <p style="background: green; color: white; border-radius: 10px; padding: 2px 2px" >Progress: {{ j }}</p>
-              {% endif %} {% endcomment %}
             </blockquote>
           </div>
         </div>
@@ -305,11 +275,7 @@ input:checked + .slider:before {
       {% endfor %}
     </div>
     <br>
-      {% comment %} <a class="btn btn-success" href="{% url 'teacher_home' pk=pk %}">Back to home page</a>
-      <a class="btn btn-success" href="{% url 'announcementteach' pk=pk pk2=pk2 %}">Make an announcement</a>
-      <a class="btn btn-success" href="{% url 'schedule' pk=pk pk2=pk2 %}">Schedule</a>
-      <a class="btn btn-success" href="{% url 'create_quiz' pk=pk pk2=pk2 %}">Create Quiz</a>
-      <a class="btn btn-success" href="{% url 'attendance' pk=pk pk2=pk2 %}">Attendance</a> {% endcomment %}
+      
     </div>
     </div>
 {% endblock content %}
