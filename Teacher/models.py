@@ -240,4 +240,12 @@ class PeerAssignsGroups(models.Model):
     class Meta:
         db_table = "Peerassigns_Groups"
 
+class ReferenceMaterial(models.Model):
+    name = models.CharField(max_length=100)
+    file = models.FileField(upload_to='Teacher/static/reference/', default=None, blank=True, null=True)
+    datet = models.DateTimeField(default=datetime.now)
+    class_code = models.ForeignKey(ClassTeachers, on_delete=models.CASCADE, blank=True, null=True)
+    class Meta:
+        db_table = "referencematerial"
+
 

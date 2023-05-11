@@ -1159,3 +1159,7 @@ def checkpointsupdate(request, pk, pk2):
         project.prog_check = request.POST.get('data')
         project.save()
         return JsonResponse({'status': 'success'})
+    
+def reference(request, pk, pk2):
+    ref_material=ReferenceMaterial.objects.filter(class_code=pk2)
+    return render(request, 'Teacher/reference.html', {'pk': pk, 'pk2': pk2, 'ref_material': ref_material})
