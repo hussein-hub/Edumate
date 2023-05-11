@@ -479,8 +479,11 @@ def create_quiz(request, pk, pk2):
         return redirect('create_quiz', pk=pk, pk2=pk2)
         
     allQuiz = Quiz.objects.filter(teach_id = pk, class_code = pk2)
+    questionCount = []
+    for i in allQuiz:
+        questionCount.append(len(Question.objects.filter(quiz = i)))
 
-    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2, 'allQuiz': allQuiz})
+    return render(request, 'Teacher/createQuiz.html', {'pk': pk, 'pk2': pk2, 'allQuiz': zip(allQuiz, questionCount)})
 
 
 def attendance(request, pk, pk2):
@@ -1161,5 +1164,18 @@ def checkpointsupdate(request, pk, pk2):
         return JsonResponse({'status': 'success'})
     
 def reference(request, pk, pk2):
-    ref_material=ReferenceMaterial.objects.filter(class_code=pk2)
+    if request.method == "POST":
+        ref=ReferenceMaterial()
+        teach = ClassTeachers.objects.get(class_code=pk2)
+        ref.class_code=teach
+        ref.name = request.POST.get('name')
+        ref.file = request.FILES['file']
+        ref.save()
+        return redirect('reference', pk=pk, pk2=pk2)
+    ref_material=ReferenceMaterial.objects.filter(class_code=pk2).order_by('-datet')
     return render(request, 'Teacher/reference.html', {'pk': pk, 'pk2': pk2, 'ref_material': ref_material})
+
+def refdelete(request, pk, pk2):
+    if request.method == "POST":
+        ReferenceMaterial.objects.get(id=request.POST.get('id')).delete()
+        return JsonResponse({'info': 'succ'})

@@ -356,7 +356,9 @@ function fetchcheck(id)
             $('#pro_nam').text(data['name']);
             let all_checks=data['points'][0].split("\r");
             let ul=document.createElement('textarea');
-            ul.setAttribute('style','height: 15vh; width: -webkit-fill-available; border: none');
+            ul.setAttribute('class','form-control');
+            ul.setAttribute('type', 'text');
+            ul.setAttribute('style','height: 15vh; width: -webkit-fill-available; border: none;white-space: pre-wrap;');
             ul.setAttribute('name', 'checkpoints_updated');
             var data = "";
             for(let i=0;i<all_checks.length;i++)

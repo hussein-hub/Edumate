@@ -69,7 +69,7 @@
 <div class="Container">
     <h1>All Quizes</h1>
     <div class="row">
-        {% for i in quiz %}
+        {% for i, j in quiz %}
             {% comment %} <div class="card mx-2 my-2" style="width: 23%;">
                 <div class="card-body">
                 <h5 class="card-title">{{i.0.quiz_name}}</h5>
@@ -94,7 +94,7 @@
                 <div class="card-body">
                   <blockquote class="blockquote mb-0">
                     <p><small>Description : {{i.0.description}}</small></p>
-                    <p><small>Max marks: {{ i.0.total_marks }}</small></p>
+                    <p><small>Max marks: {{ j }}</small></p>
                     <p><small>Quiz Creation Date: {{ i.0.quiz_date }}</small></p>
                     <p><small>Time Limit: {{ i.0.time_limit }} mins</small></p>
                     {% if i.1 %}

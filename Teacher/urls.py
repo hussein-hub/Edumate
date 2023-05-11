@@ -38,6 +38,7 @@ urlpatterns = [
     path('classroom/<pk2>/peergroups/<pk3>/view_grades/', views.view_grades, name='view_grades'),
     path('classroom/<pk2>/peergroups/<pk3>/showassignment/<pk4>/', views.groupgrade, name='groupgrade'),
     path('classroom/<pk2>/updatecheckpoints/', views.checkpointsupdate, name='checkpointsupdate'),
+    path('classroom/<pk2>/ref_delete/', views.refdelete, name='refdelete'),
     # path('video_feed', views.video_feed, name='video_feed'),
     path('logout/', views.logout, name="logout")
 ]

@@ -138,7 +138,7 @@
                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                   <div class="accordion-body">
                     <div class="row" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-                    {% for i in allQuiz %}
+                    {% for i, j in allQuiz %}
                
                   <div class="card my-2 col-md-4 mx-2" style="width: 18rem; padding:0px;">
                       <div class="card-header">
@@ -149,7 +149,7 @@
                       <div class="card-body">
                         <blockquote class="blockquote mb-0">
                           <p><small>Description : {{i.description}}</small></p>
-                          <p><small>Max marks: {{ i.total_marks }}</small></p>
+                          <p><small>Max marks: {{ j }}</small></p>
                           <p><small>Quiz Creation Date: {{ i.quiz_date }}</small></p>
                           <p><small>Time Limit: {{ i.time_limit }} mins</small></p>
                         </blockquote>

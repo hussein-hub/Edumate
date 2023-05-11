@@ -223,7 +223,7 @@ def grad(request, pk, pk2, pk3, pk4):
     return render(request, 'Student/grad.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'ques_and_ans': zip(questions, final_options), 'submitted': submitted, 'assignment': assignment, 'pe': pe_assigned})
 
 def announcement_stud(request, pk, pk2):
-    announcements = Announcements.objects.filter(class_code = pk2)
+    announcements = Announcements.objects.filter(class_code = pk2).order_by('-date')
     # print(pk, pk2)
     return render(request, 'Student/announcement_student.html', {'pk': pk, 'pk2': pk2, 'announcements': announcements})
 
@@ -279,7 +279,12 @@ def quiz(request, pk, pk2):
         quiz_list.append([i,answer])
     today = timezone.localtime(timezone.now())
     # print(str(today) + "-----")
-    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': quiz_list,'today':today})
+
+    questionCount = []
+    for i in quiz:
+        questionCount.append(len(Question.objects.filter(quiz = i)))
+
+    return render(request, 'Student/quiz_student.html', {'pk': pk, 'pk2': pk2, 'quiz': zip(quiz_list, questionCount),'today':today})
 
 def ansquiz(request,pk,pk2,pk3):
     quiz = Quiz.objects.get(id = pk3)
@@ -749,8 +754,7 @@ def analytics(request, pk, pk2):
     quizzes=Quiz_marks.objects.filter(class_id=pk2, student=pk)
     marks_quiz=[]
     for i in quizzes:
-        if i.total_marks:
-            marks_quiz.append([i.quiz.quiz_name, i.total_marks])
+        marks_quiz.append([i.quiz.quiz_name, i.total_marks])
     all_class_quizzes=Quiz.objects.filter(class_code=pk2)
     pending_quiz=[]
     for i in all_class_quizzes:
@@ -787,3 +791,8 @@ def analytics(request, pk, pk2):
                     group_peer_grading.append([i.gpeer_name, i.gpeer_due])
                 break
     return render(request, 'Student/analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': class_info, 'final_data': final_data, 'total_lecs': total_lecs, 'attended': sum(final_data), 'perct': perct, 'assign': academics, 'quiz': marks_quiz, 'pending_assignments': pending_assignments, 'pending_quiz': pending_quiz, 'group_peer_grading': group_peer_grading, 'group_peer_marks': group_peer_marks})
+
+
+def reference_student(request, pk, pk2):
+    material = ReferenceMaterial.objects.filter(class_code=pk2).order_by('-datet')
+    return render(request, 'Student/reference_student.html', {'pk': pk, 'pk2': pk2, 'material': material})

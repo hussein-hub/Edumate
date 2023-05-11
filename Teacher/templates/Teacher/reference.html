@@ -1,0 +1,186 @@
+{% extends './base_teacher.html' %}
+{% load static %}
+
+{% block title %}
+<title>References</title>
+{% endblock title %}
+
+{% block styles %}
+{% comment %} <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css"> {% endcomment %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+
+
+
+<style>
+.btn-success, .btn-success:active, .btn-success:visited {
+  background-color: #008374 !important;
+}
+
+.btn-success:hover {
+  border-color: #008374 !important;
+  background-color: white !important;
+  color: #008374 !important;
+}
+</style>
+{% endblock styles %}
+
+{% block navbar %}
+  <header id="header" class="header d-flex align-items-center">
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>EDUMATE<span>.</span></h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <a class="btn" href="{% url 'classroom' pk=pk pk2=pk2 %}">Back</a>
+          </li>
+          
+          <li class="dropdown">
+            <a href="#">
+              <span>Hello {{request.session.tname}}!</span> <i class="bi bi-chevron-down dropdown-indicator"></i>
+            </a>
+            <ul>
+              <li>
+                {% if pk %}
+                <a href="{% url 'logout' pk=pk %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+                {% else %}
+                <a href="{% url 'logout' pk=pk1 %}"><i style="margin-right: 6px;" class="fa-solid fa-right-from-bracket"></i>logout</a>
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .navbar -->
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+
+    </div>
+  </header>
+  {% endblock navbar %}
+
+
+{% block content %}
+
+<br><br>
+<div class="container ">
+    {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  
+         <script>alert('{{ message }}')</script>
+        {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+		<div class="row">
+			<div class="col">
+				<h2>Reference Material</h2>
+			</div>
+			<div class="col">
+				{% comment %} <a href="{% url 'product_add' %}" id="add_product_btn"><button type="button" class="btn btn-primary">Add New</button></a> {% endcomment %}
+			</div>
+		</div>
+		<form method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div>
+				<div class="searchInput" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-between;">
+					{% comment %} <select name="student_id">
+						<option value="none">Select student</option>
+						{% for i in all_stud %}
+						<option value={{ i.stud_id }}>{{ i.name }}</option>
+						{% endfor %}
+					</select> {% endcomment %}
+					<input style="width: 45%" class="form-control" type="text" name="name" placeholder="Enter Name" required>
+					<input style="width: 45%" class="form-control" type="file" name="file" required>
+				</div>
+			</div>
+			<br>
+			<button type="submit" class="btn btn-success">Upload</button>
+		</form>
+	
+
+		<table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-striped table-bordered hover select" id="attendance-table">
+			<thead>
+				<tr>
+          			<th>Name</th>
+          			<th>File</th>
+					<th>Date</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody class="two-col-form">
+				{% for i in ref_material %}
+				<tr>
+	 				<td>{{i.name}}</td>
+	 				<td><a href="{{i.file.url}}" target="_black">file</a></td>
+	 				<td>{{i.datet}}</td>
+	 				<td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.id}}" data-product-name="{{i.name}}" onclick="caller('{{i.id}}')">Delete</button></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+</div>
+{% endblock content %}
+{% block script %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
+
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+
+<script>
+
+
+
+
+$(document).ready( function () {
+	$('#attendance-table').DataTable({
+		"order": [],
+		dom: 'Bfrtip',
+		buttons: [
+		{ extend: 'copy', className: 'btn btn-success glyphicon' },
+   		{ extend: 'csv', className: 'btn btn-success glyphicon' },
+    	{ extend: 'excel', className: 'btn btn-success glyphicon' },
+    	{ extend: 'pdf', className: 'btn btn-success glyphicon' },
+		],
+		"columnDefs": [ {
+			"targets": 3,
+			"sortable": false,
+			"searchable": true
+		} ],
+		"paging": true
+		});
+});
+function caller(id)
+{
+	$.ajax(
+    {
+        type:"POST",
+        url: "{% url 'refdelete' pk=pk pk2=pk2 %}",
+        data:{
+        id: id,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function( data ) 
+        {
+            location.reload();
+        }
+    })
+}	
+</script>
+{% endblock script %}
