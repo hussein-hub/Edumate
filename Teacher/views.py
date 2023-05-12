@@ -3,6 +3,7 @@ from datetime import date
 from datetime import datetime, timedelta
 import time
 import cv2
+from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 import string, random
 from django.http import FileResponse, Http404, HttpResponseRedirect, StreamingHttpResponse
@@ -15,7 +16,7 @@ from .models import *
 import random
 import copy
 from django.shortcuts import redirect, render
-
+from django.core.mail import send_mail
 from django.views import generic
 from django.utils.safestring import mark_safe
 from .utils import Calendar, gen_bounding_boxes
@@ -329,6 +330,11 @@ def announcement(request, pk, pk2):
         announcement.teach_id = Teachers.objects.get(teach_id=pk)
         announcement.class_code = ClassTeachers.objects.get(class_code=pk2)
         announcement.save()
+        all_stud = ClassStudents.objects.filter(class_code=pk2)
+        for i in all_stud:
+            if i.stud_id.email != None:
+                send_mail("New Announcement", f"New announcement in class: {announcement.class_code.class_name}", settings.EMAIL_HOST_USER, [i.stud_id.email], fail_silently = True)
+                
         return redirect('announcementteach', pk=pk, pk2=pk2)
     announcement_data = Announcements.objects.filter(class_code = pk2).order_by('-date')
     return render(request, 'Teacher/announcement_teach.html', {'pk': pk, 'pk2': pk2, 'announcement_data': announcement_data})

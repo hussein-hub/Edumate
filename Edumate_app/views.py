@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from .models import Students, Teachers
 import string, random
@@ -5,6 +6,7 @@ from Student import views as stud_views
 from Teacher import views as teach_views
 from django.contrib import messages
 import re
+from django.core.mail import send_mail
 # Create your views here.
 def home(request):
     return render(request, 'Edumate_app/index.html')
@@ -22,12 +24,14 @@ def final_reg(request):
             student.name=request.POST.get('name')
             student.email=request.POST.get('email')
             student.password=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 8)))  
+            send_mail("Edumate- new user created", f"Welcome {student.name}, your account credentials for edumate are as follows, Email:{student.email} , Password:{student.password}. You will be required to change the password on the first login for security purpose.", settings.EMAIL_HOST_USER, [student.email], fail_silently = True)
             student.save()
         else:
             teacher=Teachers()
             teacher.name=request.POST.get('name')
             teacher.email=request.POST.get('email')
             teacher.password=str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 8)))
+            send_mail("Edumate- new instructor created", f"Welcome {teacher.name}, your account credentials for edumate are as follows, Email:{teacher.email} , Password:{teacher.password}. You will be required to change the password on the first login for security purpose.", settings.EMAIL_HOST_USER, [teacher.email], fail_silently = True)
             teacher.save()
         messages.error(request, 'Registration successful')
         return redirect('final_register')
