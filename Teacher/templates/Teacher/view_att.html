@@ -124,7 +124,7 @@
 				{% for i in all_att %}
 				<tr>
 	 				<td>{{forloop.counter}}</td>
-	 				<td><img height=100 src="{{i.image}}" /></td>
+	 				<td><img height=100 src="{{i.image}}" alt="Manually marked"/></td>
 	 				<td>{{i.name}}</td>
 	 				<td>{{ i.time }}</td>
 	 				<td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#productDeleteModal" data-product-id="{{i.att_id.att_id}}" data-product-name="{{i.name}}" onclick="caller('{{i.stud_id}}', '{{i.att_id}}')">Delete</button></td>
