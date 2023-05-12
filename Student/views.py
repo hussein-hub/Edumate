@@ -524,7 +524,40 @@ def enterattcode(request, pk, pk2):
 
 def projecttrack(request, pk, pk2):
     projects = Project.objects.filter(class_code=pk2)
-    return render(request, 'Student/projecttrack.html', {'pk': pk, 'pk2': pk2, 'projects': projects})
+    all_data=[]
+    for i in projects:
+        groups=Groups.objects.filter(pro_id=i.pro_id)
+        for j in groups:
+            mems=Members.objects.filter(group_id=j.group_id, stud_id=pk)
+            if mems:
+                progress=Progress.objects.filter(group_id=j.group_id)
+                if progress:
+                    prog=progress[0].prog
+                    count=0
+                    for k in prog:
+                        if k == "a":
+                            count=count+1
+                    if timezone.now() > i.proj_due:
+                        if progress[0].time_update > i.proj_due:
+                            all_data.append("L")
+                        elif count == len(prog):
+                            all_data.append("O")
+                        else:
+                            all_data.append("L")
+                    else:
+                        if count==len(prog):
+                            all_data.append("O")
+                        else:
+                            all_data.append("N")
+                else:
+                    if timezone.now() > i.proj_due:
+                        all_data.append("L")
+                    else:
+                        all_data.append("N")
+                break
+    print(projects)
+    print(all_data)
+    return render(request, 'Student/projecttrack.html', {'pk': pk, 'pk2': pk2, 'projects': zip(projects, all_data)})
 
 def single_project(request, pk, pk2, pk3):
     project=Project.objects.get(pro_id=pk3)
@@ -558,12 +591,14 @@ def single_project(request, pk, pk2, pk3):
         che=Progress.objects.filter(group_id=final_group.group_id)
         if che:
             che[0].prog=res
+            che[0].time_update=timezone.now()
             che[0].save()
             messages.error(request, "Progress saved!")
             return redirect('single_project', pk=pk, pk2=pk2, pk3=pk3)
         resp=Progress()
         resp.group_id=final_group
         resp.prog=res
+        resp.time_update=timezone.now()
         resp.save()
         messages.error(request, "Progress saved!")
         return redirect('single_project', pk=pk, pk2=pk2, pk3=pk3)
@@ -591,6 +626,7 @@ def single_stud_group(request, pk, pk2, pk3):
     members=None
     assigned=None
     total_marks="X"
+    feed_by_teacher="X"
     for i in all_group:
         mems=Peermembers.objects.filter(stud_id=pk, pgro_id=i.group_id)
         if mems:
@@ -600,6 +636,8 @@ def single_stud_group(request, pk, pk2, pk3):
     submi=None
     if single_group.submit_desc:
         submi=single_group.submit_file.url
+        if single_group.feedbackbyteacher:
+            feed_by_teacher=single_group.feedbackbyteacher
     peerreviews=[]
     p_groups=PeergradeGroups.objects.filter(class_code=pk2, assignment_id=pk3)
     if p_groups:
@@ -631,7 +669,7 @@ def single_stud_group(request, pk, pk2, pk3):
         single_group.submit_date=timezone.now()
         single_group.save()
         return redirect('single_stud_group', pk=pk, pk2=pk2, pk3=pk3)
-    return render(request, 'Student/single_stud_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'group': group, 'single_group': single_group, 'members': members, 'submi': submi, 'pe': peerreviews, 'assigned': assigned, 'total_marks': total_marks})
+    return render(request, 'Student/single_stud_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'group': group, 'single_group': single_group, 'members': members, 'submi': submi, 'pe': peerreviews, 'assigned': assigned, 'total_marks': total_marks, 'feed_by_teacher': feed_by_teacher})
 
 def gradesingle(request, pk, pk2, pk3, pk4):
     pet=PeergradeGroups.objects.get(class_code=pk2, assignment_id=pk3)
@@ -769,7 +807,7 @@ def analytics(request, pk, pk2):
     for i in all_peers:
         all_gs=PeerGroups.objects.filter(gro_id=i.gro_id)
         for j in all_gs:
-            peer_m=Peermembers.objects.filter(pgro_id=j.group_id)
+            peer_m=Peermembers.objects.filter(pgro_id=j.group_id, stud_id=pk)
             if peer_m:
                 created_peer=PeergradeGroups.objects.filter(assignment_id=i.gro_id)
                 if created_peer:
@@ -787,7 +825,12 @@ def analytics(request, pk, pk2):
                         group_peer_marks.append([i.gpeer_name, (sum(all_marks)+j.marksbyteacher*4)/(len(all_marks)+4)])
                     else:
                         group_peer_marks.append([i.gpeer_name, ""])
-                if not j.submit_file:
+                else:
+                    if j.submit_desc:
+                        group_peer_marks.append([i.gpeer_name, ""])
+                if j.submit_desc:
+                    continue
+                else:
                     group_peer_grading.append([i.gpeer_name, i.gpeer_due])
                 break
     return render(request, 'Student/analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': class_info, 'final_data': final_data, 'total_lecs': total_lecs, 'attended': sum(final_data), 'perct': perct, 'assign': academics, 'quiz': marks_quiz, 'pending_assignments': pending_assignments, 'pending_quiz': pending_quiz, 'group_peer_grading': group_peer_grading, 'group_peer_marks': group_peer_marks})

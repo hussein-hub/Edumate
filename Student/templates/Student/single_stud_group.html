@@ -148,6 +148,11 @@
           {% else %}
           <p><b style="color: #008374">Marks given by teacher</b> : Not given</p>
           {% endif %}
+          {% if feed_by_teacher != "X" %}
+          <p><b style="color: #008374">Feedback given by teacher</b> : {{ feed_by_teacher  }}</p>
+          {% else %}
+          <p><b style="color: #008374">Feedback given by teacher</b> : Not given</p>
+          {% endif %}
           <p><b style="color: #008374">Due date</b> : {{ group.gpeer_due }}</p>
           <p><b style="color: #008374">Group ID : {{ single_group.group_id }}</b></p>
           <div style="margin-bottom: 12px"><b style="color: #008374">Members : </b>

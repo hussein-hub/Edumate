@@ -244,6 +244,11 @@ input:checked + .slider:before {
             <div style="font-weight: 600; font-size: 18px">
               Group ID: {{ i.group_id }}
             </div>
+            {% if j.2 == "L" %}
+            <span class="badge rounded-pill bg-danger"><small>Late</small></span>
+            {% elif j.2 == "O" %}
+            <span class="badge rounded-pill bg-success"><small>Completed on time</small></span>
+            {% endif %}
           </div>
           <div class="card-body" style="padding: 4rem;">
             <blockquote class="blockquote mb-0">

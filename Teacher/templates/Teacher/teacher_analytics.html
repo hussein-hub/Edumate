@@ -111,7 +111,7 @@
               {% if perct == "X" %}
               <p><strong>Percentage attendance:</strong> None </p>
               {% else %}
-              <p><strong>Percentage attendance:</strong> {{ perct }} %</p>
+              <p><strong>Percentage attendance:</strong> {{ perct|floatformat:2 }} %</p>
               {% endif %}
               </div>
               </div>
@@ -134,7 +134,7 @@
               {% if perct2 == "X" %}
               <p><strong>Percentage submission:</strong> None </p>
               {% else %}
-              <p><strong>Percentage submission:</strong> {{ perct2 }} %</p>
+              <p><strong>Percentage submission:</strong> {{ perct2|floatformat:2 }} %</p>
               {% endif %}
               </div>
             </div>

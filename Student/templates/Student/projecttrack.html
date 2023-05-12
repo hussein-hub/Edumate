@@ -141,7 +141,7 @@ input:checked + .slider:before {
       <br>
 
       <div class="row">
-      {% for i in projects %}
+      {% for i, j in projects %}
           
 
         {% comment %} <div class="card mr-2 mb-2" style="width: 23%;">
@@ -159,6 +159,13 @@ input:checked + .slider:before {
           <div class="card-header">
             <div style="font-weight: 600; font-size: 18px">
               {{ i.proj_name }}
+              {% if j == "L" %}
+            <span class="badge rounded-pill bg-danger" style="margin-left: 20px"><small>Late</small></span>
+            {% elif j == "O" %}
+            <span class="badge rounded-pill bg-success" style="margin-left: 20px"><small>Completed on time</small></span>
+            {% else %}
+            <span class="badge rounded-pill bg-secondary" style="margin-left: 20px"><small>Ongoing</small></span>
+            {% endif %}
             </div>
           </div>
           <div class="card-body">

@@ -40,5 +40,6 @@ class Quiz_marks(models.Model):
 class Progress(models.Model):
     group_id = models.ForeignKey('Teacher.Groups', on_delete=models.CASCADE, default=0, blank=True, null=True)
     prog = models.CharField(max_length=400)
+    time_update = models.DateTimeField(default=timezone.now)
     class Meta:
         db_table = "Progress"

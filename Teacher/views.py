@@ -49,6 +49,7 @@ import json
 import hashlib
 import hmac
 from collections import OrderedDict
+from django.utils import timezone
 
 
 def get_viewer_url_signature(account_id, auth_token, identifier, valid_until_timestamp):
@@ -853,9 +854,24 @@ def view_groups(request, pk, pk2, pk3):
             for j in prog[0].prog:
                 if j=="a":
                     count=count+1
-            progressval.append([((count/len(total))*100), ((count/len(total))*100)*2.55])
+            if timezone.now() > pro.proj_due:
+                if count == len(total):
+                    if prog[0].time_update > pro.proj_due:
+                        progressval.append([((count/len(total))*100), ((count/len(total))*100)*2.55, "L"])
+                    else:
+                        progressval.append([((count/len(total))*100), ((count/len(total))*100)*2.55, "O"])
+                else:
+                    progressval.append([((count/len(total))*100), ((count/len(total))*100)*2.55, "L"])
+            else:
+                if count==len(total):
+                        progressval.append([((count/len(total))*100), ((count/len(total))*100)*2.55, "O"])
+                else:
+                    progressval.append([((count/len(total))*100), ((count/len(total))*100)*2.55, "N"])
         else:
-            progressval.append([0, 0])
+            if timezone.now() > pro.proj_due:
+                progressval.append([0, 0, "L"])
+            else:
+                progressval.append([0, 0, "N"])
     return render(request, 'Teacher/view_group.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'groups': zip(groups, progressval, student_names)})
 
 def group_details(request, pk, pk2, pk3, pk4):
@@ -864,11 +880,13 @@ def group_details(request, pk, pk2, pk3, pk4):
     members=Members.objects.filter(group_id=pk4)
     pro=Progress.objects.filter(group_id=pk4)
     progress=None
+    final_pro=None
     if pro:
         progress=list(pro[0].prog)
+        final_pro=pro[0].time_update
     else:
         progress=list("b"*len(project.prog_check.split('\r')))
-    return render(request, 'Teacher/group_details.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'members': members, 'progress': progress, 'project': project, 'progr': zip(project.prog_check.split('\r'), progress)})
+    return render(request, 'Teacher/group_details.html', {'pk': pk, 'pk2': pk2, 'pk3': pk3, 'pk4': pk4, 'members': members, 'progress': progress, 'project': project, 'progr': zip(project.prog_check.split('\r'), progress), 'last_update': final_pro})
 
 def grouppeergrading(request, pk, pk2):
     all_g_assigns=Grouppeers.objects.filter(class_code=pk2).order_by('-created_date')
@@ -1146,9 +1164,10 @@ def teacher_analytics(request, pk, pk2):
         all_gs=PeerGroups.objects.filter(gro_id=i.gro_id)
         count=0
         for j in all_gs:
-            if not j.marksbyteacher:
+            if j.submit_desc and not j.marksbyteacher:
                 count=count+1
-        group_peers.append([i.gpeer_name, count])
+        if count:
+            group_peers.append([i.gpeer_name, count])
     return render(request, 'Teacher/teacher_analytics.html', {'pk': pk, 'pk2': pk2, 'class_info': classroom, 'att_data': data, 'perct': perct, 'total': total_classes, 'graph2': graph2_data, 'total2': total2, 'perct2': perct2, 'pending': pending_tasks, 'groups': group_peers})
 
 def logout(request, pk):
