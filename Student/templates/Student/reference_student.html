@@ -7,7 +7,8 @@
 
 {% block styles %}
 {% comment %} <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css"> {% endcomment %}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+{% comment %} <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"> {% endcomment %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet" />
 
 
 
@@ -21,6 +22,9 @@
   border-color: #008374 !important;
   background-color: white !important;
   color: #008374 !important;
+}
+.download_button:hover {
+  background-color: #017064;
 }
 </style>
 {% endblock styles %}
@@ -72,15 +76,32 @@
 <div class="container ">
 		<div class="row">
 			<div class="col">
-				<h2>Reference Material</h2>
+				<h2 class="text-4xl font-bold dark:text-white">Reference Material</h2>
 			</div>
 			<div class="col">
 				{% comment %} <a href="{% url 'product_add' %}" id="add_product_btn"><button type="button" class="btn btn-primary">Add New</button></a> {% endcomment %}
 			</div>
 		</div>
+
+
+    <div class="grid grid-cols-4 gap-4">
+    {% for i in material %}
+      <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-4">
+        <a href="#">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{i.name}}</h5>
+        </a>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{i.datet}}</p>
+        <a href="{{i.file.url}}" target="_blank" style="background-color: #008374;" class="btn btn-success inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none">
+            Download
+            <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+        </a>
+    </div>
+    {% endfor %}
+  </div>
+
 	
 
-		<table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-striped table-bordered hover select" id="attendance-table">
+		{% comment %} <table style="border-top: 1px solid #cbc3c3; margin-top: 50px" class="table table-striped table-bordered hover select" id="attendance-table">
 			<thead>
 				<tr>
           			<th>Sr. No.</th>
@@ -99,7 +120,7 @@
 	 			</tr>
 				{% endfor %}
 			</tbody>
-		</table>
+		</table> {% endcomment %}
 </div>
 {% endblock content %}
 {% block script %}

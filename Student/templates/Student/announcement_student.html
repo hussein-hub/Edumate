@@ -8,6 +8,7 @@
 
 {% block styles %}
 <link href="{% static 'Student/assets/css/announcement_student.css' %}" rel="stylesheet">
+{% comment %} <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet" /> {% endcomment %}
 {% endblock styles %}
 
 {% block navbar %}
@@ -81,7 +82,7 @@
                 </div>
                 <div class="card-body">
                     <blockquote class="blockquote mb-0">
-                    <p style="text-overflow: ellipsis; word-wrap: nowrap; overflow: hidden">{{ i.announce_data|slice:":50" }} <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModalAnnounce{{forloop.counter}}">..Read more</a> </p>
+                    <p style="text-overflow: ellipsis; word-wrap: nowrap; overflow: hidden">{{ i.announce_data|slice:":50" }} <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModalAnnounce{{forloop.counter}}" style="font-size: 0.875rem;">..Read more</a> </p>
                     </blockquote>
                 </div>
             </div>
