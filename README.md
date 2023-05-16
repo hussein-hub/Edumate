@@ -116,9 +116,11 @@ Here is the link to the research paper: <a href="https://journal.ijresm.com/inde
 * Administration: Manage and administer the system efficiently
 * Quiz security: Detect and prevent cheating during quizzes
 ---
-Click to see the user guide video
-[![User guide video](https://media.sproutsocial.com/uploads/2020/10/Sprout-Guide-Get-Most-Out-of-Video-Featured-Image.svg)]
-(https://github.com/hussein-hub/Edumate/blob/main/Demo_video_edumate.mp4)
+###User guide demo video
+
+
+https://github.com/hussein-hub/Edumate/assets/56965843/861a0304-3fd7-4887-88c8-ecf266576241
+
 
 
 ---
