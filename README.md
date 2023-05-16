@@ -87,17 +87,20 @@ python manage.py runserver
 Snapshots of the project
 </h2>
   
-![img](Screenshots/ss1.PNG)
-![img](Screenshots/ss2.PNG)  
-![img](Screenshots/ss3.PNG)  
-![img](Screenshots/ss4.PNG)  
-![img](Screenshots/ss5.PNG)  
+![img](Screenshots/Picture1.png)
+![img](Screenshots/Picture2.png)  
+![img](Screenshots/Picture3.png) 
+![img](Screenshots/Picture4.png) 
+![img](Screenshots/Picture5.png)  
+
+---
+### Research Paper Details
+A research paper has been published for the smart attendence module. 
+Here is the link to the research paper: <a href="https://journal.ijresm.com/index.php/ijresm/article/view/2694" target="_blank">Effective Inexpensive and Robust Solution to Classroom Attendance Recording Using Face Detection Technology</a>
 
 ---
 
-<img align="right" width=200px height=200px alt="side_sticker" src="https://github.com/kashish1211/GUPSHUP/blob/master/Screenshots/giphchat.gif" />
-
-### Features of GupShup
+### Features of Edumate
 * User authentication: Secure login and access control for teachers and students
 * Virtual classrooms: Create and manage virtual classrooms for courses and subjects
 * Assignments: Create, assign, and submit tasks and projects
@@ -114,7 +117,8 @@ Snapshots of the project
 * Quiz security: Detect and prevent cheating during quizzes
 ---
 Click to see the user guide video
-[![User guide video](https://media.sproutsocial.com/uploads/2020/10/Sprout-Guide-Get-Most-Out-of-Video-Featured-Image.svg)](https://drive.google.com/file/d/1KI7BdVSxiOW3bYIXvsrOzjFCfDHf7qBb/view?usp=sharing)
+[![User guide video](https://media.sproutsocial.com/uploads/2020/10/Sprout-Guide-Get-Most-Out-of-Video-Featured-Image.svg)]
+(https://github.com/hussein-hub/Edumate/blob/main/Demo_video_edumate.mp4)
 
 
 ---
