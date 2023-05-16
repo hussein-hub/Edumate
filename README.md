@@ -116,8 +116,7 @@ Here is the link to the research paper: <a href="https://journal.ijresm.com/inde
 * Administration: Manage and administer the system efficiently
 * Quiz security: Detect and prevent cheating during quizzes
 ---
-###User guide demo video
-
+### User guide demo video
 
 https://github.com/hussein-hub/Edumate/assets/56965843/861a0304-3fd7-4887-88c8-ecf266576241
 
